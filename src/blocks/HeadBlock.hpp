@@ -5,7 +5,6 @@
 namespace BCIEvent{
     class HeadBlock : public Block{
 	public:
-	Block* run;
 	/**
 	 * Because head blocks are the first block in a series, they have no previous block.
 	 * However, the Block constructor expects a previous block, so the HeadBlock
@@ -14,6 +13,7 @@ namespace BCIEvent{
 	 */
 	HeadBlock();
 	~HeadBlock();
+	Block* run(Actor &callingActor);
     };
 }
 

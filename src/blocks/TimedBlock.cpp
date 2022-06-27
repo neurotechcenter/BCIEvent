@@ -8,7 +8,7 @@ TimedBlockStart::TimedBlockStart(Block* previous, std::chrono::duration<std::chr
     _time = time;
 }
 
-Block* TimedBlockStart::run(){
+Block* TimedBlockStart::run(Actor &callingActor){
     _startTime = std::chrono::high_resolution_clock::now();
     return _next;
 }
@@ -17,8 +17,8 @@ TimedBlockEnd::TimedBlockEnd(Block* previous, TimedBlockStart* start) : Block(pr
     _start = start;
 }
 
-Block* TimedBlockEnd::run(){
-    if (std::chrono::high_resolution_clock::now() >= _start->startTime()){
+Block* TimedBlockEnd::run(Actor &callingActor){
+    if (std::chrono::high_resolution_clock::now() >= _start->startTime() + _start->time()){
 	return _next;
     }
     return this; //wait until time has elapsed

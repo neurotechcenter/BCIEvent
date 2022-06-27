@@ -4,16 +4,19 @@ using namespace BCIEvent;
 
 IfEndBlock::IfEndBlock(Block* previous) : Block(previous){}
 
-Block* IfEndBlock::run(){
+IfEndBlock::IfEndBlock() : Block(this){}
+
+Block* IfEndBlock::run(Actor &callingActor){
     return _next;
 }
 
-IfStartBlock::IfStartBlock(Block* previous, std::function<bool()> condition) : Block(previous){
+IfStartBlock::IfStartBlock(Block* previous, IfEndBlock* endBlock, std::function<bool(Actor &callingActor)> condition) : Block(previous){
     _condition = condition;
+    _endBlock = endBlock;
 }
 
-Block* IfStartBlock::run(){
-    if (_condition())
+Block* IfStartBlock::run(Actor &callingActor){
+    if (_condition( callingActor ))
 	return _next;
     else
 	return _endBlock;

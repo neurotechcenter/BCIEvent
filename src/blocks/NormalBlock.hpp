@@ -11,7 +11,7 @@ namespace BCIEvent{
     class NormalBlock : public Block {
 	std::function<void()> _action; 
 	public:
-	    Block* run();
+	    Block* run(Actor &callingActor);
 	    NormalBlock(Block* prev, std::function<void()> action);
     };
 }

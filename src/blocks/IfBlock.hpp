@@ -8,15 +8,16 @@ namespace BCIEvent{
     class IfEndBlock : public Block{
 	public:
 	    IfEndBlock(Block* previous);
-	Block* run;
+	    IfEndBlock();
+	Block* run(Actor &callingActor);
     };
 
     class IfStartBlock : public Block{
-	std::function<bool()> _condition;
+	std::function<bool(Actor &callingActor)> _condition;
 	IfEndBlock* _endBlock;
 	public:
-	    IfStartBlock(Block* previous, std::function<bool()> condition);
-	Block* run;
+	    IfStartBlock(Block* previous, IfEndBlock* endBlock, std::function<bool(Actor &callingActor)> condition);
+	Block* run(Actor &callingActor);
     };
 }
 

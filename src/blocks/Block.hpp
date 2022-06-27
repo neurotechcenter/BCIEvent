@@ -4,6 +4,7 @@
 
 
 namespace BCIEvent{
+    class Actor;
     class Block{
 	protected:
 	    Block* _next;
@@ -25,7 +26,7 @@ namespace BCIEvent{
 	     * Runs the block's main code and returns the next block to run on the next cycle of the event loop
 	     * May return the same block in the case of a timer which has not finished.
 	     */
-	    virtual Block* run() = 0;
+	    virtual Block* run(Actor& callingActor) = 0;
 	    void setNext(Block* newNext) { _next = newNext; }
     };    
 }

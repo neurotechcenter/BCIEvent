@@ -7,7 +7,7 @@ EventCallerBlock::EventCallerBlock(Block* previous, std::shared_ptr<Event> event
     _event = event;
 }
 
-Block* EventCallerBlock::run(){
+Block* EventCallerBlock::run(Actor &callingActor){
     _event->trigger();
     return _next;
 }

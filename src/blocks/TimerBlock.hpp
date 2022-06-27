@@ -1,5 +1,6 @@
 #ifndef TIMERBLOCK_H
 #define TIMERBLOCK_H
+#include "Actor.hpp"
 #include "Block.hpp"
 #include <chrono>
 #include <functional>
@@ -17,8 +18,8 @@ namespace BCIEvent{
        std::chrono::duration<std::chrono::high_resolution_clock> _timeElapsed;
        std::function<void()> _action;
     public:
-	TimerBlock(Block* previous, std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void> action);
-	Block* run;
+	TimerBlock(Block* previous, std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void (Actor&)> action);
+	Block* run(Actor &actor);
    }; 
 }
 

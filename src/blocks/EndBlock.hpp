@@ -10,9 +10,9 @@ namespace BCIEvent{
      */
     class EndBlock : public Block {
 	public:
-	Block* run;
-	    EndBlock(Block* prev);
-	    ~EndBlock();
+	EndBlock(Block* prev);
+	~EndBlock();
+	Block* run(Actor &callingActor);
     };
 }
 #endif

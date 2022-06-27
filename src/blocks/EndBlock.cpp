@@ -7,4 +7,4 @@ EndBlock::EndBlock(Block* previous) : Block(previous){
     _next = nullptr;
 }
 
-Block* EndBlock::run(){return _next;}
+Block* EndBlock::run(Actor &callingActor){return _next;}

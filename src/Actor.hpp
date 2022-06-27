@@ -1,12 +1,17 @@
 #ifndef ACTOR_H
 #define ACTOR_H
+#include <memory>
 #include <vector>
 #include "EventListener.hpp"
+#include "GlobalVariables.hpp"
+#include "Variable.hpp"
 #include <list>
 
 namespace BCIEvent{
     class Actor{
-	std::vector<EventListener*> _eventListeners; 	
+	std::shared_ptr<GlobalVariables> _globalVars;
+	std::vector<std::unique_ptr<EventListener>> _eventListeners; 	
+	std::map<std::string, std::unique_ptr<Variable>> _variables; 
 
 	/**
 	 * List of currently executing blocks.
@@ -20,7 +25,12 @@ namespace BCIEvent{
 	 */
 	void update();
 
-	~Actor();
+	Actor (std::shared_ptr<GlobalVariables> globals);
+	void addVariable(Variable var);
+	template<typename T>
+	T getVariable(std::string name);
+	template<typename T>
+	void setVariable(std::string name, T value);
     };
 }
 

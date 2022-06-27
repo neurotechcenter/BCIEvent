@@ -7,11 +7,10 @@
 namespace BCIEvent{
     class EventListener;
     class Event{
-	std::string _name;
 	std::vector<EventListener*> _listeners;
 	bool _isTriggered;
 	public:
-	Event(std::string name);
+	Event();
 	void trigger();
 	void addListener(EventListener*);
 

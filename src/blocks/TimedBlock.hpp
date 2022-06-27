@@ -12,16 +12,18 @@ namespace BCIEvent{
 
     class TimedBlockStart : public Block{
 	std::chrono::time_point<std::chrono::high_resolution_clock> _startTime;
+	std::chrono::duration<std::chrono::high_resolution_clock> _time;
 	public:
-	Block* run();
+	Block* run(Actor &callingActor);
 	TimedBlockStart(Block* previous, std::chrono::duration<std::chrono::high_resolution_clock> time);
-	inline std::chrono::time_point<std::chrono::high_resolution_clock> startTime() {return _startTime;}
+	std::chrono::time_point<std::chrono::high_resolution_clock> startTime() {return _startTime;}
+	std::chrono::duration<std::chrono::high_resolution_clock> time() {return _time;}
     };
 
     class TimedBlockEnd : public Block{
 	TimedBlockStart* _start;
 	public:
-	Block* run;
+	Block* run(Actor &callingActor);
 	TimedBlockEnd(Block* previous, TimedBlockStart* start);
     };
 }
