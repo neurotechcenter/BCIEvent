@@ -9,20 +9,21 @@
 #include "Block.hpp"
 #include "Event.hpp"
 #include "EventListener.hpp"
+#include "StartEvent.hpp"
 
 namespace BCIEvent{
     class SequenceBuilder{
-	std::weak_ptr<EventListener> _listener;
+	std::unique_ptr<EventListener> _listener;
 	Block* _lastBlock;
 	std::stack<Block*> _controlCloseBlocks;	
 	
 	public:
-	SequenceBuilder();
 	SequenceBuilder(std::shared_ptr<Event> listeningEvent);
+	SequenceBuilder() : SequenceBuilder(StartEvent::getInstance()) {};
 
-	void addNormalBlock(std::function<void()> action);
-	void addIfBlock(std::function<bool()> condition);
-	void addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void()> action);
+	void addNormalBlock(std::function<void(Actor &)> action);
+	void addIfBlock(std::function<bool(Actor &)> condition);
+	void addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void(Actor &)> action);
 	void addTimedBlock(std::chrono::duration<std::chrono::high_resolution_clock> time);
 	void addEventCallerBlock(std::shared_ptr<Event> calledEvent);
 
@@ -37,7 +38,7 @@ namespace BCIEvent{
 	 */
 	void closeStatement();
 
-
+	std::unique_ptr<EventListener> getSequence();
 
     };
 }

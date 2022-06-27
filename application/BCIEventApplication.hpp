@@ -1,4 +1,0 @@
-#ifndef BCIEVENT_APPLCIATION_H
-#define BCIEVENT_APPLICATION_H
-
-#endif

@@ -5,35 +5,51 @@
 #include "StartEvent.hpp"
 #include "IfBlock.hpp"
 #include "TimerBlock.hpp"
+#include "EndBlock.hpp"
+#include <stdexcept>
 
 using namespace BCIEvent;
 
-SequenceBuilder::SequenceBuilder(){
-   SequenceBuilder(std::make_shared<EventListener> (StartEvent::getInstance())); 
-}
 
 SequenceBuilder::SequenceBuilder(std::shared_ptr<Event> listeningEvent){
-   _listener = std::make_shared<EventListener> (listeningEvent); 
+   _listener = std::make_unique<EventListener> (listeningEvent); 
    HeadBlock* head  = new HeadBlock();
    _lastBlock = head;
-   _listener.lock()->setNext(head);
+   _listener->setNext(head);
 }
 
-void SequenceBuilder::addNormalBlock(std::function<void ()> action){
-   new NormalBlock(_lastBlock, action); 
+std::unique_ptr<EventListener> SequenceBuilder::getSequence(){
+    _lastBlock = new EndBlock(_lastBlock);
+
+    if (_controlCloseBlocks.size() != 0){
+	throw std::out_of_range("Statements were left unclosed. There are " + std::to_string(_controlCloseBlocks.size()) + " statements left to close.");
+    }
+    return std::move(_listener);
 }
 
-void SequenceBuilder::addIfBlock(std::function<bool ()> condition){
+void SequenceBuilder::addNormalBlock(std::function<void (Actor& callingActor)> action){
+   _lastBlock = new NormalBlock(_lastBlock, action); 
+}
+
+void SequenceBuilder::addIfBlock(std::function<bool (Actor& callingActor)> condition){
     auto endBlk = new IfEndBlock();
-    new IfStartBlock(_lastBlock, endBlk, condition);
+    _lastBlock = new IfStartBlock(_lastBlock, endBlk, condition);
     _controlCloseBlocks.push(endBlk);
 }
 
-void SequenceBuilder::addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void (Actor&)> action) {
-    new TimerBlock(_lastBlock, time, action);
+void SequenceBuilder::addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void (Actor &callingActor)> action) {
+    _lastBlock = new TimerBlock(_lastBlock, time, action);
 }
 
-void closeStatement(){
-    
+
+
+void SequenceBuilder::closeStatement(){
+    if (_controlCloseBlocks.size() <= 0){
+	throw std::out_of_range("closeStatement() called more times than necessary. Check how many multi-block statements you've added.");
+    }
+    Block* closeBlock = _controlCloseBlocks.top();
+    _lastBlock->setNext(closeBlock);
+    _lastBlock = closeBlock;
+    _controlCloseBlocks.pop();
 }
 	
