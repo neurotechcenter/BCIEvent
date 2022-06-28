@@ -10,7 +10,6 @@
 
 namespace BCIEvent{
     class BCIEventApplication : public ApplicationBase{
-	std::vector<Actor> _actors;
 	public:
 	BCIEventApplication();
 	void Publish();
@@ -22,9 +21,10 @@ namespace BCIEvent{
 	void StopRun() override;
 	void Halt() override;
 
-
+	void setState(std::string name, int value);
+	int getState(std::string name);
 	private:
-	std::unique_ptr<ApplicationWindow> _window;
+	ApplicationWindow& _window;
 	std::unique_ptr<TextField> _messageField;
 
 	void OnPreflight(const SignalProperties& input) const;
@@ -33,9 +33,14 @@ namespace BCIEvent{
 	void OnStopRun();
 	void OnHalt();
 
+	/**
+	 * Use this method to initialize all of the 
+	 */
+	void InitBCIEvent();
 	void update();
-	
-
+	enum States {Running, Paused};
+	States _currentState = Paused;	
+	std::vector<std::unique_ptr<Actor>> _actors;
     };
 }
 

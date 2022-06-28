@@ -5,19 +5,11 @@
 using namespace BCIEvent;
 
 
-BCIEventApplication::BCIEventApplication() : _window(ApplicationWindowClient::Window()){
+BCIEventApplication::BCIEventApplication() : _window(ApplicationWindowClient::Window("Application")){
+
 }
 
 
-void BCIEventApplication::Publish(){
-    BEGIN_PARAMETER_DEFINITIONS
-    END_PARAMETER_DEFINITIONS
-
-
-
-    BEGIN_STATE_DEFINITIONS
-    END_STATE_DEFINITIONS
-}
 
 
 
@@ -33,7 +25,14 @@ void BCIEventApplication::Initialize(const SignalProperties& input, SignalProper
 }
 
 void BCIEventApplication::Process(const GenericSignal& input, GenericSignal& output){
-
+    switch (_currentState){
+	case Paused:
+	    break;
+	case Running:
+	    update();
+	    break;
+    }
+    output = input;
 }
 
 void BCIEventApplication::Resting(const GenericSignal& input, GenericSignal& output){
@@ -50,4 +49,19 @@ void BCIEventApplication::StopRun(){
 
 void BCIEventApplication::Halt(){
     OnHalt();
+}
+
+
+void BCIEventApplication::update(){
+    for (auto &&actor : _actors){
+	actor->update();
+    }
+}
+
+void BCIEventApplication::setState(std::string name, int value){
+    State(name) = value;
+}
+
+int BCIEventApplication::getState(std::string name){
+    return State(name);
 }

@@ -1,0 +1,12 @@
+#include "BCIEventApplication.hpp"
+
+
+void BCIEvent::BCIEventApplication::Publish(){
+    BEGIN_PARAMETER_DEFINITIONS
+    END_PARAMETER_DEFINITIONS
+
+
+
+    BEGIN_STATE_DEFINITIONS
+    END_STATE_DEFINITIONS
+}

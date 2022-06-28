@@ -5,7 +5,7 @@ set(BCI2000_DIR /opt/BCI2000)
 
 project(${name})
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-
+set(CMAKE_CXX_STANDARD 20)
 
 
 add_executable(${name}
@@ -17,6 +17,7 @@ target_include_directories(${name} PUBLIC
     ../src/event
     ../src/builder
     ../src/variable
+    ../src/state
     ../src/application)
     
 target_include_directories(${name} PUBLIC
