@@ -4,6 +4,11 @@
 
 using namespace BCIEvent;
 
+
+BCIEventApplication::BCIEventApplication() : _window(ApplicationWindowClient::Window()){
+}
+
+
 void BCIEventApplication::Publish(){
     BEGIN_PARAMETER_DEFINITIONS
     END_PARAMETER_DEFINITIONS

@@ -12,6 +12,7 @@ namespace BCIEvent{
     class BCIEventApplication : public ApplicationBase{
 	std::vector<Actor> _actors;
 	public:
+	BCIEventApplication();
 	void Publish();
 	void Preflight(const SignalProperties&, SignalProperties&) const override;
 	void Initialize(const SignalProperties&, SignalProperties&) override;
