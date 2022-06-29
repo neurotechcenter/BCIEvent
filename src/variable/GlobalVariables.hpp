@@ -13,7 +13,7 @@ namespace BCIEvent{
 	public:
 	void addVariable(Variable var);
 	template<typename T>
-	T getVariable(std::string name);
+	T getVariable(std::string name) const;
 	template<typename T>
 	void setVariable(std::string name, T value);
     };

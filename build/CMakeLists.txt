@@ -18,6 +18,7 @@ target_include_directories(${name} PUBLIC
     ../src/builder
     ../src/variable
     ../src/state
+    ../src/expression
     ../src/application)
     
 target_include_directories(${name} PUBLIC
@@ -30,4 +31,5 @@ target_include_directories(${name} PUBLIC
     ${BCI2000_DIR}/src/shared/config/
     ${BCI2000_DIR}/src/shared/bcistream/
     ${BCI2000_DIR}/src/shared/filters/
+    ${BCI2000_DIR}/src/shared/state/
     ${BCI2000_DIR}/src/shared/modules/application/gui)

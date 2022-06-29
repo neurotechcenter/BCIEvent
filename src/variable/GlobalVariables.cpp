@@ -10,30 +10,9 @@ void GlobalVariables::addVariable(Variable var){
     _vars.insert(std::pair<std::string, std::unique_ptr<Variable>> (var.name(), std::unique_ptr<Variable>(&var)));
 }
 
-bool GlobalVariables::getBoolVariable(std::string name){
-    try{
-    return _vars.at(name)->getAsBool();
-    } catch (std::out_of_range e){
-    throw std::out_of_range("Variable " + name + " not found locally or globally.");
-    }
-}
-int GlobalVariables::getIntVariable(std::string name){
-    try{
-    return _vars.at(name)->getAsInt();
-    } catch (std::out_of_range e){
-    throw std::out_of_range("Variable " + name + " not found locally or globally.");
-    }
-}
-double GlobalVariables::getNumberVariable(std::string name){
-    try{
-    return _vars.at(name)->getAsDouble();
-    } catch (std::out_of_range e){
-    throw std::out_of_range("Variable " + name + " not found locally or globally.");
-    }
-}
 
 template<typename ReqType>
-ReqType GlobalVariables::getVariable(std::string name){
+ReqType GlobalVariables::getVariable(std::string name) const{
     static_assert(std::is_same<ReqType, bool>::value || std::is_floating_point<ReqType>::value || std::is_integral<ReqType>::value,
 	    "Template argument for getVariable must be boolean, integral, or floating point");
     try {

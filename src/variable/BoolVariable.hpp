@@ -8,8 +8,11 @@
 
 namespace BCIEvent{
     class BoolVariable : public Variable{
-	bool _value;
+	bool _value = false;
 	public:
+
+	BoolVariable(std::string name) : Variable(name) {}
+
 	bool getAsBool() const { return _value; }
 	int getAsInt() const { throw std::logic_error("Cannot get value int from variable of type Boolean"); }
 	long double getAsFloat() const { throw std::logic_error("Cannot get value float from variable of type Boolean"); }
