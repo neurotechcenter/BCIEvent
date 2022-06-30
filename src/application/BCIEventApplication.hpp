@@ -12,7 +12,7 @@ namespace BCIEvent{
     class BCIEventApplication : public ApplicationBase{
 	public:
 	BCIEventApplication();
-	void Publish();
+	void Publish() override;
 	void Preflight(const SignalProperties&, SignalProperties&) const override;
 	void Initialize(const SignalProperties&, SignalProperties&) override;
 	void Process(const GenericSignal&, GenericSignal&) override;
@@ -26,6 +26,7 @@ namespace BCIEvent{
 	private:
 	ApplicationWindow& _window;
 	std::unique_ptr<TextField> _messageField;
+	SignalProperties& properties;
 
 	void OnPreflight(const SignalProperties& input) const;
 	void OnInitialize(const SignalProperties& input);
