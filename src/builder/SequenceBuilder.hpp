@@ -10,23 +10,36 @@
 #include "Event.hpp"
 #include "EventListener.hpp"
 #include "StartEvent.hpp"
+#include "BooleanExpression.hpp"
+#include "IntegerExpression.hpp"
+#include "StatementCloseBlock.hpp"
 
 namespace BCIEvent{
     class SequenceBuilder{
 	std::unique_ptr<EventListener> _listener;
 	Block* _lastBlock;
-	std::stack<Block*> _controlCloseBlocks;	
+	std::stack<StatementCloseBlock*> _controlCloseBlocks;	
 	
 	public:
 	SequenceBuilder(std::shared_ptr<Event> listeningEvent);
 	SequenceBuilder() : SequenceBuilder(StartEvent::getInstance()) {};
 
-	void addNormalBlock(std::function<void(Actor &)> action);
-	void addIfBlock(std::function<bool(Actor &)> condition);
-	void addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void(Actor &)> action);
-	void addTimedBlock(std::chrono::duration<std::chrono::high_resolution_clock> time);
-	void addEventCallerBlock(std::shared_ptr<Event> calledEvent);
+	SequenceBuilder& addNormalBlock(std::function<void(Actor &)> action);
+	template<BooleanExpression B>
+	SequenceBuilder& addIfBlock(B condition);
+	template<BooleanExpression B>
+	SequenceBuilder& addIfElseBlock(B condition);
+	
+	SequenceBuilder& addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void(Actor &)> action);
+	SequenceBuilder& addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time);
+	SequenceBuilder& addTimedBlock(std::chrono::duration<std::chrono::high_resolution_clock> time);
+	SequenceBuilder& addEventCallerBlock(std::shared_ptr<Event> calledEvent);
 
+	template<IntegerExpression I>
+	SequenceBuilder& addLoopBlock(I iterations);
+
+	template<BooleanExpression B>
+	SequenceBuilder& addWhileLoopBlock(B condition);
 
 	/**
 	 * Control elements which contain multiple blocks, such as if statements or loops,
@@ -36,7 +49,7 @@ namespace BCIEvent{
 	 * If there are any unclosed statements when the sequence is completed,
 	 * or if closeStatement is called too many times, an exception is thrown.
 	 */
-	void closeStatement();
+	SequenceBuilder& closeStatement();
 
 	std::unique_ptr<EventListener> getSequence();
 

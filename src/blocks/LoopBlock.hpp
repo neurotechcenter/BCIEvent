@@ -4,6 +4,7 @@
 #include <functional>
 #include "Block.hpp"
 #include "IntegerExpression.hpp"
+#include "StatementCloseBlock.hpp"
 
 namespace BCIEvent{
 
@@ -20,23 +21,16 @@ namespace BCIEvent{
 	bool _isLooping = false;
 	friend class LoopEndBlock;
 
-	//tag dispatch because all the different inputs need to be converted to an int function	
-	std::function<int (const Actor&)> getIterFn(std::function<int (const Actor& callingActor)>);
-	std::function<int (const Actor&)> getIterFn(std::function<int ()>);
-	std::function<int (const Actor&)> getIterFn(std::string variableName);
-	std::function<int (const Actor&)> getIterFn(int number);
-
-
 	public:
 	template<IntegerExpression T>
-	LoopStartBlock(Block* previous, LoopEndBlock* endBlock, T iterationGetter);
+	LoopStartBlock(Block* previous, T iterationGetter);
+	void addEndBlock(LoopEndBlock* endBlock); //must be called
 	Block* run (Actor& callingActor);
     };
-    class LoopEndBlock : public Block{
+    class LoopEndBlock : public StatementCloseBlock{
 	LoopStartBlock* _startBlock;
 	public:
 	LoopEndBlock(LoopStartBlock* startBlock); //constructor which sets _next to itself. For use with a stack holding closing blocks.
-	LoopEndBlock(Block* previous, LoopStartBlock* startBlock); //avoid this constructor unless you are building sequences manually
 	Block* run(Actor& callingActor);
     };
 }

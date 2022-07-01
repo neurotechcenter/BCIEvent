@@ -3,6 +3,7 @@
 #include <concepts>
 #include <type_traits>
 #include "Actor.hpp"
+#include <functional>
 
 namespace BCIEvent{
     /**
@@ -15,6 +16,8 @@ namespace BCIEvent{
     || std::is_same<std::result_of<T(const Actor&)>, bool>::value; 
     template <typename T>
     concept BooleanExpression = ReturnsBoolean<T> || std::convertible_to<T, bool> || std::convertible_to<T, std::string>;
+
+
 }
 
 #endif

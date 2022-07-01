@@ -4,12 +4,16 @@
 using namespace BCIEvent;
 
 
-TimerBlock::TimerBlock(Block* previous, std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void()> action) : Block(previous){
+TimerBlock::TimerBlock(Block* previous, std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void(Actor& callingActor)> action) : Block(previous){
     _time = time;
     _action = action;
 }
 
-Block* TimerBlock::run(){
+TimerBlock::TimerBlock(Block* previous, std::chrono::duration<std::chrono::high_resolution_clock> time) : Block(previous){
+    _time = time;
+}
+
+Block* TimerBlock::run(Actor& callingActor){
     auto now = std::chrono::high_resolution_clock::now();
     _timeElapsed = now - _startTime;
     if (!_isRunning){ //if clock is not running, start it.
@@ -20,6 +24,7 @@ Block* TimerBlock::run(){
 	_isRunning=false;
 	return _next;
     }
-    _action(); //time has not elapsed; execute action and return this block.
+    if(_action) //don't run action if there is no action
+	_action(); //time has not elapsed; execute action and return this block.
     return this; 
 }

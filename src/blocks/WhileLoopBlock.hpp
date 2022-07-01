@@ -4,6 +4,7 @@
 #include <string>
 #include <functional>
 #include "BooleanExpression.hpp"
+#include "StatementCloseBlock.hpp"
 namespace BCIEvent{
 
     /**
@@ -19,24 +20,20 @@ namespace BCIEvent{
 	friend class WhileLoopEndBlock;
 	public:
 	template<BooleanExpression T>
-	WhileLoopStartBlock(Block* previous, WhileLoopEndBlock* endBlock, T condition);
+	WhileLoopStartBlock(Block* previous, T condition);
 	Block* run(Actor& callingActor);
+	void setEndBlock(WhileLoopEndBlock* endBlock); //sets the end block. This must be called.
 
 	private:
 	std::function<bool (const Actor&)> _condition;
-	std::function<bool (const Actor&)> getCond(std::function<bool()>);
-	std::function<bool (const Actor&)> getCond(std::function<bool(const Actor&)>);
-	std::function<bool (const Actor&)> getCond(std::string variableName);
-	std::function<bool (const Actor&)> getCond(bool);
 
     };
     
 
-    class WhileLoopEndBlock : public Block{
+    class WhileLoopEndBlock : public StatementCloseBlock{
 	WhileLoopStartBlock* _startBlock;
 	public:
 	WhileLoopEndBlock(WhileLoopStartBlock* startBlock); //constructor which sets _next to itself. For use with a stack holding closing blocks
-	WhileLoopEndBlock(Block* previous, WhileLoopStartBlock* startBlock); //constructor to be used when building sequences manually
 	Block* run(Actor& callingActor);
     };
 }

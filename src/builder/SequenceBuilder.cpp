@@ -1,11 +1,14 @@
 #include <memory>
 #include "HeadBlock.hpp"
+#include "LoopBlock.hpp"
 #include "NormalBlock.hpp"
 #include "SequenceBuilder.hpp"
 #include "StartEvent.hpp"
 #include "IfBlock.hpp"
+#include "IfElseBlock.hpp"
 #include "TimerBlock.hpp"
 #include "EndBlock.hpp"
+#include "WhileLoopBlock.hpp"
 #include <stdexcept>
 
 using namespace BCIEvent;
@@ -27,23 +30,60 @@ std::unique_ptr<EventListener> SequenceBuilder::getSequence(){
     return std::move(_listener);
 }
 
-void SequenceBuilder::addNormalBlock(std::function<void (Actor& callingActor)> action){
+SequenceBuilder& SequenceBuilder::addNormalBlock(std::function<void (Actor& callingActor)> action){
    _lastBlock = new NormalBlock(_lastBlock, action); 
+   return *this;
 }
 
-void SequenceBuilder::addIfBlock(std::function<bool (Actor& callingActor)> condition){
+template <BooleanExpression B>
+SequenceBuilder& SequenceBuilder::addIfBlock(B condition){
     auto endBlk = new IfEndBlock();
     _lastBlock = new IfStartBlock(_lastBlock, endBlk, condition);
     _controlCloseBlocks.push(endBlk);
+    return *this;
 }
 
-void SequenceBuilder::addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void (Actor &callingActor)> action) {
+template<BooleanExpression B>
+SequenceBuilder& SequenceBuilder::addIfElseBlock(B condition){
+    auto endBlk = new IfElseEndBlock();
+    auto elseBlk = new IfElseElseBlock(endBlk);
+    _lastBlock = new IfElseStartBlock(_lastBlock, condition, elseBlk, endBlk);
+    _controlCloseBlocks.push(endBlk);
+    _controlCloseBlocks.push(elseBlk);
+    return *this;
+}
+
+SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void (Actor &callingActor)> action) {
     _lastBlock = new TimerBlock(_lastBlock, time, action);
+    return *this;
+}
+SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time) {
+    _lastBlock = new TimerBlock(_lastBlock, time);
+    return *this;
+}
+
+template <IntegerExpression I>
+SequenceBuilder& SequenceBuilder::addLoopBlock(I iterations){
+    auto startBlk = new LoopStartBlock(_lastBlock, iterations);
+    auto endBlk = new LoopEndBlock(startBlk);
+    startBlk->addEndBlock(endBlk);
+    _lastBlock = startBlk;
+    _controlCloseBlocks.push(endBlk);
+    return *this;
+}
+
+template <BooleanExpression B>
+SequenceBuilder& SequenceBuilder::addWhileLoopBlock(B condition){
+    auto startBlk = new WhileLoopStartBlock(_lastBlock, condition);
+    auto endBlk = new WhileLoopEndBlock(startBlk);
+    startBlk->setEndBlock(endBlk);
+    _lastBlock = startBlk;
+    _controlCloseBlocks.push(endBlk);
+    return *this;
 }
 
 
-
-void SequenceBuilder::closeStatement(){
+SequenceBuilder& SequenceBuilder::closeStatement(){
     if (_controlCloseBlocks.size() <= 0){
 	throw std::out_of_range("closeStatement() called more times than necessary. Check how many multi-block statements you've added.");
     }
@@ -51,5 +91,6 @@ void SequenceBuilder::closeStatement(){
     _lastBlock->setNext(closeBlock);
     _lastBlock = closeBlock;
     _controlCloseBlocks.pop();
+    return *this;
 }
 	

@@ -1,17 +1,16 @@
 #include "IfBlock.hpp"
+#include "ActorUtil.hpp"
 
 using namespace BCIEvent;
 
-IfEndBlock::IfEndBlock(Block* previous) : Block(previous){}
-
-IfEndBlock::IfEndBlock() : Block(this){}
 
 Block* IfEndBlock::run(Actor &callingActor){
     return _next;
 }
 
-IfStartBlock::IfStartBlock(Block* previous, IfEndBlock* endBlock, std::function<bool(Actor &callingActor)> condition) : Block(previous){
-    _condition = condition;
+template <BooleanExpression T>
+IfStartBlock::IfStartBlock(Block* previous, IfEndBlock* endBlock, T condition) : Block(previous){
+    _condition = getExpressionFn<bool>(condition);
     _endBlock = endBlock;
 }
 

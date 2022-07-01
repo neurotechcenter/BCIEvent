@@ -13,7 +13,7 @@ Block* TimedBlockStart::run(Actor &callingActor){
     return _next;
 }
 
-TimedBlockEnd::TimedBlockEnd(Block* previous, TimedBlockStart* start) : Block(previous){
+TimedBlockEnd::TimedBlockEnd(TimedBlockStart* start){
     _start = start;
 }
 

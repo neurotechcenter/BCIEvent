@@ -9,9 +9,10 @@
 #include <stdexcept>
 #include <type_traits>
 
+
 using namespace BCIEvent;
 
-    void Actor::update( GenericSignal& signal ){
+    void Actor::update( const GenericSignal& signal ){
 
 	//Set the signal for this cycle.
 	_currentSignal = &signal;
@@ -57,11 +58,17 @@ Actor::~Actor(){
     DestructorEntered();
 }
 
-void Actor::addVariable(Variable var){
+Actor& Actor::addVariable(Variable var){
     _variables.insert(var.name(), std::unique_ptr<Variable>(&var));
+    return *this;
 }
 
-void Actor::addGraphic(std::string filename, bool transparent){
+Actor& Actor::addEventListener(std::unique_ptr<EventListener> listener){
+    _eventListeners.push_back(std::move(listener));
+    return *this;
+}
+
+Actor& Actor::addGraphic(std::string filename, bool transparent){
     std::unique_ptr<QPixmap> pixmap = std::make_unique<QPixmap>(filename);
     if (pixmap->isNull()){
 	throw std::invalid_argument("Could not load file " + filename);
@@ -70,6 +77,7 @@ void Actor::addGraphic(std::string filename, bool transparent){
 	pixmap->setMask(pixmap.createHeuristicMask());
     }
     _graphics.push_back(std::move(pixmap));
+    return *this;
 }
 
 template<typename ReqType>
@@ -110,8 +118,9 @@ void Actor::setState(std::string name, T value){
 
 template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
 T Actor::getState(std::string name) const{
-    return static_cast<T>(_states->at(name).get());
+    return static_cast<T>(_states->getState(name).get());
 }
+
 
 
 double Actor::getSignal(size_t channel, size_t element){

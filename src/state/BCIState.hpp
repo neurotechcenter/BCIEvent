@@ -1,7 +1,6 @@
-#ifndef STATE_H
-#define STATE_H
+#ifndef BCISTATE_H
+#define BCISTATE_H
 #include <string>
-#include "BCIEventApplication.hpp"
 
 namespace BCIEvent{
 
@@ -9,19 +8,22 @@ namespace BCIEvent{
      * A BCI2000 state. BCIEvent does not add these states automatically, you must add them
      * in the Publish function of BCIEventApplication.
      */
-    enum StateType{ Boolean, u8, i8, u64, i64 };
-    class State{
+    class BCIEventApplication;
+    class BCIState{
+    public:
+	enum StateType { Boolean, u8, i8, u32, i32 };
+    private:
 	BCIEventApplication* _app;
         std::string _name;
         StateType _type;
     public:
-        State(BCIEventApplication* app, StateType type, std::string name);
+        BCIState(BCIEventApplication* app, StateType type, std::string name);
         void set(int);	
         void set(bool);
 	void set(char);
-	int get();
-	StateType type();
-	std::string name();
+	int get() const;
+	StateType type() const { return _type; };
+	std::string name() const { return _name; };
     };
 }
 #endif

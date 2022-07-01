@@ -6,20 +6,23 @@ using namespace BCIEvent;
 template <BooleanExpression T>
 WhileLoopStartBlock::WhileLoopStartBlock(Block* previous, WhileLoopEndBlock* endBlock, T condition) : Block(previous){
     _endBlock = endBlock;
-    _condition = getCond(condition);
+    _condition = getExpressionFn<int>(condition);
 }
 
-template <BooleanExpression T> 
 Block* WhileLoopStartBlock::run(Actor& callingActor){
     bool b = callingActor.getVariable<bool>("e");
     if (!_isLooping){ //begin loop
 	_isLooping = true;
     }
-    if (!_condition()){ //loop is finished
+    if (!_condition(callingActor)){ //loop is finished
 	_isLooping = false;
 	return _endBlock;
     }
     return _next;
+}
+
+void WhileLoopStartBlock::setEndBlock(WhileLoopEndBlock* endBlock){
+    _endBlock = endBlock;
 }
 
 Block* WhileLoopEndBlock::run(Actor& callingActor){
@@ -29,27 +32,8 @@ Block* WhileLoopEndBlock::run(Actor& callingActor){
     return _startBlock;
 }
 
-WhileLoopEndBlock::WhileLoopEndBlock(WhileLoopStartBlock* startBlock) : Block(this){
-    _startBlock = startBlock;
-}
-
-WhileLoopEndBlock::WhileLoopEndBlock(Block* previous, WhileLoopStartBlock* startBlock) : Block(previous) {
+WhileLoopEndBlock::WhileLoopEndBlock(WhileLoopStartBlock* startBlock){
     _startBlock = startBlock;
 }
 
 
-std::function<bool (const Actor&)> WhileLoopStartBlock::getCond(std::function<bool (const Actor& callingActor)> condition){
-    return condition;
-}
-std::function<bool (const Actor&)> WhileLoopStartBlock::getCond(std::function<bool ()> condition){
-    return [&](const Actor& callingActor){return condition();}; 
-}
-std::function<bool (const Actor&)> WhileLoopStartBlock::getCond(std::string varName){
-    return [&](const Actor& callingActor){
-        bool b = callingActor.getVariable<bool>("e");
-	return b;    
-    };
-}
-std::function<bool (const Actor&)> WhileLoopStartBlock::getCond(bool condition){
-    return [&](const Actor& callingActor){return condition;};
-}

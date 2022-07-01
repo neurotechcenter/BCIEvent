@@ -1,11 +1,12 @@
 #include "LoopBlock.hpp"
+#include "ActorUtil.hpp"
 #include "IntegerExpression.hpp"
 
 using namespace BCIEvent;
 
 template<IntegerExpression T>
 LoopStartBlock::LoopStartBlock(Block* previous, LoopEndBlock* endBlock, T iterationGetter) : Block(previous){
-    _iterationGetter = getIterFn(iterationGetter);
+    _iterationGetter = getExpressionFn<int>(iterationGetter);
     _endBlock = endBlock;
 }
 
@@ -21,6 +22,9 @@ Block* LoopStartBlock::run(Actor& callingActor){
     }
     return _next;
 }
+void LoopStartBlock::addEndBlock(LoopEndBlock* endBlock){
+    _endBlock = endBlock;
+}
 
 Block* LoopEndBlock::run(Actor &callingActor){
     _startBlock->_currentIter++; //iterate loop
@@ -30,26 +34,9 @@ Block* LoopEndBlock::run(Actor &callingActor){
     return _startBlock; //else return the start block of the loop
 }
 
-LoopEndBlock::LoopEndBlock(LoopStartBlock* startBlock) : Block(this){
-    _startBlock = startBlock;
-}
-
-LoopEndBlock::LoopEndBlock(Block* previous, LoopStartBlock* startBlock) : Block(previous){
+LoopEndBlock::LoopEndBlock(LoopStartBlock* startBlock) {
     _startBlock = startBlock;
 }
 
 
-std::function<int (const Actor&)> getIterFn(std::function<int (const Actor&)> iterFn){
-    return iterFn;
-}
-std::function<int (const Actor&)> getIterFn(std::function<int ()> iterFn){
-    return [&](const Actor&){ return iterFn();};
-}
-std::function<int (const Actor&)> getIterFn(std::string varName){
-    return [&](const Actor& callingActor){
-	return callingActor.getVariable<int>(varName);	
-    };
-}
-std::function<int (const Actor&)> getIterFn(int iterations){
-    return [=](const Actor&){return iterations;};
-}
+

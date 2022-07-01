@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 
-set(name BCIEvent)
+set(name BCIEventApplication)
 set(BCI2000_DIR /opt/BCI2000)
 
 project(${name})
@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(LIBQT5_DIR /usr/lib)
 
 add_executable(${name}
-    ../src/Main.cpp)
+    ../src/application/BCIEventApplication.cpp)
 
 target_include_directories(${name} PUBLIC
     ../src

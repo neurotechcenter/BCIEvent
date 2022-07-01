@@ -2,6 +2,7 @@
 #define TIMEDBLOCK_H
 #include <chrono>
 #include "Block.hpp"
+#include "StatementCloseBlock.hpp"
 
 namespace BCIEvent{
     /**
@@ -20,11 +21,11 @@ namespace BCIEvent{
 	std::chrono::duration<std::chrono::high_resolution_clock> time() {return _time;}
     };
 
-    class TimedBlockEnd : public Block{
+    class TimedBlockEnd : public StatementCloseBlock{
 	TimedBlockStart* _start;
 	public:
 	Block* run(Actor &callingActor);
-	TimedBlockEnd(Block* previous, TimedBlockStart* start);
+	TimedBlockEnd(TimedBlockStart* start);
     };
 }
 

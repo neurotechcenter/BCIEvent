@@ -4,7 +4,10 @@
 #include "Actor.hpp"
 #include "ApplicationWindow.h"
 #include "GenericSignal.h"
+#include "GlobalVariables.hpp"
+#include "GraphDisplay.h"
 #include "SignalProperties.h"
+#include "States.hpp"
 #include "TextField.h"
 #include <vector>
 
@@ -14,7 +17,7 @@ namespace BCIEvent{
 	BCIEventApplication();
 	void Publish() override;
 	void Preflight(const SignalProperties&, SignalProperties&) const override;
-	void Initialize(const SignalProperties&, SignalProperties&) override;
+	void Initialize(const SignalProperties&, const SignalProperties&) override;
 	void Process(const GenericSignal&, GenericSignal&) override;
 	void Resting(const GenericSignal&, GenericSignal&) override;
 	void StartRun() override;
@@ -23,10 +26,12 @@ namespace BCIEvent{
 
 	void setState(std::string name, int value);
 	int getState(std::string name);
+
+	void addActor(std::unique_ptr<Actor>);
 	private:
 	ApplicationWindow& _window;
+	GUI::GraphDisplay& _display;
 	std::unique_ptr<TextField> _messageField;
-	SignalProperties& properties;
 
 	void OnPreflight(const SignalProperties& input) const;
 	void OnInitialize(const SignalProperties& input);
@@ -35,13 +40,19 @@ namespace BCIEvent{
 	void OnHalt();
 
 	/**
-	 * Use this method to initialize all of the 
+	 * Initializes BCIEvent framework 
 	 */
 	void InitBCIEvent();
-	void update();
-	enum States {Running, Paused};
-	States _currentState = Paused;	
+	void update( const GenericSignal& );
+	enum RunState {Running, Paused};
+	RunState _currentState = Paused;	
 	std::vector<std::unique_ptr<Actor>> _actors;
+	std::shared_ptr<GlobalVariables> _globalVars;
+	std::shared_ptr<BCIEvent::States> _states;
+
+	std::unique_ptr<Actor> makeActor();
+	void addState(std::string name, BCIState::StateType type);
+	void uploadState(std::string name, int width);
     };
 }
 

@@ -16,9 +16,10 @@ namespace BCIEvent{
        std::chrono::time_point<std::chrono::high_resolution_clock> _startTime;
        std::chrono::duration<std::chrono::high_resolution_clock> _time;
        std::chrono::duration<std::chrono::high_resolution_clock> _timeElapsed;
-       std::function<void()> _action;
+       std::function<void(Actor& callingActor)> _action;
     public:
 	TimerBlock(Block* previous, std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void (Actor&)> action);
+	TimerBlock(Block* previous, std::chrono::duration<std::chrono::high_resolution_clock> time); //treated as wait block
 	Block* run(Actor &actor);
    }; 
 }

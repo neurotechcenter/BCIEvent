@@ -5,6 +5,7 @@
 #include <vector>
 #include "EventListener.hpp"
 #include "GUI.h"
+#include "GenericSignal.h"
 #include "GlobalVariables.hpp"
 #include "GraphDisplay.h"
 #include "Variable.hpp"
@@ -37,12 +38,13 @@ namespace BCIEvent{
 	 * Main update function: called once every cycle of the main loop.
 	 * Runs blocks and handles events.
 	 */
-	void update( GenericSignal& input );
+	void update( const GenericSignal& input );
 
-	Actor (std::shared_ptr<GlobalVariables> globalVars, std::shared_ptr<States> states, GUI::GraphDisplay& display);
+	Actor (GlobalVariables* globalVars, States* states, GUI::GraphDisplay& display);
 	~Actor();
-	void addVariable(Variable var);
-	void addGraphic(std::string filename, bool transparent);
+	Actor& addVariable(Variable var);
+	Actor& addGraphic(std::string filename, bool transparent);
+	Actor& addEventListener(std::unique_ptr<EventListener> listener);
 
 	template<typename T>
 	T getVariable(std::string name) const;
@@ -55,6 +57,7 @@ namespace BCIEvent{
 
 	template<typename T> requires std::integral<T> || std::convertible_to<T,bool>
 	T getState(std::string name) const;
+
 
 	/**
 	 * The event which is triggered whenever this actor is clicked.

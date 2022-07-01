@@ -3,12 +3,12 @@
 
 #include "Block.hpp"
 #include <functional>
+#include "BooleanExpression.hpp"
+#include "StatementCloseBlock.hpp"
 
 namespace BCIEvent{
-    class IfEndBlock : public Block{
+    class IfEndBlock : public StatementCloseBlock{
 	public:
-	    IfEndBlock(Block* previous);
-	    IfEndBlock();
 	Block* run(Actor &callingActor);
     };
 
@@ -16,7 +16,9 @@ namespace BCIEvent{
 	std::function<bool(Actor &callingActor)> _condition;
 	IfEndBlock* _endBlock;
 	public:
-	    IfStartBlock(Block* previous, IfEndBlock* endBlock, std::function<bool(Actor &callingActor)> condition);
+
+	    template <BooleanExpression T>
+	    IfStartBlock(Block* previous, IfEndBlock* endBlock, T condition);
 	Block* run(Actor &callingActor);
     };
 }
