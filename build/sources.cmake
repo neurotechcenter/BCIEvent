@@ -1,0 +1,51 @@
+set(SOURCES_CPP 
+	../src/Actor.cpp
+	../src/application/BCIEventApplication.cpp
+	../src/application/AppInitPartial.cpp
+	../src/blocks/EndBlock.cpp
+	../src/blocks/EventCallerBlock.cpp
+	../src/blocks/HeadBlock.cpp
+	../src/blocks/IfBlock.cpp
+	../src/blocks/IfElseBlock.cpp
+	../src/blocks/LoopBlock.cpp
+	../src/blocks/NormalBlock.cpp
+	../src/blocks/TimedBlock.cpp
+	../src/blocks/TimerBlock.cpp
+	../src/blocks/WhileLoopBlock.cpp
+	../src/builder/SequenceBuilder.cpp
+	../src/state/BCIState.cpp
+	../src/state/States.cpp
+	../src/variable/GlobalVariables.cpp
+	../src/event/EventListener.cpp
+	../src/event/Event.cpp
+    )
+
+
+set(INCLUDE_BCI
+    src/shared/modules/application
+    src/shared/gui
+    src/shared/utils
+    src/shared/utils/Lib
+    src/shared/types/
+    src/shared/accessors/
+    src/shared/config/
+    src/shared/bcistream/
+    src/shared/filters/
+    src/shared/state/
+    /src/shared/modules/application/gui
+    )
+    
+
+set(SOURCES_BCI 
+    src/shared/gui/GraphObject.cpp
+    src/shared/types/SignalProperties.cpp
+    src/shared/types/GenericSignal.cpp
+    src/shared/types/State.cpp
+    src/shared/types/StateList.cpp
+    src/shared/types/Param.cpp
+    src/shared/utils/Directory.cpp
+    src/shared/accessors/Environment.cpp
+    src/shared/modules/application/ApplicationBase.cpp
+    src/shared/modules/application/gui/ApplicationWindow.cpp
+    src/shared/filters/GenericFilter.cpp
+    )
