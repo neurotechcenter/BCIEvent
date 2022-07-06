@@ -5,6 +5,7 @@
 #include <functional>
 #include "BooleanExpression.hpp"
 #include "StatementCloseBlock.hpp"
+#include "ActorUtil.hpp"
 
 namespace BCIEvent{
     class IfEndBlock : public StatementCloseBlock{
@@ -16,9 +17,12 @@ namespace BCIEvent{
 	std::function<bool(Actor &callingActor)> _condition;
 	IfEndBlock* _endBlock;
 	public:
+	template <BooleanExpression T>
+	IfStartBlock(Block* previous, IfEndBlock* endBlock, T condition) : Block(previous){
+	    _condition = getExpressionFn<bool>(condition);
+	    _endBlock = endBlock;
+	}
 
-	    template <BooleanExpression T>
-	    IfStartBlock(Block* previous, IfEndBlock* endBlock, T condition);
 	Block* run(Actor &callingActor);
     };
 }

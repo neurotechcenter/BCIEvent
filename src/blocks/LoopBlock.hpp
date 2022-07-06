@@ -3,6 +3,7 @@
 
 #include <functional>
 #include "Block.hpp"
+#include "ActorUtil.hpp"
 #include "IntegerExpression.hpp"
 #include "StatementCloseBlock.hpp"
 
@@ -23,7 +24,10 @@ namespace BCIEvent{
 
 	public:
 	template<IntegerExpression T>
-	LoopStartBlock(Block* previous, T iterationGetter);
+	LoopStartBlock(Block* previous, T iterationGetter) : Block(previous){
+	    _iterationGetter = getExpressionFn<int>(iterationGetter);
+	}
+	
 	void addEndBlock(LoopEndBlock* endBlock); //must be called
 	Block* run (Actor& callingActor);
     };

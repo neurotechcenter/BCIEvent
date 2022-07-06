@@ -35,23 +35,7 @@ SequenceBuilder& SequenceBuilder::addNormalBlock(std::function<void (Actor& call
    return *this;
 }
 
-template <BooleanExpression B>
-SequenceBuilder& SequenceBuilder::addIfBlock(B condition){
-    auto endBlk = new IfEndBlock();
-    _lastBlock = new IfStartBlock(_lastBlock, endBlk, condition);
-    _controlCloseBlocks.push(endBlk);
-    return *this;
-}
 
-template<BooleanExpression B>
-SequenceBuilder& SequenceBuilder::addIfElseBlock(B condition){
-    auto endBlk = new IfElseEndBlock();
-    auto elseBlk = new IfElseElseBlock(endBlk);
-    _lastBlock = new IfElseStartBlock(_lastBlock, condition, elseBlk, endBlk);
-    _controlCloseBlocks.push(endBlk);
-    _controlCloseBlocks.push(elseBlk);
-    return *this;
-}
 
 SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time, std::function<void (Actor &callingActor)> action) {
     _lastBlock = new TimerBlock(_lastBlock, time, action);
@@ -59,26 +43,6 @@ SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> ti
 }
 SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time) {
     _lastBlock = new TimerBlock(_lastBlock, time);
-    return *this;
-}
-
-template <IntegerExpression I>
-SequenceBuilder& SequenceBuilder::addLoopBlock(I iterations){
-    auto startBlk = new LoopStartBlock(_lastBlock, iterations);
-    auto endBlk = new LoopEndBlock(startBlk);
-    startBlk->addEndBlock(endBlk);
-    _lastBlock = startBlk;
-    _controlCloseBlocks.push(endBlk);
-    return *this;
-}
-
-template <BooleanExpression B>
-SequenceBuilder& SequenceBuilder::addWhileLoopBlock(B condition){
-    auto startBlk = new WhileLoopStartBlock(_lastBlock, condition);
-    auto endBlk = new WhileLoopEndBlock(startBlk);
-    startBlk->setEndBlock(endBlk);
-    _lastBlock = startBlk;
-    _controlCloseBlocks.push(endBlk);
     return *this;
 }
 

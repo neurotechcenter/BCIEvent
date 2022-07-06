@@ -85,46 +85,10 @@ Actor& Actor::addGraphic(std::string filename, bool transparent){
     return *this;
 }
 
-template<typename ReqType>
-ReqType Actor::getVariable(std::string name) const{
-    static_assert(std::is_convertible<ReqType, bool>::value || std::is_floating_point<ReqType>::value || std::is_integral<ReqType>::value,
-	    "Template argument for getVariable must be boolean, integral, or floating point");
-    try {
-        if(std::is_same<ReqType, bool>::value){
-	    return _variables.at(name)->getAsBool();
-	}
-	else if (std::is_integral<ReqType>::value){
-	    return static_cast<ReqType>(_variables.at(name)->getAsInt());
-	}
-	else{
-	    return static_cast<ReqType>(_variables.at(name)->getAsDouble());
-	}
-    } catch (std::out_of_range e) {
-	return _globalVars->getVariable<ReqType>(name);
-    }
-}
-
-template <typename SetType>
-void Actor::setVariable(std::string name, SetType value){
-    static_assert(std::is_same<SetType, bool>::value || std::is_same<SetType, Variable>::value || std::is_floating_point<SetType>::value || std::is_integral<SetType>::value,
-	    "Template argument for setVariable must be Variable, boolean, integral, or floating point");
-    try {
-	_variables.at(name) = value;
-    } catch (std::out_of_range e) {
-	_globalVars->setVariable(name, value);
-    }
-}
-
-template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
-void Actor::setState(std::string name, T value){
-    _states->getState(name).set(value);
-}
 
 
-template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
-T Actor::getState(std::string name) const{
-    return static_cast<T>(_states->getState(name).get());
-}
+
+
 
 
 

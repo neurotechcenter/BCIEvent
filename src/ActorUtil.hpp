@@ -23,8 +23,8 @@ namespace BCIEvent{
 	return [&](const Actor& a) { return a.getVariable(in); };
     }
 
-    template<typename T, typename U> requires std::convertible_to<T, U>
-    std::function<U (const Actor&)> getExpressionFn(T in){
+    template<typename T>
+    std::function<T (const Actor&)> getExpressionFn(T in){
 	return [&](const Actor&) { return in; };
     }
 

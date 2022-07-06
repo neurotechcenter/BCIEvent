@@ -13,6 +13,10 @@
 #include "BooleanExpression.hpp"
 #include "IntegerExpression.hpp"
 #include "StatementCloseBlock.hpp"
+#include "IfBlock.hpp"
+#include "IfElseBlock.hpp"
+#include "LoopBlock.hpp"
+#include "WhileLoopBlock.hpp"
 
 namespace BCIEvent{
     class SequenceBuilder{
@@ -25,10 +29,24 @@ namespace BCIEvent{
 	SequenceBuilder() : SequenceBuilder(StartEvent::getInstance()) {};
 
 	SequenceBuilder& addNormalBlock(std::function<void(Actor &)> action);
+	template <BooleanExpression B>
+	SequenceBuilder& addIfBlock(B condition){
+	    auto endBlk = new IfEndBlock();
+	    _lastBlock = new IfStartBlock(_lastBlock, endBlk, condition);
+	    _controlCloseBlocks.push(endBlk);
+	    return *this;
+	}
+
+	
 	template<BooleanExpression B>
-	SequenceBuilder& addIfBlock(B condition);
-	template<BooleanExpression B>
-	SequenceBuilder& addIfElseBlock(B condition);
+	SequenceBuilder& addIfElseBlock(B condition){
+	    auto endBlk = new IfElseEndBlock();
+	    auto elseBlk = new IfElseElseBlock(endBlk);
+	    _lastBlock = new IfElseStartBlock(_lastBlock, condition, elseBlk, endBlk);
+	    _controlCloseBlocks.push(endBlk);
+	    _controlCloseBlocks.push(elseBlk);
+	    return *this;
+	}
 	
 	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time, std::function<void(Actor &)> action);
 	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time);
@@ -36,10 +54,26 @@ namespace BCIEvent{
 	SequenceBuilder& addEventCallerBlock(std::shared_ptr<Event> calledEvent);
 
 	template<IntegerExpression I>
-	SequenceBuilder& addLoopBlock(I iterations);
+	SequenceBuilder& addLoopBlock(I iterations){
+	    auto startBlk = new LoopStartBlock(_lastBlock, iterations);
+	    auto endBlk = new LoopEndBlock(startBlk);
+	    startBlk->addEndBlock(endBlk);
+	    _lastBlock = startBlk;
+	    _controlCloseBlocks.push(endBlk);
+	    return *this;
+	}
 
-	template<BooleanExpression B>
-	SequenceBuilder& addWhileLoopBlock(B condition);
+
+	template <BooleanExpression B>
+	SequenceBuilder& addWhileLoopBlock(B condition){
+	    auto startBlk = new WhileLoopStartBlock(_lastBlock, condition);
+	    auto endBlk = new WhileLoopEndBlock(startBlk);
+	    startBlk->setEndBlock(endBlk);
+	    _lastBlock = startBlk;
+	    _controlCloseBlocks.push(endBlk);
+	    return *this;
+	}
+
 
 	/**
 	 * Control elements which contain multiple blocks, such as if statements or loops,

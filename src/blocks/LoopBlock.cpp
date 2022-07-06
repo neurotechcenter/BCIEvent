@@ -4,10 +4,6 @@
 
 using namespace BCIEvent;
 
-template<IntegerExpression T>
-LoopStartBlock::LoopStartBlock(Block* previous, T iterationGetter) : Block(previous){
-    _iterationGetter = getExpressionFn<int>(iterationGetter);
-}
 
 Block* LoopStartBlock::run(Actor& callingActor){
     if (!_endBlock){

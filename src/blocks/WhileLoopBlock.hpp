@@ -5,6 +5,7 @@
 #include <functional>
 #include "BooleanExpression.hpp"
 #include "StatementCloseBlock.hpp"
+#include "ActorUtil.hpp"
 namespace BCIEvent{
 
     /**
@@ -19,8 +20,10 @@ namespace BCIEvent{
 	bool _isLooping = false;
 	friend class WhileLoopEndBlock;
 	public:
-	template<BooleanExpression T>
-	WhileLoopStartBlock(Block* previous, T condition);
+	template <BooleanExpression T>
+	WhileLoopStartBlock(Block* previous, T condition) : Block(previous){
+	    _condition = getExpressionFn<int>(condition);
+	}
 	Block* run(Actor& callingActor);
 	void setEndBlock(WhileLoopEndBlock* endBlock); //sets the end block. This must be called.
 

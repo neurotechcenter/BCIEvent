@@ -4,10 +4,6 @@
 
 using namespace BCIEvent;
 
-template <BooleanExpression T>
-WhileLoopStartBlock::WhileLoopStartBlock(Block* previous, T condition) : Block(previous){
-    _condition = getExpressionFn<int>(condition);
-}
 
 Block* WhileLoopStartBlock::run(Actor& callingActor){
     if (!_endBlock){

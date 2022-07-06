@@ -59,6 +59,9 @@ set(SOURCES_BCI
     src/shared/types/Param.cpp
     src/shared/types/ParamList.cpp
     src/shared/types/LabelIndex.cpp
+    src/shared/types/Label.cpp
+    src/shared/types/Status.cpp
+    src/shared/types/SysCommand.cpp
     src/shared/types/PhysicalUnit.cpp
     src/shared/types/EncodedString.cpp
     src/shared/types/SignalType.cpp
@@ -69,6 +72,7 @@ set(SOURCES_BCI
     src/shared/types/VisID.cpp
     src/shared/utils/Directory.cpp
     src/shared/utils/RandomGenerator.cpp
+    src/shared/utils/EventQueue.cpp
     src/shared/utils/LogFile.cpp
     src/shared/utils/PrecisionTime.cpp
     src/shared/utils/QtProxyThread.cpp
