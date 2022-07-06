@@ -15,7 +15,7 @@ namespace BCIEvent{
 
     class WhileLoopEndBlock;
     class WhileLoopStartBlock : public Block{
-	WhileLoopEndBlock* _endBlock;
+	WhileLoopEndBlock* _endBlock = nullptr;
 	bool _isLooping = false;
 	friend class WhileLoopEndBlock;
 	public:

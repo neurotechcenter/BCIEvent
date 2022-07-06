@@ -9,12 +9,12 @@ States::States(BCIEventApplication* app){
 }
 
 void States::addState(std::string name, BCIState::StateType type){
-    _states.insert(std::make_unique<BCIState>(_app, type, name));
+    _states.insert(std::pair<std::string, std::unique_ptr<BCIState>>(name, std::make_unique<BCIState>(_app, type, name)));
 }
 
 BCIState& States::getState(std::string name) const{
     try{
-	return _states.at(name);
+	return *_states.at(name);
     } catch (std::out_of_range e) {
 	throw std::out_of_range("Could not find state " + name);
     }

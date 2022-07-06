@@ -15,6 +15,7 @@ namespace BCIEvent{
     class BCIEventApplication : public ApplicationBase{
 	public:
 	BCIEventApplication();
+	~BCIEventApplication();
 	void Publish() override;
 	void Preflight(const SignalProperties&, SignalProperties&) const override;
 	void Initialize(const SignalProperties&, const SignalProperties&) override;
@@ -28,6 +29,8 @@ namespace BCIEvent{
 	int getState(std::string name);
 
 	void addActor(std::unique_ptr<Actor>);
+	void update( const GenericSignal& );
+	const GenericSignal* currentSignal;
 	private:
 	ApplicationWindow& _window;
 	GUI::GraphDisplay& _display;
@@ -43,14 +46,13 @@ namespace BCIEvent{
 	 * Initializes BCIEvent framework 
 	 */
 	void InitBCIEvent();
-	void update( const GenericSignal& );
 	enum RunState {Running, Paused};
 	RunState _currentState = Paused;	
 	std::vector<std::unique_ptr<Actor>> _actors;
 	std::shared_ptr<GlobalVariables> _globalVars;
 	std::shared_ptr<BCIEvent::States> _states;
 
-	std::unique_ptr<Actor> makeActor();
+	Actor* makeActor();
 	void addState(std::string name, BCIState::StateType type);
 	void uploadState(std::string name, int width);
     };

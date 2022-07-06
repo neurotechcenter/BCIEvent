@@ -7,9 +7,13 @@
 namespace BCIEvent{
     class NumberVariable : public Variable{
 	double _value = 0.0;
+	std::string _name;
 
 	public:
-	NumberVariable(std::string name) : Variable(name){}
+	NumberVariable(std::string name) { _name = name; }
+
+	std::string name() const { return _name; }
+
 	bool getAsBool() { throw std::logic_error("Cannot get number as boolean"); }
 	int getAsInt() { 
 	    if (std::floor(std::abs(_value)) == std::abs(_value)){

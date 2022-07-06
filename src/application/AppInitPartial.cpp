@@ -6,9 +6,10 @@
 
 void BCIEvent::BCIEventApplication::InitBCIEvent(){
     addState("aState", BCIState::u32);
-    addActor(makeActor()
-    ->addVariable(BoolVariable("testVar"))
-    .addVariable(BoolVariable("antiTestVar"))
+    Actor* actor1 = &makeActor()
+    ->addVariable(std::move(std::make_unique<BoolVariable>("testVar")))
+    .addVariable(std::move(std::make_unique<BoolVariable>("antiTestVar")))
+    .addGraphic("redthing.png", false)
     .addEventListener(SequenceBuilder()
 	.addLoopBlock(20)
 	.addIfBlock("testVar")
@@ -22,6 +23,6 @@ void BCIEvent::BCIEventApplication::InitBCIEvent(){
 	.addTimerBlock(std::chrono::milliseconds(500))
 	.addNormalBlock([](Actor& callingActor){ callingActor.setState("aState", callingActor.getState<int>("aState")); })
 	.closeStatement()
-	.getSequence())
-	    );
+	.getSequence());
+    addActor(std::unique_ptr<Actor>(actor1));	
 }

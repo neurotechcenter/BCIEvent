@@ -14,7 +14,7 @@ namespace BCIEvent{
      */
     class LoopEndBlock;
     class LoopStartBlock : public Block{
-	LoopEndBlock* _endBlock;
+	LoopEndBlock* _endBlock = nullptr;
 	std::function<int (const Actor& callingActor)> _iterationGetter;
 	int _iterations;
 	int _currentIter;

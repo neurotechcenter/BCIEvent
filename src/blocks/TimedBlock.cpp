@@ -4,7 +4,7 @@
 
 using namespace BCIEvent;
 
-TimedBlockStart::TimedBlockStart(Block* previous, std::chrono::duration<std::chrono::high_resolution_clock> time) : Block(previous){
+TimedBlockStart::TimedBlockStart(Block* previous, std::chrono::duration<double> time) : Block(previous){
     _time = time;
 }
 

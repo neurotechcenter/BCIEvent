@@ -1,15 +1,18 @@
 #include "WhileLoopBlock.hpp"
 #include "BooleanExpression.hpp"
+#include <stdexcept>
 
 using namespace BCIEvent;
 
 template <BooleanExpression T>
-WhileLoopStartBlock::WhileLoopStartBlock(Block* previous, WhileLoopEndBlock* endBlock, T condition) : Block(previous){
-    _endBlock = endBlock;
+WhileLoopStartBlock::WhileLoopStartBlock(Block* previous, T condition) : Block(previous){
     _condition = getExpressionFn<int>(condition);
 }
 
 Block* WhileLoopStartBlock::run(Actor& callingActor){
+    if (!_endBlock){
+	throw std::runtime_error("Loop start block has no end block (call setEndBlock())");
+    }
     bool b = callingActor.getVariable<bool>("e");
     if (!_isLooping){ //begin loop
 	_isLooping = true;

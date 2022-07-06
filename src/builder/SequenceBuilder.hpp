@@ -30,9 +30,9 @@ namespace BCIEvent{
 	template<BooleanExpression B>
 	SequenceBuilder& addIfElseBlock(B condition);
 	
-	SequenceBuilder& addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void(Actor &)> action);
-	SequenceBuilder& addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time);
-	SequenceBuilder& addTimedBlock(std::chrono::duration<std::chrono::high_resolution_clock> time);
+	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time, std::function<void(Actor &)> action);
+	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time);
+	SequenceBuilder& addTimedBlock(std::chrono::duration<double> time);
 	SequenceBuilder& addEventCallerBlock(std::shared_ptr<Event> calledEvent);
 
 	template<IntegerExpression I>

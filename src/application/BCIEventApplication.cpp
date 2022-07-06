@@ -14,10 +14,15 @@ BCIEventApplication::BCIEventApplication()
 
 }
 
+BCIEventApplication::~BCIEventApplication(){}
+
 void BCIEventApplication::addState(std::string name, BCIState::StateType type){
     _states->addState(name, type);
 }
 
+void BCIEventApplication::addActor(std::unique_ptr<Actor> actor){
+    _actors.push_back(std::move(actor));
+}
 
 void BCIEventApplication::uploadState(std::string name, int width){
 	if (States->Exists(name)){
@@ -68,6 +73,7 @@ void BCIEventApplication::OnInitialize(const SignalProperties& input){
 }
 
 void BCIEventApplication::Process(const GenericSignal& input, GenericSignal& output){
+    currentSignal = &input;
     switch (_currentState){
 	case Paused:
 	    break;
@@ -94,6 +100,15 @@ void BCIEventApplication::Halt(){
     OnHalt();
 }
 
+void BCIEventApplication::OnPreflight(const SignalProperties& input) const{
+}
+
+void BCIEventApplication::OnStartRun(){
+}
+void BCIEventApplication::OnStopRun(){
+}
+void BCIEventApplication::OnHalt(){
+}
 
 void BCIEventApplication::update(const GenericSignal& input){
     for (auto &&actor : _actors){
@@ -109,6 +124,6 @@ int BCIEventApplication::getState(std::string name){
     return State(name);
 }
 
-std::unique_ptr<Actor> BCIEventApplication::makeActor(){
-    return std::move(std::make_unique<BCIEvent::Actor>(&*_globalVars, &*_states, _display));
+Actor* BCIEventApplication::makeActor(){
+    return new Actor(&*_globalVars, &*_states, _display);
 }

@@ -10,7 +10,6 @@ namespace BCIEvent{
 	std::vector<EventListener*> _listeners;
 	bool _isTriggered;
 	public:
-	Event();
 	void trigger();
 	void addListener(EventListener*);
 

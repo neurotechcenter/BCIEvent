@@ -16,10 +16,10 @@
 
 namespace BCIEvent{
     class Actor : GUI::GraphObject{
-	std::shared_ptr<GlobalVariables> _globalVars;
+	GlobalVariables* const _globalVars;
 	std::vector<std::unique_ptr<EventListener>> _eventListeners; 	
 	std::map<std::string, std::unique_ptr<Variable>> _variables; 
-	std::shared_ptr<States> _states;
+	States* const _states;
 	std::vector<std::unique_ptr<QPixmap>> _graphics;
 	int _currentGraphic = 0;
 
@@ -42,7 +42,7 @@ namespace BCIEvent{
 
 	Actor (GlobalVariables* globalVars, States* states, GUI::GraphDisplay& display);
 	~Actor();
-	Actor& addVariable(Variable var);
+	Actor& addVariable(std::unique_ptr<Variable> var);
 	Actor& addGraphic(std::string filename, bool transparent);
 	Actor& addEventListener(std::unique_ptr<EventListener> listener);
 

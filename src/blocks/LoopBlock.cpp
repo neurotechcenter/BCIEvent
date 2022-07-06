@@ -5,12 +5,14 @@
 using namespace BCIEvent;
 
 template<IntegerExpression T>
-LoopStartBlock::LoopStartBlock(Block* previous, LoopEndBlock* endBlock, T iterationGetter) : Block(previous){
+LoopStartBlock::LoopStartBlock(Block* previous, T iterationGetter) : Block(previous){
     _iterationGetter = getExpressionFn<int>(iterationGetter);
-    _endBlock = endBlock;
 }
 
 Block* LoopStartBlock::run(Actor& callingActor){
+    if (!_endBlock){
+	throw std::runtime_error("Loop start block has no end block (call setEndBlock())");
+    }
     if (!_isLooping){ // begin loop
 	_isLooping = true;
 	_iterations = _iterationGetter(callingActor);

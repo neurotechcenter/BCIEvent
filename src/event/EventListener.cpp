@@ -1,5 +1,5 @@
 #include "EventListener.hpp"
-
+#include "Event.hpp"
 using namespace BCIEvent;
 
 

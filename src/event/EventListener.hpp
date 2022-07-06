@@ -1,13 +1,13 @@
 #ifndef EVENTLISTENER_H
 #define EVENTLISTENER_H
 #include "HeadBlock.hpp"
-#include "Event.hpp"
 #include <memory>
 
 namespace BCIEvent{
     /**
      * A block that waits for an event.
      */
+    class Event;
     class EventListener{
 	HeadBlock* _next;
 	bool _isTriggered;

@@ -1,12 +1,9 @@
 #include "Event.hpp"
-
+#include "EventListener.hpp"
 
 
 using namespace BCIEvent;
 
-Event::Event(std::string name){
-    _name = name;
-}
 
 void Event::trigger(){
     for (EventListener* listener : _listeners){

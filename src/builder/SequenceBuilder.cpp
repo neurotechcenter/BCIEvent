@@ -53,11 +53,11 @@ SequenceBuilder& SequenceBuilder::addIfElseBlock(B condition){
     return *this;
 }
 
-SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time, std::function<void (Actor &callingActor)> action) {
+SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time, std::function<void (Actor &callingActor)> action) {
     _lastBlock = new TimerBlock(_lastBlock, time, action);
     return *this;
 }
-SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<std::chrono::high_resolution_clock> time) {
+SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time) {
     _lastBlock = new TimerBlock(_lastBlock, time);
     return *this;
 }

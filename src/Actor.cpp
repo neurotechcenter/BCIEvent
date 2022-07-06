@@ -8,6 +8,8 @@
 #include "NumberVariable.hpp"
 #include <stdexcept>
 #include <type_traits>
+#include <QBitmap>
+#include <QPainter>
 
 
 using namespace BCIEvent;
@@ -46,9 +48,8 @@ using namespace BCIEvent;
 	_currentSignal = nullptr; //the signal should only ever be accessed during the update stage.
     }
 
-Actor::Actor(std::shared_ptr<GlobalVariables> globalVars, std::shared_ptr<States> states, GUI::GraphDisplay& display) : GUI::GraphObject(display, 0){
-    _globalVars = globalVars;
-    _states = states;
+Actor::Actor(GlobalVariables* globalVars, States* states, GUI::GraphDisplay& display) :
+	GUI::GraphObject(display, 0), _states{states}, _globalVars{globalVars}{
     SetAlignment(GUI::Alignment::Center);
     SetScalingMode(GUI::ScalingMode::AdjustBoth);
 
@@ -58,8 +59,8 @@ Actor::~Actor(){
     DestructorEntered();
 }
 
-Actor& Actor::addVariable(Variable var){
-    _variables.insert(var.name(), std::unique_ptr<Variable>(&var));
+Actor& Actor::addVariable(std::unique_ptr<Variable> var){
+    _variables.insert(std::pair<std::string, std::unique_ptr<Variable>>(var->name(), std::move(var)));
     return *this;
 }
 
@@ -69,13 +70,17 @@ Actor& Actor::addEventListener(std::unique_ptr<EventListener> listener){
 }
 
 Actor& Actor::addGraphic(std::string filename, bool transparent){
-    std::unique_ptr<QPixmap> pixmap = std::make_unique<QPixmap>(filename);
+    filename = "../BCIEventAssets/" + filename;
+    std::unique_ptr<QPixmap> pixmap = std::make_unique<QPixmap>(QString(filename.c_str()));
     if (pixmap->isNull()){
 	throw std::invalid_argument("Could not load file " + filename);
     }
-    if (transparent && !pixmap->hasAlphaChannel){ //tries to make image transparent
-	pixmap->setMask(pixmap.createHeuristicMask());
+    //Qt is weird, will try later
+    
+    if (transparent && !pixmap->hasAlphaChannel()){ //tries to make image transparent
+	pixmap->setMask(pixmap->createHeuristicMask());
     }
+    
     _graphics.push_back(std::move(pixmap));
     return *this;
 }
@@ -151,7 +156,7 @@ bool Actor::OnClick(const GUI::Point& clickPoint){
 }
 
 void Actor::OnPaint(const GUI::DrawContext& context){
-    QPixmap *imgBuffer = &*_graphics.get(_currentGraphic);
+    QPixmap *imgBuffer = &*_graphics.at(_currentGraphic);
     int width = ::Floor(context.rect.Width()), height = ::Floor(context.rect.Height());
     if (width == imgBuffer->width() && height == imgBuffer->height())
 	context.handle.dc->drawPixmap(::Floor(context.rect.left), ::Floor(context.rect.top), *imgBuffer);

@@ -4,7 +4,7 @@
 ## Description: List of files belonging to the LibTiny utils library.
 
 SET( TINY_DIR
-  ${PROJECT_SRC_DIR}/shared/utils/Lib
+    ${BCI2000_DIR}src/shared/utils/Lib
 )
 
 SET( SRC_LIBTINY
@@ -71,12 +71,14 @@ SET( SRC_LIBTINY
   ${TINY_DIR}/Numeric.h
   ${TINY_DIR}/Ratio.cpp
 
+  #${TINY_DIR}/UnitTest.cpp
+
   ${TINY_DIR}/IndentingOStreambuf.h
 )
 
 if(MSVC)
   list(APPEND SRC_LIBTINY
-    ${PROJECT_SRC_DIR}/shared/compat/msvc_stdlib.cpp
+      ${BCI2000_DIR}/shared/compat/msvc_stdlib.cpp
   )
 endif()
 
