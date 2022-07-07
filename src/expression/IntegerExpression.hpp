@@ -1,6 +1,7 @@
 #ifndef INTEGEREXPRESSION_H
 #define INTEGEREXPRESSION_H
 #include <concepts>
+#include<type_traits>
 #include "Actor.hpp"
 
 namespace BCIEvent{
@@ -12,8 +13,8 @@ namespace BCIEvent{
      */
 
     template<typename T>
-    concept ReturnsInt = std::is_convertible<std::result_of<T()>, int>::value 
-    || std::is_convertible<std::result_of<T(const Actor&)>, int>::value;
+    concept ReturnsInt = std::convertible_to<std::invoke_result<T>::type, int> 
+    || std::convertible_to<std::invoke_result<T,const Actor&>::type, int>;
     template<typename T>
     concept IntegerExpression = ReturnsInt<T> || std::convertible_to<T, int> || std::convertible_to<T, std::string>;
 }

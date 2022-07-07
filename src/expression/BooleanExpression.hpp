@@ -12,8 +12,8 @@ namespace BCIEvent{
      * or variable names (in which case they will not be type checked at compile time)
      */
     template<typename T> //returns a boolean
-    concept ReturnsBoolean = std::is_same<std::result_of<T()>, bool>::value 
-    || std::is_same<std::result_of<T(const Actor&)>, bool>::value; 
+    concept ReturnsBoolean = std::convertible_to<std::invoke_result<T>::type, bool> 
+    || std::convertible_to<std::invoke_result<T,const Actor&>::type, bool>; 
     template <typename T>
     concept BooleanExpression = ReturnsBoolean<T> || std::convertible_to<T, bool> || std::convertible_to<T, std::string>;
 

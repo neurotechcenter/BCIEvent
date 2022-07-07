@@ -9,9 +9,11 @@ using namespace BCIEvent;
 
 BCIEventApplication::BCIEventApplication() 
     : _window(ApplicationWindowClient::Window("Application")), _display(Window()){
+    _window.SetHeight(200)
+    .SetWidth(300)
+    .SetVisible(true);
     _states = std::make_unique<BCIEvent::States>(this);
     _globalVars = std::make_unique<GlobalVariables>();
-
 }
 
 BCIEventApplication::~BCIEventApplication(){}
@@ -38,6 +40,7 @@ void BCIEventApplication::uploadState(std::string name, int width){
 }
 
 void BCIEventApplication::Publish(){
+	AppLog << "publishing";
     for (const BCIState* state : _states->getStates()){
         auto name = state->name();    
 	auto type = state->type();
@@ -73,6 +76,7 @@ void BCIEventApplication::OnInitialize(const SignalProperties& input){
 }
 
 void BCIEventApplication::Process(const GenericSignal& input, GenericSignal& output){
+    AppLog << "Process";
     currentSignal = &input;
     switch (_currentState){
 	case Paused:

@@ -11,7 +11,7 @@ namespace BCIEvent{
     class GlobalVariables{
 	std::map<std::string, std::unique_ptr<Variable>> _vars;
 	public:
-	void addVariable(Variable var);
+	void addVariable(std::unique_ptr<Variable> var);
 
 	template<typename ReqType>
 	ReqType getVariable(std::string name) const{

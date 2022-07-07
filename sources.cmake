@@ -1,0 +1,31 @@
+set(SOURCES_EVENT
+  	src/application/BCIEventApplication.cpp
+	src/Actor.cpp
+	src/application/AppInitPartial.cpp
+	src/blocks/EndBlock.cpp
+	src/blocks/EventCallerBlock.cpp
+	src/blocks/HeadBlock.cpp
+	src/blocks/IfBlock.cpp
+	src/blocks/IfElseBlock.cpp
+	src/blocks/LoopBlock.cpp
+	src/blocks/NormalBlock.cpp
+	src/blocks/TimedBlock.cpp
+	src/blocks/TimerBlock.cpp
+	src/blocks/WhileLoopBlock.cpp
+	src/builder/SequenceBuilder.cpp
+	src/state/BCIState.cpp
+	src/state/States.cpp
+	src/variable/GlobalVariables.cpp
+	src/event/EventListener.cpp
+	src/event/Event.cpp
+    )
+set(INCLUDE_EVENT 
+    src
+    src/blocks
+    src/event
+    src/builder
+    src/variable
+    src/state
+    src/expression
+    src/application
+)

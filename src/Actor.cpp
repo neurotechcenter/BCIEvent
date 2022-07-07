@@ -70,7 +70,7 @@ Actor& Actor::addEventListener(std::unique_ptr<EventListener> listener){
 }
 
 Actor& Actor::addGraphic(std::string filename, bool transparent){
-    filename = "../BCIEventAssets/" + filename;
+    filename = "../src/custom/BCIEvent/assets/graphics/" + filename;
     std::unique_ptr<QPixmap> pixmap = std::make_unique<QPixmap>(QString(filename.c_str()));
     if (pixmap->isNull()){
 	throw std::invalid_argument("Could not load file " + filename);
