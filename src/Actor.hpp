@@ -15,7 +15,7 @@
 #include <QPixmap>
 
 namespace BCIEvent{
-    class Actor : GUI::GraphObject{
+    class Actor : public GUI::GraphObject{
 	GlobalVariables* const _globalVars;
 	std::vector<std::unique_ptr<EventListener>> _eventListeners; 	
 	std::map<std::string, std::unique_ptr<Variable>> _variables; 

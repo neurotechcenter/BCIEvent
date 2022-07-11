@@ -16,7 +16,8 @@ list(TRANSFORM SOURCES_EVENT PREPEND ${PROJECT_SOURCE_DIR}/../src/custom/BCIEven
 
 bci2000_add_application_module(
   ${BCIEVENT_APP_NAME}
+  ${SOURCES_EVENT}
 )
 
-message(${SOURCES_EVENT})
+add_compile_definitions(BCIEVENT_APP_NAME=${BCIEVENT_APP_NAME})
 target_include_directories(${BCIEVENT_APP_NAME} PUBLIC ${INCLUDE_EVENT})

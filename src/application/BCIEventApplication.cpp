@@ -2,21 +2,40 @@
 #include "Environment.h"
 #include <memory>
 #include <stdexcept>
+#include "Shapes.h"
+#include "StartEvent.hpp"
 
 
 using namespace BCIEvent;
 
 
+RegisterFilter(BCIEventApplication, 3);
+
+
 BCIEventApplication::BCIEventApplication() 
-    : _window(ApplicationWindowClient::Window("Application")), _display(Window()){
-    _window.SetHeight(200)
+    :  _display(ApplicationWindowClient::Window()){
+	    /**
+    _display.SetHeight(200)
     .SetWidth(300)
     .SetVisible(true);
+    */
+    Parameter("ShowAppLog") = 1;
     _states = std::make_unique<BCIEvent::States>(this);
     _globalVars = std::make_unique<GlobalVariables>();
+	GUI::Rect rect = {0.5f, 0.4f, 0.5f, 0.6f};
+    _messageField = std::make_unique<TextField>(_display);
+    _messageField->SetTextHeight(0.8f)
+	    .SetColor(RGBColor::Gray)
+	    .SetTextColor(RGBColor::Yellow)
+	    .SetObjectRect(rect);
+    _messageField->SetText("A")
+	    .Show();
+    InitBCIEvent();
 }
 
-BCIEventApplication::~BCIEventApplication(){}
+BCIEventApplication::~BCIEventApplication(){
+	Halt();
+}
 
 void BCIEventApplication::addState(std::string name, BCIState::StateType type){
     _states->addState(name, type);
@@ -61,22 +80,22 @@ void BCIEventApplication::Publish(){
 }
 
 void BCIEventApplication::Preflight(const SignalProperties &input, SignalProperties& output) const {
-
     OnPreflight(input);
 }
 
 void BCIEventApplication::Initialize(const SignalProperties& input, const SignalProperties& output){
     ApplicationBase::Initialize(input, output);
 
+    RectangularShape* shape = new RectangularShape(_display, 1);
+    shape->SetFillColor(RGBColor::Red);
     OnInitialize(input);
 }
 
 void BCIEventApplication::OnInitialize(const SignalProperties& input){
-    InitBCIEvent();
+    _display.Show();
 }
 
 void BCIEventApplication::Process(const GenericSignal& input, GenericSignal& output){
-    AppLog << "Process";
     currentSignal = &input;
     switch (_currentState){
 	case Paused:
@@ -93,10 +112,12 @@ void BCIEventApplication::Resting(const GenericSignal& input, GenericSignal& out
 }
 
 void BCIEventApplication::StartRun(){
+	_currentState = Running;
     OnStartRun();
 }
 
 void BCIEventApplication::StopRun(){
+	_currentState = Paused;
     OnStopRun();
 }
 
@@ -108,7 +129,9 @@ void BCIEventApplication::OnPreflight(const SignalProperties& input) const{
 }
 
 void BCIEventApplication::OnStartRun(){
+	StartEvent::getInstance()->trigger();
 }
+
 void BCIEventApplication::OnStopRun(){
 }
 void BCIEventApplication::OnHalt(){

@@ -13,6 +13,7 @@ void States::addState(std::string name, BCIState::StateType type){
 }
 
 BCIState& States::getState(std::string name) const{
+	
     try{
 	return *_states.at(name);
     } catch (std::out_of_range e) {

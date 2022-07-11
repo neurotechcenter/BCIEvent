@@ -20,23 +20,17 @@ using namespace BCIEvent;
 	_currentSignal = &signal;
 	
 	//Run and update blocks
+	bciout << "Blocks: " << _currentBlocks.size();
 
-
-	std::vector<Block*> toRemove;
-	toRemove.reserve(_currentBlocks.size());
-	for(auto i = _currentBlocks.begin(); i != _currentBlocks.end(); i++){
-	    Block* currentBlock = *i;
+	for(int i = 0; i < _currentBlocks.size(); i++){
+	    Block* currentBlock = _currentBlocks.front();
 	    Block* nextBlock = currentBlock->run(*this); //runs the block and gets a reference to the next block
-	    if (nextBlock == nullptr){ //remove end blocks
-		toRemove.push_back(currentBlock);
-	    } else {
-		_currentBlocks.erase(i);
-		_currentBlocks.insert(i, nextBlock);
+	    _currentBlocks.pop_front();
+	    if (nextBlock != nullptr){ //only add next block if it exists
+		_currentBlocks.push_back(nextBlock);
 	    }
 	}
-	for (int i = 0; i < toRemove.size(); i++){ //remove end blocks
-		    _currentBlocks.remove(toRemove[i]);
-	}
+
 
 	//Handle events
 	
@@ -46,6 +40,8 @@ using namespace BCIEvent;
 	    }
 	}
 	_currentSignal = nullptr; //the signal should only ever be accessed during the update stage.
+	Invalidate();
+	Paint();
     }
 
 Actor::Actor(GlobalVariables* globalVars, States* states, GUI::GraphDisplay& display) :
@@ -53,6 +49,7 @@ Actor::Actor(GlobalVariables* globalVars, States* states, GUI::GraphDisplay& dis
     SetAlignment(GUI::Alignment::Center);
     SetScalingMode(GUI::ScalingMode::AdjustBoth);
 
+    Show();
 }
 
 Actor::~Actor(){
@@ -120,12 +117,19 @@ bool Actor::OnClick(const GUI::Point& clickPoint){
 }
 
 void Actor::OnPaint(const GUI::DrawContext& context){
+    bciout << "PAINTING";
     QPixmap *imgBuffer = &*_graphics.at(_currentGraphic);
+    bciout << "2";
     int width = ::Floor(context.rect.Width()), height = ::Floor(context.rect.Height());
-    if (width == imgBuffer->width() && height == imgBuffer->height())
+    bciout << "3";
+    if (width == imgBuffer->width() && height == imgBuffer->height()){
+    bciout << "4";
 	context.handle.dc->drawPixmap(::Floor(context.rect.left), ::Floor(context.rect.top), *imgBuffer);
-    else
+    } else {
+    	bciout << "5";
 	context.handle.dc->drawPixmap(::Floor(context.rect.left), ::Floor(context.rect.top), width, height, *imgBuffer);
+	bciout << "6";
+    }
 }
 
 

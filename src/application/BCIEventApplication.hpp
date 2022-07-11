@@ -32,8 +32,7 @@ namespace BCIEvent{
 	void update( const GenericSignal& );
 	const GenericSignal* currentSignal;
 	private:
-	ApplicationWindow& _window;
-	GUI::GraphDisplay& _display;
+	ApplicationWindow& _display;
 	std::unique_ptr<TextField> _messageField;
 
 	void OnPreflight(const SignalProperties& input) const;
