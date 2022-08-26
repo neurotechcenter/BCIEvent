@@ -48,9 +48,9 @@ SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> ti
 }
 
 SequenceBuilder& SequenceBuilder::addWaitForProcessBlock() {
-    Block* b = new WaitForProcessBlock();
-    _app.addProcessBlock(std::shared_ptr<WaitForProcessBlock>(b));
-    _lastBlock = b;
+    auto b = std::make_shared<WaitForProcessBlock>(_lastBlock);
+    _app.addProcessBlock(b);
+    _lastBlock = &*b;
     return *this;
 }
 

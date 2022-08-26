@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "Shapes.h"
 #include "StartEvent.hpp"
+#include "WaitForProcessBlock.hpp"
 
 
 using namespace BCIEvent;
@@ -92,7 +93,7 @@ void BCIEventApplication::Initialize(const SignalProperties& input, const Signal
 void BCIEventApplication::Process(const GenericSignal& input, GenericSignal& output){
     currentSignal = &input;
 	for (auto pBlock : _processBlocks) {
-		pBlock.process();
+		pBlock->process();
 	}
     output = input;
 }
@@ -131,10 +132,12 @@ void BCIEventApplication::OnStopRun(){
 }
 
 void BCIEventApplication::OnHalt(){
+	_appLoop = false;
+	_appLoopThread.join();
 }
 
 void BCIEventApplication::applicationLoop() {
-	while (true) {
+	while (_appLoop) {
 		switch (_currentState) {
 		case Paused:
 			break;

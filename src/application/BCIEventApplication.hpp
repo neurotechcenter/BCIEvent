@@ -14,6 +14,8 @@
 #include <thread>
 
 namespace BCIEvent{
+	class WaitForProcessBlock;
+
     class BCIEventApplication : public ApplicationBase{
 	public:
 	BCIEventApplication();
@@ -36,6 +38,7 @@ namespace BCIEvent{
 	ApplicationWindow& _display;
 	std::unique_ptr<TextField> _messageField;
 	std::thread _appLoopThread;
+	bool _appLoop = true;
 
 	void applicationLoop();
 	void update(const GenericSignal&);
@@ -57,7 +60,7 @@ namespace BCIEvent{
 	std::vector<std::unique_ptr<Actor>> _actors;
 	std::shared_ptr<GlobalVariables> _globalVars;
 	std::shared_ptr<BCIEvent::States> _states;
-	std::vector<WaitForProcessBlock> _processBlocks;
+	std::vector<std::shared_ptr<WaitForProcessBlock>> _processBlocks;
 
 
 	Actor* makeActor();

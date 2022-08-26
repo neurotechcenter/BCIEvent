@@ -4,7 +4,6 @@
 #include "Actor.hpp"
 #include "Block.hpp"
 
-#error what
 
 namespace BCIEvent {
 	class WaitForProcessBlock : public Block {
