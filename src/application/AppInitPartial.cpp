@@ -10,7 +10,7 @@ void BCIEvent::BCIEventApplication::InitBCIEvent(){
     ->addVariable(std::move(std::make_unique<BoolVariable>("testVar")))
     .addVariable(std::move(std::make_unique<BoolVariable>("antiTestVar")))
     .addGraphic("redthing.png", false)
-    .addEventListener(SequenceBuilder()
+    .addEventListener(SequenceBuilder(this)
 	.addNormalBlock([&](Actor& callingActor){ bciout << "Amogus"; })
 	.addNormalBlock([&](Actor& callingActor){ State("aState") = 85; })
 	.addLoopBlock(20)

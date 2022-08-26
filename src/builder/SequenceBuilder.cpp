@@ -14,7 +14,8 @@
 using namespace BCIEvent;
 
 
-SequenceBuilder::SequenceBuilder(std::shared_ptr<Event> listeningEvent){
+SequenceBuilder::SequenceBuilder(std::shared_ptr<Event> listeningEvent, BCIEventApplication* app){
+    _app = app;
    _listener = std::make_unique<EventListener> (listeningEvent); 
    HeadBlock* head  = new HeadBlock();
    _lastBlock = head;
@@ -46,6 +47,12 @@ SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> ti
     return *this;
 }
 
+SequenceBuilder& SequenceBuilder::addWaitForProcessBlock() {
+    Block* b = new WaitForProcessBlock();
+    _app.addProcessBlock(std::shared_ptr<WaitForProcessBlock>(b));
+    _lastBlock = b;
+    return *this;
+}
 
 SequenceBuilder& SequenceBuilder::closeStatement(){
     if (_controlCloseBlocks.size() <= 0){

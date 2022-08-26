@@ -12,6 +12,7 @@ set(SOURCES_EVENT
 	src/blocks/TimedBlock.cpp
 	src/blocks/TimerBlock.cpp
 	src/blocks/WhileLoopBlock.cpp
+	src/blocks/WaitForProcessBlock.cpp
 	src/builder/SequenceBuilder.cpp
 	src/state/BCIState.cpp
 	src/state/States.cpp

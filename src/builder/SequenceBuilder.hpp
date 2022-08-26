@@ -17,16 +17,18 @@
 #include "IfElseBlock.hpp"
 #include "LoopBlock.hpp"
 #include "WhileLoopBlock.hpp"
+#include "WaitForProcessBlock.hpp"
 
-namespace BCIEvent{
-    class SequenceBuilder{
+namespace BCIEvent {
+    class SequenceBuilder {
+	BCIEventApplication* _app;
 	std::unique_ptr<EventListener> _listener;
 	Block* _lastBlock;
 	std::stack<StatementCloseBlock*> _controlCloseBlocks;	
 	
 	public:
-	SequenceBuilder(std::shared_ptr<Event> listeningEvent);
-	SequenceBuilder() : SequenceBuilder(StartEvent::getInstance()) {};
+	SequenceBuilder(std::shared_ptr<Event> listeningEvent, BCIEventApplication *app);
+	SequenceBuilder(BCIEventApplication* app) : SequenceBuilder(StartEvent::getInstance(), app) {};
 
 	SequenceBuilder& addNormalBlock(std::function<void(Actor &)> action);
 	template <BooleanExpression B>
@@ -52,6 +54,7 @@ namespace BCIEvent{
 	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time);
 	SequenceBuilder& addTimedBlock(std::chrono::duration<double> time);
 	SequenceBuilder& addEventCallerBlock(std::shared_ptr<Event> calledEvent);
+	SequenceBuilder& addWaitForProcessBlock();
 
 	template<IntegerExpression I>
 	SequenceBuilder& addLoopBlock(I iterations){

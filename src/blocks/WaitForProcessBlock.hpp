@@ -1,0 +1,22 @@
+#ifndef PROCESSBLOCK_H
+#define PROCESSBLOCK_H
+#include "BCIEventApplication.hpp"
+#include "Actor.hpp"
+#include "Block.hpp"
+
+#error what
+
+namespace BCIEvent {
+	class WaitForProcessBlock : public Block {
+		bool _waiting = false;
+	public:
+		WaitForProcessBlock(Block*);
+		void process();
+		Block* run(Actor&);
+
+	};
+}
+
+
+
+#endif

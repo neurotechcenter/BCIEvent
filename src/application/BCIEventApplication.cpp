@@ -85,25 +85,15 @@ void BCIEventApplication::Preflight(const SignalProperties &input, SignalPropert
 
 void BCIEventApplication::Initialize(const SignalProperties& input, const SignalProperties& output){
     ApplicationBase::Initialize(input, output);
-
-    RectangularShape* shape = new RectangularShape(_display, 1);
-    shape->SetFillColor(RGBColor::Red);
     OnInitialize(input);
 }
 
-void BCIEventApplication::OnInitialize(const SignalProperties& input){
-    _display.Show();
-}
 
 void BCIEventApplication::Process(const GenericSignal& input, GenericSignal& output){
     currentSignal = &input;
-    switch (_currentState){
-	case Paused:
-	    break;
-	case Running:
-	    update(input);
-	    break;
-    }
+	for (auto pBlock : _processBlocks) {
+		pBlock.process();
+	}
     output = input;
 }
 
@@ -128,13 +118,31 @@ void BCIEventApplication::Halt(){
 void BCIEventApplication::OnPreflight(const SignalProperties& input) const{
 }
 
-void BCIEventApplication::OnStartRun(){
+void BCIEventApplication::OnInitialize(const SignalProperties& input) {
+	_appLoopThread = std::thread(&BCIEventApplication::applicationLoop, this);
 	StartEvent::getInstance()->trigger();
+	_display.Show();
+}
+
+void BCIEventApplication::OnStartRun(){
 }
 
 void BCIEventApplication::OnStopRun(){
 }
+
 void BCIEventApplication::OnHalt(){
+}
+
+void BCIEventApplication::applicationLoop() {
+	while (true) {
+		switch (_currentState) {
+		case Paused:
+			break;
+		case Running:
+			update(*currentSignal);
+			break;
+		}
+	}
 }
 
 void BCIEventApplication::update(const GenericSignal& input){

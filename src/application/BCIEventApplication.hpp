@@ -9,7 +9,9 @@
 #include "SignalProperties.h"
 #include "States.hpp"
 #include "TextField.h"
+#include "WaitForProcessBlock.hpp"
 #include <vector>
+#include <thread>
 
 namespace BCIEvent{
     class BCIEventApplication : public ApplicationBase{
@@ -27,13 +29,18 @@ namespace BCIEvent{
 
 	void setState(std::string name, int value);
 	int getState(std::string name);
-
-	void addActor(std::unique_ptr<Actor>);
-	void update( const GenericSignal& );
+	
 	const GenericSignal* currentSignal;
+
 	private:
 	ApplicationWindow& _display;
 	std::unique_ptr<TextField> _messageField;
+	std::thread _appLoopThread;
+
+	void applicationLoop();
+	void update(const GenericSignal&);
+	void addActor(std::unique_ptr<Actor>);
+	void addProcessBlock(std::shared_ptr<WaitForProcessBlock>);
 
 	void OnPreflight(const SignalProperties& input) const;
 	void OnInitialize(const SignalProperties& input);
@@ -50,6 +57,8 @@ namespace BCIEvent{
 	std::vector<std::unique_ptr<Actor>> _actors;
 	std::shared_ptr<GlobalVariables> _globalVars;
 	std::shared_ptr<BCIEvent::States> _states;
+	std::vector<WaitForProcessBlock> _processBlocks;
+
 
 	Actor* makeActor();
 	void addState(std::string name, BCIState::StateType type);
