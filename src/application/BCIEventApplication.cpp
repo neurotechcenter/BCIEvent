@@ -46,6 +46,10 @@ void BCIEventApplication::addActor(std::unique_ptr<Actor> actor){
     _actors.push_back(std::move(actor));
 }
 
+void BCIEventApplication::addVar(std::unique_ptr<Variable> v) {
+	_globalVars->addVariable(std::move(v));
+}
+
 void BCIEventApplication::uploadState(std::string name, int width){
 	if (States->Exists(name)){
 	    throw std::invalid_argument("Attempted to define state " + name + ", but that state already exists");
@@ -163,5 +167,9 @@ int BCIEventApplication::getState(std::string name){
 }
 
 Actor* BCIEventApplication::makeActor(){
-    return new Actor(&*_globalVars, &*_states, _display);
+    return new Actor(this);
+}
+
+void BCIEventApplication::addProcessBlock(std::shared_ptr<WaitForProcessBlock> pBlock) {
+	_processBlocks.push_back(pBlock);
 }

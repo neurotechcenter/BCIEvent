@@ -29,10 +29,28 @@ namespace BCIEvent{
 	void StopRun() override;
 	void Halt() override;
 
+
+	void addState(std::string name, BCIState::StateType type);
 	void setState(std::string name, int value);
 	int getState(std::string name);
+	BCIState getBCIState(std::string name);
+
+	void addVar(std::unique_ptr<Variable> var);
+
+	template<typename ReqType>
+	ReqType getVar(std::string name) const {
+		return _globalVars->getVariable(name);
+	}
+	template<typename SetType>
+	SetType setVar(std::string name, SetType value) {
+		_globalVars->setVariable(name, value);
+	}
+	
 	
 	const GenericSignal* currentSignal;
+
+
+	void addProcessBlock(std::shared_ptr<WaitForProcessBlock>);
 
 	private:
 	ApplicationWindow& _display;
@@ -43,7 +61,6 @@ namespace BCIEvent{
 	void applicationLoop();
 	void update(const GenericSignal&);
 	void addActor(std::unique_ptr<Actor>);
-	void addProcessBlock(std::shared_ptr<WaitForProcessBlock>);
 
 	void OnPreflight(const SignalProperties& input) const;
 	void OnInitialize(const SignalProperties& input);
@@ -62,9 +79,9 @@ namespace BCIEvent{
 	std::shared_ptr<BCIEvent::States> _states;
 	std::vector<std::shared_ptr<WaitForProcessBlock>> _processBlocks;
 
+	GUI::GraphDisplay& getDisplay() { return _display; }
 
 	Actor* makeActor();
-	void addState(std::string name, BCIState::StateType type);
 	void uploadState(std::string name, int width);
     };
 }

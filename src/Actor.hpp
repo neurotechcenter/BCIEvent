@@ -16,10 +16,9 @@
 
 namespace BCIEvent{
     class Actor : public GUI::GraphObject{
-	GlobalVariables* const _globalVars;
+	BCIEventApplication* _app;
 	std::vector<std::unique_ptr<EventListener>> _eventListeners; 	
 	std::map<std::string, std::unique_ptr<Variable>> _variables; 
-	States* const _states;
 	std::vector<std::unique_ptr<QPixmap>> _graphics;
 	int _currentGraphic = 0;
 
@@ -40,7 +39,7 @@ namespace BCIEvent{
 	 */
 	void update( const GenericSignal& input );
 
-	Actor (GlobalVariables* globalVars, States* states, GUI::GraphDisplay& display);
+	Actor(BCIEventApplication* app);
 	~Actor();
 	Actor& addVariable(std::unique_ptr<Variable> var);
 	Actor& addGraphic(std::string filename, bool transparent);
@@ -96,7 +95,7 @@ namespace BCIEvent{
         	    return static_cast<ReqType>(_variables.at(name)->getAsDouble());
         	}
             } catch (std::out_of_range e) {
-        	return _globalVars->getVariable<ReqType>(name);
+        	return _app->getVar<ReqType>(name);
             }
         }
 
@@ -107,18 +106,18 @@ namespace BCIEvent{
 	    try {
 		*_variables.at(name) = value;
 	    } catch (std::out_of_range e) {
-		_globalVars->setVariable(name, value);
+		_app->setVar(name, value);
 	    }
 	}
 	
 	template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
 	void setState(std::string name, T value){
-	    _states->getState(name).set(value);
+	    _app->getBCIState(name).set(value);
 	}
 
 	template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
 	T getState(std::string name) const{
-	    return static_cast<T>(_states->getState(name).get());
+	    return static_cast<T>(_app->getBCIState(name).get());
 	}
     };
 }

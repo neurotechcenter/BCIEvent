@@ -44,9 +44,10 @@ using namespace BCIEvent;
 	Paint();
     }
 
-Actor::Actor(GlobalVariables* globalVars, States* states, GUI::GraphDisplay& display) :
-	GUI::GraphObject(display, 0), _states{states}, _globalVars{globalVars} 
+Actor::Actor(BCIEventApplication* app) :
+	GUI::GraphObject(app->getDisplay(), 0)
 {
+	_app = app;
     SetAlignment(GUI::Alignment::Center);
     SetScalingMode(GUI::ScalingMode::AdjustBoth);
     Show();
