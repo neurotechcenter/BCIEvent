@@ -13,7 +13,7 @@ namespace BCIEvent{
 	 */
 	HeadBlock();
 	~HeadBlock();
-	Block* run(Actor &callingActor);
+	Block* run(Sequence &sequence);
     };
 }
 

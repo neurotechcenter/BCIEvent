@@ -24,7 +24,7 @@ namespace BCIEvent{
 	WhileLoopStartBlock(Block* previous, T condition) : Block(previous){
 	    _condition = getExpressionFn<int>(condition);
 	}
-	Block* run(Actor& callingActor);
+	Block* run(Sequence& sequence);
 	void setEndBlock(WhileLoopEndBlock* endBlock); //sets the end block. This must be called.
 
 	private:
@@ -37,7 +37,7 @@ namespace BCIEvent{
 	WhileLoopStartBlock* _startBlock;
 	public:
 	WhileLoopEndBlock(WhileLoopStartBlock* startBlock); //constructor which sets _next to itself. For use with a stack holding closing blocks
-	Block* run(Actor& callingActor);
+	Block* run(Sequence& sequence);
     };
 }
 

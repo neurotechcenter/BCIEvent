@@ -9,7 +9,7 @@ namespace BCIEvent{
 
 class IfElseEndBlock : public StatementCloseBlock{
     public:
-    Block* run(Actor& callingActor);
+    Block* run(Sequence& sequence);
 };
 
 class IfElseElseBlock : public StatementCloseBlock{
@@ -18,14 +18,14 @@ class IfElseElseBlock : public StatementCloseBlock{
     friend class IfElseStartBlock;
     public:
     IfElseElseBlock(IfElseEndBlock* endBlock);
-    Block* run(Actor& callingActor);
+    Block* run(Sequence& sequence);
 
 };
 
 class IfElseStartBlock : public Block{
     IfElseElseBlock* _elseBlock;
     IfElseEndBlock* _endBlock;
-    std::function<bool (Actor&)> _condition;
+    std::function<bool (Sequence&)> _condition;
 
     public:
 	template<BooleanExpression B>
@@ -34,7 +34,7 @@ class IfElseStartBlock : public Block{
 	   _elseBlock = elseBlock;
 	   _endBlock = endBlock;
 	}
-    Block* run(Actor& callingActor);
+    Block* run(Sequence& sequence);
 };
 
 

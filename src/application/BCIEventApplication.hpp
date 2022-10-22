@@ -35,6 +35,8 @@ namespace BCIEvent{
 	int getState(std::string name);
 	BCIState getBCIState(std::string name);
 
+	int randInt(int lowerBound, int upperBound);
+
 	void addVar(std::unique_ptr<Variable> var);
 
 	template<typename ReqType>

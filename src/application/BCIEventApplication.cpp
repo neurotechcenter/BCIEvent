@@ -166,6 +166,10 @@ int BCIEventApplication::getState(std::string name){
     return State(name);
 }
 
+int BCIEventApplication::randInt(int lower, int upper) {
+	return RandomNumberGenerator(upper - lower + 1) + lower;
+}
+
 Actor* BCIEventApplication::makeActor(){
     return new Actor(this);
 }

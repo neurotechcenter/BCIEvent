@@ -10,11 +10,11 @@
 namespace BCIEvent{
     class IfEndBlock : public StatementCloseBlock{
 	public:
-	Block* run(Actor &callingActor);
+	Block* run(Sequence& sequence);
     };
 
     class IfStartBlock : public Block{
-	std::function<bool(Actor &callingActor)> _condition;
+	std::function<bool(Sequence& sequence)> _condition;
 	IfEndBlock* _endBlock;
 	public:
 	template <BooleanExpression T>
@@ -23,7 +23,7 @@ namespace BCIEvent{
 	    _endBlock = endBlock;
 	}
 
-	Block* run(Actor &callingActor);
+	Block* run(Sequence& sequence);
     };
 }
 

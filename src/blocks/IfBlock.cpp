@@ -3,12 +3,12 @@
 using namespace BCIEvent;
 
 
-Block* IfEndBlock::run(Actor &callingActor){
+Block* IfEndBlock::run(Sequence& sequence){
     return _next;
 }
 
 
-Block* IfStartBlock::run(Actor &callingActor){
+Block* IfStartBlock::run(Sequence& sequence){
     if (_condition( callingActor ))
 	return _next;
     else

@@ -16,16 +16,15 @@
 
 namespace BCIEvent{
     class Actor : public GUI::GraphObject{
+		friend class Sequence;
+		
 	BCIEventApplication* _app;
-	std::vector<std::unique_ptr<EventListener>> _eventListeners; 	
 	std::map<std::string, std::unique_ptr<Variable>> _variables; 
 	std::vector<std::unique_ptr<QPixmap>> _graphics;
 	int _currentGraphic = 0;
 
-	/**
-	 * List of currently executing blocks.
-	 */
-	std::list<Block*> _currentBlocks;
+	std::vector<std::unique_ptr<Sequence>> _sequences;
+
 
 	const GenericSignal* _currentSignal;
 
@@ -46,6 +45,7 @@ namespace BCIEvent{
 	Actor& addEventListener(std::unique_ptr<EventListener> listener);
 
 
+	int randInt(int lowerBound, int upperBound) { return _app->randInt(lowerBound, upperBound); }
 
 	/**
 	 * The event which is triggered whenever this actor is clicked.
@@ -72,6 +72,7 @@ namespace BCIEvent{
 	void setZOrder(float zOrder) { GUI::GraphObject::SetZOrder(zOrder); Invalidate(); }
 	bool visible() { return GUI::GraphObject::Visible(); }
 	void setVisible(bool visible) { GUI::GraphObject::SetVisible(visible); Invalidate(); }
+
 	/**
 	 * This currently returns true when a point within the bounding box is clicked.
 	 * I will change this when graphics are implemented
@@ -81,7 +82,7 @@ namespace BCIEvent{
 	        
 
 	template<typename ReqType>
-        inline ReqType getVariable(std::string name) const{
+        ReqType getVariable(std::string name) const{
             static_assert(std::is_convertible<ReqType, bool>::value || std::is_floating_point<ReqType>::value || std::is_integral<ReqType>::value,
         	    "Template argument for getVariable must be boolean, integral, or floating point");
             try {

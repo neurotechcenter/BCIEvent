@@ -16,7 +16,7 @@ namespace BCIEvent{
     class LoopEndBlock;
     class LoopStartBlock : public Block{
 	LoopEndBlock* _endBlock = nullptr;
-	std::function<int (const Actor& callingActor)> _iterationGetter;
+	std::function<int (const Sequence& sequence)> _iterationGetter;
 	int _iterations;
 	int _currentIter;
 	bool _isLooping = false;
@@ -35,7 +35,7 @@ namespace BCIEvent{
 	LoopStartBlock* _startBlock;
 	public:
 	LoopEndBlock(LoopStartBlock* startBlock); //constructor which sets _next to itself. For use with a stack holding closing blocks.
-	Block* run(Actor& callingActor);
+	Block* run(Sequence& sequence);
     };
 }
 

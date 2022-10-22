@@ -8,7 +8,7 @@ void WaitForProcessBlock::process() {
 	_waiting = false;
 }
 
-Block* WaitForProcessBlock::run(Actor& callingActor) {
+Block* WaitForProcessBlock::run(Sequence& sequence) {
 	if (_waiting) {
 		return this;
 	}

@@ -20,24 +20,10 @@ using namespace BCIEvent;
 	_currentSignal = &signal;
 	
 	//Run and update blocks
-	bciout << "Blocks: " << _currentBlocks.size();
 
-	for(int i = 0; i < _currentBlocks.size(); i++){
-	    Block* currentBlock = _currentBlocks.front();
-	    Block* nextBlock = currentBlock->run(*this); //runs the block and gets a reference to the next block
-	    _currentBlocks.pop_front();
-	    if (nextBlock != nullptr){ //only add next block if it exists
-		_currentBlocks.push_back(nextBlock);
-	    }
+	for(auto sequence : _sequences){
+        sequence->update();
 	}
-
-
-	//Handle events
-	
-	for (auto &&listener : _eventListeners){
-	    if (listener->isTriggered()){
-		_currentBlocks.push_back(listener->getNext());
-	    }
 	}
 	_currentSignal = nullptr; //the signal should only ever be accessed during the update stage.
 	Invalidate();
@@ -84,7 +70,9 @@ Actor& Actor::addGraphic(std::string filename, bool transparent){
 }
 
 
-
+int Actor::randInt(int lower, int upper) {
+	return _app->randInt(lower, upper);
+}
 
 
 

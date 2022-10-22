@@ -5,13 +5,13 @@
 using namespace BCIEvent;
 
 
-Block* LoopStartBlock::run(Actor& callingActor){
+Block* LoopStartBlock::run(Sequence& sequence){
     if (!_endBlock){
 	throw std::runtime_error("Loop start block has no end block (call setEndBlock())");
     }
     if (!_isLooping){ // begin loop
 	_isLooping = true;
-	_iterations = _iterationGetter(callingActor);
+	_iterations = _iterationGetter(sequence);
 	_currentIter = 0;
     }
     if (_currentIter >= _iterations){ //when looping is done, skip directly to the closing block
@@ -24,7 +24,7 @@ void LoopStartBlock::addEndBlock(LoopEndBlock* endBlock){
     _endBlock = endBlock;
 }
 
-Block* LoopEndBlock::run(Actor &callingActor){
+Block* LoopEndBlock::run(Sequence& sequence){
     _startBlock->_currentIter++; //iterate loop
     if (!_startBlock->_isLooping){ //if loop is done, return the next block outside the loop
 	return _next;

@@ -12,7 +12,7 @@ namespace BCIEvent{
 	public:
 	EndBlock(Block* prev);
 	~EndBlock();
-	Block* run(Actor &callingActor);
+	Block* run(Sequence &sequence);
     };
 }
 #endif

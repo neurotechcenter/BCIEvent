@@ -18,7 +18,7 @@ namespace BCIEvent{
        std::chrono::duration<double> _timeElapsed;
        std::function<void(Actor& callingActor)> _action;
     public:
-	TimerBlock(Block* previous, std::chrono::duration<double> time, std::function<void (Actor&)> action);
+	TimerBlock(Block* previous, std::chrono::duration<double> time, std::function<void (Sequence&)> action);
 	TimerBlock(Block* previous, std::chrono::duration<double> time); //treated as wait block
 	Block* run(Actor &actor);
    }; 

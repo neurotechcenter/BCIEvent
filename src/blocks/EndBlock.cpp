@@ -9,6 +9,6 @@ EndBlock::EndBlock(Block* previous) : Block(previous){
 
 EndBlock::~EndBlock() {}
 
-Block* EndBlock::run(Actor &callingActor){return _next;}
+Block* EndBlock::run(Sequence &sequence){return _next;}
 
 

@@ -9,7 +9,7 @@ namespace BCIEvent{
 	std::shared_ptr<Event> _event;
 	public:
 	EventCallerBlock(Block* previous, std::shared_ptr<Event> event);
-	Block* run(Actor &callingActor);
+	Block* run(Sequence &sequence);
     };
 }
 #endif

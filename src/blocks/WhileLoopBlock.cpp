@@ -5,15 +5,14 @@
 using namespace BCIEvent;
 
 
-Block* WhileLoopStartBlock::run(Actor& callingActor){
+Block* WhileLoopStartBlock::run(Sequence& sequence){
     if (!_endBlock){
 	throw std::runtime_error("Loop start block has no end block (call setEndBlock())");
     }
-    bool b = callingActor.getVariable<bool>("e");
     if (!_isLooping){ //begin loop
 	_isLooping = true;
     }
-    if (!_condition(callingActor)){ //loop is finished
+    if (!_condition(sequence)){ //loop is finished
 	_isLooping = false;
 	return _endBlock;
     }
@@ -24,7 +23,7 @@ void WhileLoopStartBlock::setEndBlock(WhileLoopEndBlock* endBlock){
     _endBlock = endBlock;
 }
 
-Block* WhileLoopEndBlock::run(Actor& callingActor){
+Block* WhileLoopEndBlock::run(Sequence& sequence){
     if (!_startBlock->_isLooping){ //loop has finished
 	return _next;
     }

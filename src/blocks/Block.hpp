@@ -1,6 +1,7 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
+#include "Sequence.hpp"
 
 
 namespace BCIEvent{
@@ -26,7 +27,7 @@ namespace BCIEvent{
 	     * Runs the block's main code and returns the next block to run on the next cycle of the event loop
 	     * May return the same block in the case of a timer which has not finished.
 	     */
-	    virtual Block* run(Actor& callingActor) = 0;
+	    virtual Block* run(Sequence& sequence) = 0;
 	    void setNext(Block* newNext) { _next = newNext; }
     };    
 }

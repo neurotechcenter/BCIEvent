@@ -3,11 +3,11 @@
 
 using namespace BCIEvent;
 
-NormalBlock::NormalBlock(Block* prev, std::function<void(Actor &callingActor)> action) : Block(prev){
+NormalBlock::NormalBlock(Block* prev, std::function<void(Sequence& sequence)> action) : Block(prev){
     _action = action;
 } 
 
-Block* NormalBlock::run(Actor &callingActor){
-    _action(callingActor);
+Block* NormalBlock::run(Sequence& sequence){
+    _action(sequence);
     return _next;
 }

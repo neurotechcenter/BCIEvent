@@ -9,10 +9,10 @@ namespace BCIEvent{
      * A block which does a single action
      */
     class NormalBlock : public Block {
-	std::function<void(Actor &callingActor)> _action; 
+	std::function<void(Sequence& sequence)> _action; 
 	public:
 	    Block* run(Actor &callingActor);
-	    NormalBlock(Block* prev, std::function<void(Actor &callingActor)> action);
+	    NormalBlock(Block* prev, std::function<void(Sequence& sequence)> action);
     };
 }
 

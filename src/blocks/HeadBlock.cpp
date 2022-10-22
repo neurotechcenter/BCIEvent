@@ -9,6 +9,6 @@ HeadBlock::~HeadBlock(){
 	_next = nullptr;
     }
 }
-Block* HeadBlock::run(Actor &callingActor){
+Block* HeadBlock::run(Sequence &sequence){
     return _next;
 }

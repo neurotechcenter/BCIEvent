@@ -4,8 +4,8 @@
 using namespace BCIEvent;
 
 
-Block* IfElseStartBlock::run(Actor& callingActor){
-    if (_condition(callingActor)){
+Block* IfElseStartBlock::run(Sequence& sSequence){
+    if (_condition(callingSequence)){
 	_elseBlock->_ifCondition = true;
 	return _next;
     } else {
@@ -18,7 +18,7 @@ IfElseElseBlock::IfElseElseBlock(IfElseEndBlock* endBlock){
     _endBlock = endBlock;
 }
 
-Block* IfElseElseBlock::run(Actor& callingActor){
+Block* IfElseElseBlock::run(Sequence& sequence){
     if (_ifCondition){ //'if' branch already ran, go to end of if else statement
 	return _endBlock;
     } else {
@@ -27,6 +27,6 @@ Block* IfElseElseBlock::run(Actor& callingActor){
 }
 
 
-Block* IfElseEndBlock::run(Actor& callingActor){
+Block* IfElseEndBlock::run(Sequence& sequence){
     return _next;
 }

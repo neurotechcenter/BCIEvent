@@ -15,7 +15,7 @@ namespace BCIEvent{
 	std::chrono::time_point<std::chrono::high_resolution_clock> _startTime;
 	std::chrono::duration<double> _time;
 	public:
-	Block* run(Actor &callingActor);
+	Block* run(Sequence& sequence);
 	TimedBlockStart(Block* previous, std::chrono::duration<double> time);
 	std::chrono::time_point<std::chrono::high_resolution_clock> startTime() {return _startTime;}
 	std::chrono::duration<double> time() {return _time;}
@@ -24,7 +24,7 @@ namespace BCIEvent{
     class TimedBlockEnd : public StatementCloseBlock{
 	TimedBlockStart* _start;
 	public:
-	Block* run(Actor &callingActor);
+	Block* run(Sequence& sequence);
 	TimedBlockEnd(TimedBlockStart* start);
     };
 }
