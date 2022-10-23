@@ -5,21 +5,21 @@
 
 namespace BCIEvent{
     /**
-     * A block that waits for an event.
+     * This holds a sequence and tallies how many times it has been triggered.
+	 * An EventListener is not created with a listening event, instead, it is registered to an event externally.
      */
     class Event;
     class EventListener{
-	HeadBlock* _next;
-	bool _isTriggered;
+		ProtoSequence _seq;
+		int _timesTriggered;
 	
 	public:
 
-	void trigger() {_isTriggered = true; }
-	bool isTriggered() { return _isTriggered; }
-	HeadBlock* getNext() { _isTriggered = false; return _next; } //called by actor when it recognizes the listener as triggered
-	void setNext(HeadBlock* next) {_next = next; }
-	EventListener(std::shared_ptr<Event> listeningEvent);
-	~EventListener();
+	EventListener(ProtoSequence sequence);
+	void trigger() { _timesTriggered++; }
+	int timesTriggered() { return _timesTriggered; }
+	HeadBlock* getSequence(); //called by actor when it recognizes the listener as triggered
+
     };
 }
 

@@ -36,7 +36,10 @@ SequenceBuilder& SequenceBuilder::addNormalBlock(std::function<void (Actor& call
    return *this;
 }
 
+SequenceBuilder& SequenceBuilder::addEventCallerBlock(std::string) {
+    _lastBlock = new EventCallerBlock()
 
+}
 
 SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time, std::function<void (Actor &callingActor)> action) {
     _lastBlock = new TimerBlock(_lastBlock, time, action);

@@ -15,6 +15,8 @@
 #include <QPixmap>
 
 namespace BCIEvent{
+	class ProtoSequence;
+	class Sequence;
     class Actor : public GUI::GraphObject{
 		friend class Sequence;
 		
@@ -23,7 +25,10 @@ namespace BCIEvent{
 	std::vector<std::unique_ptr<QPixmap>> _graphics;
 	int _currentGraphic = 0;
 
-	std::vector<std::unique_ptr<Sequence>> _sequences;
+	std::vector<EventListener> _listeners;
+	std::list<std::unique_ptr<Sequence>> _sequences; //Currently running sequences
+	std::map<String, ProtoSequence> _procedures; //procedures defined for this actor
+	std::map<String, Event> _events;
 
 
 	const GenericSignal* _currentSignal;
@@ -42,7 +47,12 @@ namespace BCIEvent{
 	~Actor();
 	Actor& addVariable(std::unique_ptr<Variable> var);
 	Actor& addGraphic(std::string filename, bool transparent);
-	Actor& addEventListener(std::unique_ptr<EventListener> listener);
+	Actor& addEventListener(std::string, EventListener);
+	Actor& addProcedure(std::string name, ProtoSequence sequence);
+	Actor& addEvent(std::string name);
+
+	Event getEvent(std::string);
+	void callEvent(std::string);
 
 
 	int randInt(int lowerBound, int upperBound) { return _app->randInt(lowerBound, upperBound); }

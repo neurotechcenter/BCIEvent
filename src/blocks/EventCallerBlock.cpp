@@ -8,6 +8,6 @@ EventCallerBlock::EventCallerBlock(Block* previous, std::shared_ptr<Event> event
 }
 
 Block* EventCallerBlock::run(Sequence &sequence){
-    _event->trigger();
+    sequence.callEvent(event);
     return _next;
 }

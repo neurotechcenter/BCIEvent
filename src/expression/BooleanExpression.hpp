@@ -7,13 +7,13 @@
 
 namespace BCIEvent{
     /**
-     * Concepts for boolean expressions.
+     * Concepts for boolean expressions within blocks.
      * These can be boolean values, functions which return a boolean,
      * or variable names (in which case they will not be type checked at compile time)
      */
     template<typename T> //returns a boolean
     concept ReturnsBoolean = std::convertible_to<std::invoke_result<T>::type, bool> 
-    || std::convertible_to<std::invoke_result<T,const Actor&>::type, bool>; 
+    || std::convertible_to<std::invoke_result<T,const Sequence&>::type, bool>; 
     template <typename T>
     concept BooleanExpression = ReturnsBoolean<T> || std::convertible_to<T, bool> || std::convertible_to<T, std::string>;
 

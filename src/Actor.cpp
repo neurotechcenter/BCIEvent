@@ -18,12 +18,22 @@ using namespace BCIEvent;
 
 	//Set the signal for this cycle.
 	_currentSignal = &signal;
-	
-	//Run and update blocks
 
-	for(auto sequence : _sequences){
-        sequence->update();
-	}
+    //Add sequences of triggered events;
+    for (EventListener& listener : _listeners) {
+        if (listener.timesTriggered > 0) {
+            _sequences.push_back(listener.getSequence());
+        }
+    }
+
+	//Run and update blocks
+    for (int i = 0; i < _sequences.size()){
+        if (_sequences.front()->update()) { //If sequence is still running, append it to the back of the list
+            _sequences.push_back(std::move(_sequences.front))
+        }
+        _sequences.pop_front() //remove sequence from the front of the list
+           //This will either remove and delete a completed sequence, or remove the empty pointer to a still-running sequence that has been moved to the back of the list
+        //After these operations, the list of sequences will be the same except without any completed sequences, which will have been deleted.
 	}
 	_currentSignal = nullptr; //the signal should only ever be accessed during the update stage.
 	Invalidate();
@@ -48,7 +58,8 @@ Actor& Actor::addVariable(std::unique_ptr<Variable> var){
     return *this;
 }
 
-Actor& Actor::addEventListener(std::unique_ptr<EventListener> listener){
+Actor& Actor::addEventListener(String name, EventListener listener){
+    getEvent(name).addListener(listener);
     _eventListeners.push_back(std::move(listener));
     return *this;
 }
@@ -74,8 +85,9 @@ int Actor::randInt(int lower, int upper) {
 	return _app->randInt(lower, upper);
 }
 
-
-
+void Actor::addSequence(std::unique_ptr<Sequence> seq) {
+    _sequences.push_back(seq.finalizeSeq());
+}
 
 
 double Actor::getSignal(size_t channel, size_t element){

@@ -22,7 +22,6 @@
 namespace BCIEvent {
     class SequenceBuilder {
 	BCIEventApplication* _app;
-	std::unique_ptr<EventListener> _listener;
 	Block* _lastBlock;
 	std::stack<StatementCloseBlock*> _controlCloseBlocks;	
 	
@@ -30,7 +29,7 @@ namespace BCIEvent {
 	SequenceBuilder(std::shared_ptr<Event> listeningEvent, BCIEventApplication *app);
 	SequenceBuilder(BCIEventApplication* app) : SequenceBuilder(StartEvent::getInstance(), app) {};
 
-	SequenceBuilder& addNormalBlock(std::function<void(Actor &)> action);
+	SequenceBuilder& addNormalBlock(std::function<void(Sequence &)> action);
 	template <BooleanExpression B>
 	SequenceBuilder& addIfBlock(B condition){
 	    auto endBlk = new IfEndBlock();
@@ -53,7 +52,7 @@ namespace BCIEvent {
 	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time, std::function<void(Actor &)> action);
 	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time);
 	SequenceBuilder& addTimedBlock(std::chrono::duration<double> time);
-	SequenceBuilder& addEventCallerBlock(std::shared_ptr<Event> calledEvent);
+	SequenceBuilder& addEventCallerBlock(std::string);
 	SequenceBuilder& addWaitForProcessBlock();
 
 	template<IntegerExpression I>

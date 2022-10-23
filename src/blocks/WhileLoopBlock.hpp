@@ -22,13 +22,13 @@ namespace BCIEvent{
 	public:
 	template <BooleanExpression T>
 	WhileLoopStartBlock(Block* previous, T condition) : Block(previous){
-	    _condition = getExpressionFn<int>(condition);
+	    _condition = getExpressionFn<bool>(condition);
 	}
 	Block* run(Sequence& sequence);
 	void setEndBlock(WhileLoopEndBlock* endBlock); //sets the end block. This must be called.
 
 	private:
-	std::function<bool (const Actor&)> _condition;
+	std::function<bool (const Sequence&)> _condition;
 
     };
     

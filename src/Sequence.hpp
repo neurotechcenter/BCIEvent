@@ -1,25 +1,41 @@
 #include "Block.hpp"
 #include <concepts>
+#include <tuple>
 
 namespace BCIEvent {
 	/**
-	* An object representing a sequence of blocks running.
+	* An object representing a sequence of blocks.
 	* Also acts as an interface for those blocks to access the environment.
 	* Holds locally-scoped variables
-	*
-	*
+	* Can be cloned, which will generate a copy of the sequence, with newly-initialized blocks.
 	*/
 	class Sequence {
 		bool running = false;
 		Actor* _parentActor;
+		HeadBlock* _head; //only used for deleting the underlying sequence of blocks when this is deleted
 		Block* _currentBlock = nullptr;
-		std::unique_ptr<EventListener> _listener; 	
-		std::map<std::string, std::unique_ptr<Variable>> _variables; 
-	
-	public:
-		Sequence(Actor*, std::unique_ptr<EventListener>);
-		void update();
-		
+		std::map<std::string, std::unique_ptr<Variable>> _variables;
+		Sequence _subProcedure; //subprocedure running within this sequence
+
+		/*
+		* Copying a sequence is not allowed, because I have no idea how copying of the internal sequence of blocks would work,
+		* and may well could cause the entire program to explode
+		* Creating multiple identical sequences is done using ProtoSequence.
+		*/
+		Sequence(const Sequence&) = delete;
+		Sequence& operator=(const Sequence&) = delete;
+
+	public: 
+		Sequence(HeadBlock* head);
+		~Sequence();
+
+		/*
+		* Runs one block through this sequence
+		* Returns false when sequence has finished
+		*/
+		bool update(Actor& callingActor);
+
+
 
 
 	template<typename ReqType>
@@ -65,5 +81,7 @@ namespace BCIEvent {
 	addVariable(bool);
 	addVariable(int);
 	addVariable(double);
-	};
+
+
+	}
 }
