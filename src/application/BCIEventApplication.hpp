@@ -9,12 +9,12 @@
 #include "SignalProperties.h"
 #include "States.hpp"
 #include "TextField.h"
-#include "WaitForProcessBlock.hpp"
 #include <vector>
 #include <thread>
 
 namespace BCIEvent{
 	class WaitForProcessBlock;
+	class ProcessEvent;
 
     class BCIEventApplication : public ApplicationBase{
 	public:
@@ -48,17 +48,15 @@ namespace BCIEvent{
 		_globalVars->setVariable(name, value);
 	}
 	
-	
 	const GenericSignal* currentSignal;
 
-
-	void addProcessBlock(std::shared_ptr<WaitForProcessBlock>);
 
 	private:
 	ApplicationWindow& _display;
 	std::unique_ptr<TextField> _messageField;
 	std::thread _appLoopThread;
 	bool _appLoop = true;
+
 
 	void applicationLoop();
 	void update(const GenericSignal&);
@@ -79,7 +77,7 @@ namespace BCIEvent{
 	std::vector<std::unique_ptr<Actor>> _actors;
 	std::shared_ptr<GlobalVariables> _globalVars;
 	std::shared_ptr<BCIEvent::States> _states;
-	std::vector<std::shared_ptr<WaitForProcessBlock>> _processBlocks;
+	std::shared_ptr<ProcessEvent> _processEvent;
 
 	GUI::GraphDisplay& getDisplay() { return _display; }
 

@@ -1,17 +1,17 @@
-#include "BCIEventApplication.hpp"
-#include "BCIState.hpp"
-#include "BoolVariable.hpp"
-#include "SequenceBuilder.hpp"
-#include <chrono>
+#include "AppInitInclude.hpp"
+
 
 void BCIEvent::BCIEventApplication::InitBCIEvent(){
     addState("aState", BCIState::u32);
-    Actor* actor1 = &makeActor()
-        ->addVariable(std::move(std::make_unique<NumberVariable>("var2")))
-        .addEventListener(SequenceBuilder(this)
+    addActor(std::unique_ptr<Actor>(makeActor()
+        .addVariable(std::make_unique<NumberVariable>("var2"))
+        .addEventListener((std::make_unique<EventListener>(
+            ProtoSequence()
             .addWaitForProcessBlock()
-            .addNormalBlock([](Actor& callingActor) {callingActor.randomCostume()})
+            .addLoop
+            .addNormalBlock([](Sequence& callingSeq) {callingSeq.})
             .addTimerBlock(std::chrono::seconds(0.2))
-            .getSequence());
-    addActor(std::unique_ptr<Actor>(actor1));	
+            )
+        ))
+    );
 }

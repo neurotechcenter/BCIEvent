@@ -14,21 +14,18 @@
 using namespace BCIEvent;
 
 
-SequenceBuilder::SequenceBuilder(std::shared_ptr<Event> listeningEvent, BCIEventApplication* app){
-    _app = app;
-   _listener = std::make_unique<EventListener> (listeningEvent); 
-   HeadBlock* head  = new HeadBlock();
-   _lastBlock = head;
-   _listener->setNext(head);
+SequenceBuilder::SequenceBuilder(){
+   _head  = new HeadBlock();
+   _lastBlock = _head;
 }
 
-std::unique_ptr<EventListener> SequenceBuilder::getSequence(){
+HeadBlock* SequenceBuilder::getSequenceStart(){
     _lastBlock = new EndBlock(_lastBlock);
 
     if (_controlCloseBlocks.size() != 0){
-	throw std::out_of_range("Statements were left unclosed. There are " + std::to_string(_controlCloseBlocks.size()) + " statements left to close.");
+	    throw std::runtime_error("Statements were left unclosed. There are " + std::to_string(_controlCloseBlocks.size()) + " statements left to close.");
     }
-    return std::move(_listener);
+    return _head;
 }
 
 SequenceBuilder& SequenceBuilder::addNormalBlock(std::function<void (Actor& callingActor)> action){
@@ -51,9 +48,7 @@ SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> ti
 }
 
 SequenceBuilder& SequenceBuilder::addWaitForProcessBlock() {
-    auto b = std::make_shared<WaitForProcessBlock>(_lastBlock);
-    _app->addProcessBlock(b);
-    _lastBlock = &*b;
+    _lastBlock = new WaitForProcessBlock();
     return *this;
 }
 

@@ -1,15 +1,45 @@
 #include "ProtoSequence.hpp"
 using namespace BCIEvent;
 
+ProtoSequence& ProtoSequence::addNormal(std::function<void(Sequence&)> action) {
+	_sequenceProto.emplace_back(ProtoSequence::Normal, action, nullptr, nullptr, nullptr, nullptr);
+	return *this;
+}
 
+ProtoSequence& ProtoSequence::addTimer(std::chrono::duration<double> time, std::function<void(Sequence&)> action) {
+	_sequenceProto.emplace_back(ProtoSequence::Timer, action, nullptr, nullptr, nullptr, time);
+	return *this;
+}
+
+ProtoSequence& ProtoSequence::addTimer(std::chrono::duration<double> time) {
+	_sequenceProto.emplace_back(ProtoSequence::Timer, nullptr, nullptr, nullptr, nullptr, time);
+	return *this;
+}
+
+ProtoSequence& ProtoSequence::addTimed(std::chrono::duration<double> time) {
+	_sequenceProto.emplace_back(ProtoSequence::Timer, nullptr, nullptr, nullptr, nullptr, time);
+	return *this;
+}
+
+ProtoSequence& ProtoSequence::addEventCaller(std::string name) {
+	_sequenceProto.emplace_back(ProtoSequence::CallEvent, nullptr, name, nullptr, nullptr, nullptr);
+	return *this;
+}
+
+ProtoSequence& ProtoSequence::addWaitForProcess() {
+	_sequenceProto.emplace_back(ProtoSequence::WaitForProcess, nullptr, nullptr, nullptr, nullptr, nullptr);
+	return *this;
+}
+
+ProtoSequence& ProtoSequence::closeStatement() {
+	_sequenceProto.emplace_back(ProtoSequence::CloseStatement, nullptr, nullptr, nullptr, nullptr, nullptr);
+	return *this;
+}
 
 std::unique_ptr<Sequence> ProtoSequence::genSequence() {
 	auto builder = new SequenceBuilder()
 	for (Protoblock const& b : _sequenceProto) {
 		switch std::get<0>(b) {
-		case ProtoBlockType::End:
-			builder.addEndBlock();
-			break;
 		case ProtoBlockType::CloseStatement:
 			builder.closeStatement();
 			break;
@@ -46,6 +76,6 @@ std::unique_ptr<Sequence> ProtoSequence::genSequence() {
 			break;
 		}
 	}
-	return std::make_unique<Sequence>(builder.getSequence());
+	return std::make_unique<Sequence>(builder.getSequenceStart());
 }
 

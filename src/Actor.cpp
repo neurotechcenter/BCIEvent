@@ -47,6 +47,7 @@ Actor::Actor(BCIEventApplication* app) :
     SetAlignment(GUI::Alignment::Center);
     SetScalingMode(GUI::ScalingMode::AdjustBoth);
     Show();
+    _events.emplace("clicked", Event());
 }
 
 Actor::~Actor(){

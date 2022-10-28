@@ -25,7 +25,7 @@ namespace BCIEvent{
 	std::vector<std::unique_ptr<QPixmap>> _graphics;
 	int _currentGraphic = 0;
 
-	std::vector<EventListener> _listeners;
+	std::vector<std::unique_ptr<EventListener>> _listeners;
 	std::list<std::unique_ptr<Sequence>> _sequences; //Currently running sequences
 	std::map<String, ProtoSequence> _procedures; //procedures defined for this actor
 	std::map<String, Event> _events;
@@ -47,7 +47,8 @@ namespace BCIEvent{
 	~Actor();
 	Actor& addVariable(std::unique_ptr<Variable> var);
 	Actor& addGraphic(std::string filename, bool transparent);
-	Actor& addEventListener(std::string, EventListener);
+	Actor& addEventListener(std::unique_ptr<EventListener>);
+	Actor& addEventListener(std::string, std::unique_ptr<EventListener>);
 	Actor& addProcedure(std::string name, ProtoSequence sequence);
 	Actor& addEvent(std::string name);
 
@@ -56,13 +57,6 @@ namespace BCIEvent{
 
 
 	int randInt(int lowerBound, int upperBound) { return _app->randInt(lowerBound, upperBound); }
-
-	/**
-	 * The event which is triggered whenever this actor is clicked.
-	 * Its possible to trigger the event from outside of this actor.
-	 * Don't do that.
-	 */
-	std::shared_ptr<Event> clickEvent();
 
 
 	/**

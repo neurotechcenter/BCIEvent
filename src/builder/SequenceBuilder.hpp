@@ -21,13 +21,12 @@
 
 namespace BCIEvent {
     class SequenceBuilder {
-	BCIEventApplication* _app;
+	HeadBlock* _head;
 	Block* _lastBlock;
 	std::stack<StatementCloseBlock*> _controlCloseBlocks;	
 	
 	public:
-	SequenceBuilder(std::shared_ptr<Event> listeningEvent, BCIEventApplication *app);
-	SequenceBuilder(BCIEventApplication* app) : SequenceBuilder(StartEvent::getInstance(), app) {};
+	SequenceBuilder();
 
 	SequenceBuilder& addNormalBlock(std::function<void(Sequence &)> action);
 	template <BooleanExpression B>
@@ -87,7 +86,7 @@ namespace BCIEvent {
 	 */
 	SequenceBuilder& closeStatement();
 
-	std::unique_ptr<EventListener> getSequence();
+	HeadBlock* getSequenceStart();
 
     };
 }

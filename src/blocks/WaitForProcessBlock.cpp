@@ -2,7 +2,9 @@
 
 using namespace BCIEvent;
 
-WaitForProcessBlock::WaitForProcessBlock(Block* previous) : Block(previous) {}
+WaitForProcessBlock::WaitForProcessBlock(Block* previous) : Block(previous) {
+	ProcessEvent::getInstance()->addWaitForProcessBlock(this);
+}
 
 void WaitForProcessBlock::process() {
 	_waiting = false;

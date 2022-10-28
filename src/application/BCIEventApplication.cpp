@@ -5,7 +5,7 @@
 #include "Shapes.h"
 #include "StartEvent.hpp"
 #include "WaitForProcessBlock.hpp"
-
+#include "ProcessEvent.hpp"
 
 using namespace BCIEvent;
 
@@ -23,6 +23,7 @@ BCIEventApplication::BCIEventApplication()
     Parameter("ShowAppLog") = 1;
     _states = std::make_unique<BCIEvent::States>(this);
     _globalVars = std::make_unique<GlobalVariables>();
+	_processEvent = ProcessEvent
 	GUI::Rect rect = {0.5f, 0.4f, 0.5f, 0.6f};
     _messageField = std::make_unique<TextField>(_display);
     _messageField->SetTextHeight(0.8f)
@@ -96,9 +97,7 @@ void BCIEventApplication::Initialize(const SignalProperties& input, const Signal
 
 void BCIEventApplication::Process(const GenericSignal& input, GenericSignal& output){
     currentSignal = &input;
-	for (auto pBlock : _processBlocks) {
-		pBlock->process();
-	}
+	_processEvent->trigger();
     output = input;
 }
 
