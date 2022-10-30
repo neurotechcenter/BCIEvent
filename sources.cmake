@@ -1,6 +1,6 @@
 set(SOURCES_EVENT
   	src/application/BCIEventApplication.cpp
-	src/Actor.cpp
+	src/actor/Actor.cpp
 	src/application/AppInitPartial.cpp
 	src/blocks/EndBlock.cpp
 	src/blocks/EventCallerBlock.cpp
@@ -13,7 +13,9 @@ set(SOURCES_EVENT
 	src/blocks/TimerBlock.cpp
 	src/blocks/WhileLoopBlock.cpp
 	src/blocks/WaitForProcessBlock.cpp
-	src/builder/SequenceBuilder.cpp
+	src/sequence/SequenceBuilder.cpp
+	src/sequence/Sequence.cpp
+	src/sequence/ProtoSequence.cpp
 	src/state/BCIState.cpp
 	src/state/States.cpp
 	src/variable/GlobalVariables.cpp
@@ -22,9 +24,10 @@ set(SOURCES_EVENT
     )
 set(INCLUDE_EVENT 
     src
+	src/actor
     src/blocks
     src/event
-    src/builder
+    src/sequence
     src/variable
     src/state
     src/expression
