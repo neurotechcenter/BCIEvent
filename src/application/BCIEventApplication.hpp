@@ -1,7 +1,6 @@
 #ifndef BCIEVENT_APPLICATION_H
 #define BCIEVENT_APPLICATION_H
 #include "ApplicationBase.h"
-#include "Actor.hpp"
 #include "ApplicationWindow.h"
 #include "GenericSignal.h"
 #include "GlobalVariables.hpp"
@@ -15,6 +14,7 @@
 namespace BCIEvent{
 	class WaitForProcessBlock;
 	class ProcessEvent;
+	class Actor;
 
     class BCIEventApplication : public ApplicationBase{
 	public:

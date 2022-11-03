@@ -1,27 +1,27 @@
 #include "ProtoSequence.hpp"
 using namespace BCIEvent;
 
-ProtoSequence& ProtoSequence::addNormal(std::function<void(Sequence&)> action) {
+ProtoSequence& ProtoSequence::addNormal(std::function<void(Sequence&)>* action) {
 	_sequenceProto.emplace_back(ProtoSequence::Normal, action, nullptr, nullptr, nullptr, nullptr);
 	return *this;
 }
 
-ProtoSequence& ProtoSequence::addTimer(std::chrono::duration<double> time, std::function<void(Sequence&)> action) {
+ProtoSequence& ProtoSequence::addTimer(double timeSeconds, std::function<void(Sequence&)>* action) {
 	_sequenceProto.emplace_back(ProtoSequence::Timer, action, nullptr, nullptr, nullptr, time);
 	return *this;
 }
 
-ProtoSequence& ProtoSequence::addTimer(std::chrono::duration<double> time) {
+ProtoSequence& ProtoSequence::addTimer(double timeSeconds) {
 	_sequenceProto.emplace_back(ProtoSequence::Timer, nullptr, nullptr, nullptr, nullptr, time);
 	return *this;
 }
 
-ProtoSequence& ProtoSequence::addTimed(std::chrono::duration<double> time) {
+ProtoSequence& ProtoSequence::addTimed(double timeSeconds) {
 	_sequenceProto.emplace_back(ProtoSequence::Timer, nullptr, nullptr, nullptr, nullptr, time);
 	return *this;
 }
 
-ProtoSequence& ProtoSequence::addEventCaller(std::string name) {
+ProtoSequence& ProtoSequence::addEventCaller(std::string* name) {
 	_sequenceProto.emplace_back(ProtoSequence::CallEvent, nullptr, name, nullptr, nullptr, nullptr);
 	return *this;
 }
@@ -39,7 +39,7 @@ ProtoSequence& ProtoSequence::closeStatement() {
 std::unique_ptr<Sequence> ProtoSequence::genSequence() {
 	auto builder = new SequenceBuilder()
 	for (Protoblock const& b : _sequenceProto) {
-		switch std::get<0>(b) {
+		switch *b.type {
 		case ProtoBlockType::CloseStatement:
 			builder.closeStatement();
 			break;
@@ -47,32 +47,32 @@ std::unique_ptr<Sequence> ProtoSequence::genSequence() {
 			builder.addWaitForProcessBlock();
 			break;
 		case ProtoBlockType::Normal:
-			builder.addNormalBlock(std::get<1>(b));
+			builder.addNormalBlock(*b.action);
 			break;
 		case ProtoBlockType::CallEvent:
-			builder.addEventCallerBlock(std::get<2>(b)); //TODO: redo how events work because not all sequences need events
+			builder.addEventCallerBlock(*b.eventName); //TODO: redo how events work because not all sequences need events
 			break;
 		case ProtoBlockType::If:
-			builder.addIfBlock(std::get<3>(b));
+			builder.addIfBlock(*b.condition);
 			break;
 		case ProtoBlockType::IfElse:
-			builder.addIfElseBlock(std::get<3>(b));
+			builder.addIfElseBlock(*b.condition);
 			break;
 		case ProtoBlockType::While:
-			builder.addWhileLoopBlock(std::get<3>(b));
+			builder.addWhileLoopBlock(*b.condition);
 			break;
 		case ProtoBlockType::Loop:
-			builder.addLoopBlock(std::get<4>(b));
+			builder.addLoopBlock(*b.number);
 			break;
 		case ProtoBlockType::Timer:
-			if (std::get<1>(b)) {
-				builder.addTimerBlock(std::get<5>(b), std::get<1>(b));
+			if (b.action) {
+				builder.addTimerBlock(*b.time, *b.action);
 				break;
 			}
-			builder.addTimerBlock(std::get<1>(b));
+			builder.addTimerBlock(*b.time);
 			break;
 		case ProtoBlockType::Timed:
-			builder.addTimedBlock(std::get<5>(b));
+			builder.addTimedBlock(*b.time);
 			break;
 		}
 	}

@@ -1,17 +1,18 @@
 #ifndef EVENTLISTENER_H
 #define EVENTLISTENER_H
-#include "HeadBlock.hpp"
 #include <memory>
+#include "ProtoSequence.hpp"
 
 namespace BCIEvent{
+    class Event;
+	class HeadBlock;
     /**
      * This holds a sequence and tallies how many times it has been triggered.
 	 * An EventListener is not created with a listening event, instead, it is registered to an event externally.
      */
-    class Event;
     class EventListener{
-		ProtoSequence _seq;
-		int _timesTriggered;
+	ProtoSequence _seq;
+	int _timesTriggered;
 	
 	public:
 

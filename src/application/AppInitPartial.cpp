@@ -7,10 +7,12 @@ void BCIEvent::BCIEventApplication::InitBCIEvent(){
         .addVariable(std::make_unique<NumberVariable>("var2"))
         .addEventListener((std::make_unique<EventListener>(
             ProtoSequence()
-            .addWaitForProcessBlock()
-            .addLoop
-            .addNormalBlock([](Sequence& callingSeq) {callingSeq.})
+            .addLoop()
+            .addWaitForProcess()
+            .addNormalBlock([](Sequence& callingSeq) {callingSeq.actorMoveTo(100, 200); })
             .addTimerBlock(std::chrono::seconds(0.2))
+            .addNormalBlock([](Sequence& callingSeq{ callingSeq.actorMoveTo(200, 200); }))
+            .closeStatement();
             )
         ))
     );

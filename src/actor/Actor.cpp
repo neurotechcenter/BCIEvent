@@ -22,13 +22,15 @@ using namespace BCIEvent;
     //Add sequences of triggered events;
     for (EventListener& listener : _listeners) {
         if (listener.timesTriggered > 0) {
-            _sequences.push_back(listener.getSequence());
+            auto seq = std::make_unique<Sequence>(listener.getSequence());
+            seq->setActor(this);
+            _sequences.push_back(seq);
         }
     }
 
 	//Run and update blocks
     for (int i = 0; i < _sequences.size()){
-        if (_sequences.front()->update()) { //If sequence is still running, append it to the back of the list
+        if (_sequences.front()->update(this)) { //If sequence is still running, append it to the back of the list
             _sequences.push_back(std::move(_sequences.front))
         }
         _sequences.pop_front() //remove sequence from the front of the list

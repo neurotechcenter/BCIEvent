@@ -15,13 +15,14 @@ Sequence::~Sequence() {
 	delete _head; //deleting the head of a sequence of blocks will sequentially delete all other blocks in the sequence.
 }
 
-Sequence::update() {
+Sequence::update(Actor* callingActor) {
+	_actor = callingActor;
 	if (_subProcedure) { //if there is a subprocedure currently running
-		if (_subProcedure.update()) {
-			return true; //block from subprocedure has 
+		if (_subProcedure->update()) {
+			return true; 
 		}
 		else {
-			_subProcedure = nullptr; //subprocedure has terminated, continue on to main procedure 
+			_subProcedure.reset(); //subprocedure has terminated, continue on to main procedure 
 		}
 	}
 	_currentBlock = _currentBlock->run();

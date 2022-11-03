@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "BCIEventApplication.hpp"
 #include "EventListener.hpp"
 #include "GUI.h"
 #include "GenericSignal.h"
@@ -12,6 +13,7 @@
 #include "States.hpp"
 #include <list>
 #include "GraphObject.h"
+#include "Variable.hpp"
 #include <QPixmap>
 
 namespace BCIEvent{

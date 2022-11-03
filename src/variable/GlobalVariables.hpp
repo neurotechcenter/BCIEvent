@@ -1,7 +1,7 @@
 #ifndef GLOBALVARIABLES_H
 #define GLOBALVARIABLES_H
 
-#include "Variable.hpp"
+#include "BCIEVariable.hpp"
 #include <string>
 #include <vector>
 #include <memory>
@@ -9,9 +9,9 @@
 
 namespace BCIEvent{
     class GlobalVariables{
-	std::map<std::string, std::unique_ptr<Variable>> _vars;
+	std::map<std::string, std::unique_ptr<BCIEVariable>> _vars;
 	public:
-	void addVariable(std::unique_ptr<Variable> var);
+	void addVariable(std::unique_ptr<BCIEVariable> var);
 
 	template<typename ReqType>
 	ReqType getVariable(std::string name) const{
@@ -34,7 +34,7 @@ namespace BCIEvent{
 
 	template <typename SetType>
 	void setVariable(std::string name, SetType value){
-	    static_assert(std::is_same<SetType, bool>::value || std::is_same<SetType, Variable>::value || std::is_floating_point<SetType>::value || std::is_integral<SetType>::value,
+	    static_assert(std::is_same<SetType, bool>::value || std::is_same<SetType, BCIEVariable>::value || std::is_floating_point<SetType>::value || std::is_integral<SetType>::value,
 		    "Template argument for setVariable must be boolean, integral, or floating point");
 	    try {
 		*_vars.at(name) = value;

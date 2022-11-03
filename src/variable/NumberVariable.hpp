@@ -1,11 +1,11 @@
 #ifndef NUMBERVARIABLE_H
 #define NUMBERVARIABLE_H
-#include "Variable.hpp"
+#include "BCIEVariable.hpp"
 #include <cmath>
 #include <stdexcept>
 
 namespace BCIEvent{
-    class NumberVariable : public Variable{
+    class NumberVariable : public BCIEVariable{
 	double _value = 0.0;
 	std::string _name;
 
@@ -25,13 +25,13 @@ namespace BCIEvent{
 	}
 	double getAsDouble() { return _value; }
 	
-	bool operator==(const Variable &other) { return _value == other.getAsDouble(); }
+	bool operator==(const BCIEVariable &other) { return _value == other.getAsDouble(); }
 	bool operator==(const bool other) { throw std::invalid_argument("Cannot compare bool and number"); }
 	bool operator==(const int other) { return _value == (float) other; }
 	bool operator==(const double other) { return _value == other; }
 	
 
-	void operator=(const Variable &other) { _value = other.getAsDouble(); }
+	void operator=(const BCIEVariable &other) { _value = other.getAsDouble(); }
 	void operator=(const bool other) { throw std::invalid_argument("Cannot assign bool to number"); }
 	void operator=(const int other) { _value = other; }
 	void operator=(const double other) { _value = other; }
