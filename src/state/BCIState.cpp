@@ -28,7 +28,7 @@ void BCIState::set(bool value){
    }
 }
 
-void BCIState::set(char value){
+void BCIState::set(int8_t value){
     if (_type == Boolean){
 	throw std::invalid_argument("Can't set a Boolean state to a 8-bit number");
     } else if (_type == u8 || _type == u32) {
@@ -40,7 +40,7 @@ void BCIState::set(char value){
 }
 
 
-void BCIState::set(int value){
+void BCIState::set(int32_t value){
     if (_type == Boolean || _type == u8 || _type == i8){
 	throw std::invalid_argument("Can't set a boolean or 8-bit state to a 64-bit number");
     } else if (_type == u32) {

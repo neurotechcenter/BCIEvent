@@ -13,7 +13,7 @@
 #include "States.hpp"
 #include <list>
 #include "GraphObject.h"
-#include "Variable.hpp"
+#include "BCIEVariable.hpp"
 #include <QPixmap>
 
 namespace BCIEvent{

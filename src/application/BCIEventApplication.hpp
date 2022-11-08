@@ -37,7 +37,7 @@ namespace BCIEvent{
 
 	int randInt(int lowerBound, int upperBound);
 
-	void addVar(std::unique_ptr<Variable> var);
+	void addVar(std::unique_ptr<BCIEVariable> var);
 
 	template<typename ReqType>
 	ReqType getVar(std::string name) const {

@@ -18,9 +18,9 @@ namespace BCIEvent{
         StateType _type;
     public:
         BCIState(BCIEventApplication* app, StateType type, std::string name);
-        void set(uint32_t);	
+        void set(int32_t);	
         void set(bool);
-	    void set(uint8_t);
+	    void set(int8_t);
 	int get() const;
 	StateType type() const { return _type; };
 	std::string name() const { return _name; };

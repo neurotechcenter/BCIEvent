@@ -23,12 +23,12 @@ namespace BCIEvent{
 		virtual int getAsInt() const = 0;
 		virtual double getAsDouble() const = 0;
 	
-		virtual bool operator==(const Variable& other) = 0;
+		virtual bool operator==(const BCIEVariable& other) = 0;
 		virtual bool operator==(const bool other) = 0;
 		virtual bool operator==(const int other) = 0;
 		virtual bool operator==(const double other) = 0;
 
-		virtual void operator=(const Variable& other) = 0;
+		virtual void operator=(const BCIEVariable& other) = 0;
 		virtual void operator=(const bool other) = 0;
 		virtual void operator=(const int other) = 0;
 		virtual void operator=(const double other) = 0;
