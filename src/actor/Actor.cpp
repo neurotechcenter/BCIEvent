@@ -4,8 +4,9 @@
 #include "GlobalVariables.hpp"
 #include "GraphDisplay.h"
 #include "GraphObject.h"
-#include "Variable.hpp"
 #include "NumberVariable.hpp"
+#include "EventListener.hpp"
+#include "StartEvent.hpp"
 #include <stdexcept>
 #include <type_traits>
 #include <QBitmap>
@@ -20,20 +21,20 @@ using namespace BCIEvent;
 	_currentSignal = &signal;
 
     //Add sequences of triggered events;
-    for (EventListener& listener : _listeners) {
-        if (listener.timesTriggered > 0) {
-            auto seq = std::make_unique<Sequence>(listener.getSequence());
+    for (auto& listener : _listeners) {
+        if (listener->timesTriggered() > 0) {
+            auto seq = listener->getSequence();
             seq->setActor(this);
             _sequences.push_back(seq);
         }
     }
 
 	//Run and update blocks
-    for (int i = 0; i < _sequences.size()){
-        if (_sequences.front()->update(this)) { //If sequence is still running, append it to the back of the list
-            _sequences.push_back(std::move(_sequences.front))
+    for (int i = 0; i < _sequences.size(); i++) {
+        if (_sequences.front()->update()) { //If sequence is still running, append it to the back of the list
+            _sequences.push_back(std::move(_sequences.front()));
         }
-        _sequences.pop_front() //remove sequence from the front of the list
+        _sequences.pop_front(); //remove sequence from the front of the list
            //This will either remove and delete a completed sequence, or remove the empty pointer to a still-running sequence that has been moved to the back of the list
         //After these operations, the list of sequences will be the same except without any completed sequences, which will have been deleted.
 	}
@@ -56,14 +57,22 @@ Actor::~Actor(){
     DestructorEntered();
 }
 
-Actor& Actor::addVariable(std::unique_ptr<Variable> var){
-    _variables.insert(std::pair<std::string, std::unique_ptr<Variable>>(var->name(), std::move(var)));
+Actor& Actor::addVariable(std::unique_ptr<BCIEVariable> var){
+    _variables.insert(std::pair<std::string, std::unique_ptr<BCIEVariable>>(var->name(), std::move(var)));
     return *this;
 }
 
-Actor& Actor::addEventListener(String name, EventListener listener){
-    getEvent(name).addListener(listener);
-    _eventListeners.push_back(std::move(listener));
+Actor& Actor::addEventListener(std::string name, std::unique_ptr<EventListener> listener){
+    _events.at(name).addListener(listener.get()); //free pointer is given to event listener,
+//TODO: will have to change getEvent to also get global events, will also have to solve problem of what happens if 
+//an actor is deleted with its event listeners still attached to events as the events to avoid use of listeners after they are deleted
+    _listeners.push_back(std::move(listener)); //ownership given to actor
+    return *this;
+}
+
+Actor& Actor::addEventListener(std::unique_ptr<EventListener> listener) {
+    StartEvent::getInstance()->addListener(listener.get());
+    _listeners.push_back(std::move(listener));
     return *this;
 }
 
@@ -88,10 +97,6 @@ int Actor::randInt(int lower, int upper) {
 	return _app->randInt(lower, upper);
 }
 
-void Actor::addSequence(std::unique_ptr<Sequence> seq) {
-    _sequences.push_back(seq.finalizeSeq());
-}
-
 
 double Actor::getSignal(size_t channel, size_t element){
 	    if (_currentSignal){
@@ -106,14 +111,9 @@ double Actor::getSignal(size_t channel, size_t element){
 	    return 0;
 }
 
-std::shared_ptr<Event> Actor::clickEvent(){
-    auto ret = _clickEvent;
-    return ret;
-}
-
 bool Actor::OnClick(const GUI::Point& clickPoint){
     /**
-     * Returns true whenever the bounding box ic clicked.
+     * Returns true whenever the bounding box is clicked.
      * Will change this when graphics are implemented.
      */
     _clickEvent->trigger();

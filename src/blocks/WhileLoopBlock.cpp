@@ -5,6 +5,10 @@
 using namespace BCIEvent;
 
 
+WhileLoopStartBlock::WhileLoopStartBlock(Block* previous, std::function<bool(const Sequence&)> condition) : Block(previous) {
+	    _condition = condition;
+}
+
 Block* WhileLoopStartBlock::run(Sequence& sequence){
     if (!_endBlock){
 	throw std::runtime_error("Loop start block has no end block (call setEndBlock())");

@@ -28,12 +28,7 @@ class IfElseStartBlock : public Block{
     std::function<bool (Sequence&)> _condition;
 
     public:
-	template<BooleanExpression B>
-	IfElseStartBlock(Block* previous, B condition, IfElseElseBlock* elseBlock, IfElseEndBlock* endBlock) : Block(previous){
-	   _condition = getExpressionFn<bool>(condition); 
-	   _elseBlock = elseBlock;
-	   _endBlock = endBlock;
-	}
+        IfElseStartBlock(Block* previous, std::function<bool(const Sequence&)> condition, IfElseElseBlock* elseBlock, IfElseEndBlock* endBlock);
     Block* run(Sequence& sequence);
 };
 

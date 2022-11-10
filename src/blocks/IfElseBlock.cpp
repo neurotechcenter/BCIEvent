@@ -3,9 +3,14 @@
 
 using namespace BCIEvent;
 
+IfElseStartBlock::IfElseStartBlock(Block* previous, std::function<bool(const Sequence&)> condition, IfElseElseBlock* elseBlock, IfElseEndBlock* endBlock) : Block(previous) {
+	   _condition = condition; 
+	   _elseBlock = elseBlock;
+	   _endBlock = endBlock;
+}
 
-Block* IfElseStartBlock::run(Sequence& sSequence){
-    if (_condition(callingSequence)){
+Block* IfElseStartBlock::run(Sequence& sequence){
+    if (_condition(sequence)){
 	_elseBlock->_ifCondition = true;
 	return _next;
     } else {

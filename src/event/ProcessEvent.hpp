@@ -1,5 +1,5 @@
-#ifndef STARTEVENT_H
-#define STARTEVENT_H
+#ifndef PROCESSEVENT_H
+#define PROCESSEVENT_H
 
 #include "Event.hpp"
 #include <memory>
@@ -21,7 +21,7 @@ namespace BCIEvent{
 		std::vector<WaitForProcessBlock*> _processBlocks;
 		void addWaitForProcess(WaitForProcessBlock*);
 	private:
-	    StartEvent(){};
+		ProcessEvent() { _processBlocks = std::vector<WaitForProcessBlock*>(); };
     };
 
 }

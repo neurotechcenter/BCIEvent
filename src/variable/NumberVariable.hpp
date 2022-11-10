@@ -14,8 +14,8 @@ namespace BCIEvent{
 
 	std::string name() const { return _name; }
 
-	bool getAsBool() { throw std::logic_error("Cannot get number as boolean"); }
-	int getAsInt() { 
+	bool getAsBool() const { throw std::runtime_error("Cannot get number as boolean"); }
+	int getAsInt() const { 
 	    if (std::floor(std::abs(_value)) == std::abs(_value)){
 		return _value;
 	    }
@@ -23,7 +23,7 @@ namespace BCIEvent{
 		throw std::logic_error("Cannot get integer from non-whole number value.");
 	    }
 	}
-	double getAsDouble() { return _value; }
+	double getAsDouble() const { return _value; }
 	
 	bool operator==(const BCIEVariable &other) { return _value == other.getAsDouble(); }
 	bool operator==(const bool other) { throw std::invalid_argument("Cannot compare bool and number"); }

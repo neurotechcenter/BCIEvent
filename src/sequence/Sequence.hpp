@@ -1,3 +1,5 @@
+#ifndef SEQUENCE_HPP
+#define SEQUENCE_HPP
 #include "BCIEVariable.hpp"
 #include <concepts>
 #include <tuple>
@@ -20,6 +22,11 @@ namespace BCIEvent {
 		std::map<std::string, std::unique_ptr<BCIEVariable>> _variables;
 		std::unique_ptr<Sequence> _subProcedure; //subprocedure running within this sequence
 
+
+	public:
+		Sequence(HeadBlock* head);
+		~Sequence();
+
 		/*
 		* Copying a sequence is not allowed, because I have no idea how copying of the internal sequence of blocks would work,
 		* and may well could cause the entire program to explode
@@ -27,10 +34,6 @@ namespace BCIEvent {
 		*/
 		Sequence(const Sequence&) = delete;
 		Sequence& operator=(const Sequence&) = delete;
-
-	public:
-		Sequence(HeadBlock* head);
-		~Sequence();
 
 		/*
 		* Runs one block through this sequence
@@ -95,3 +98,4 @@ namespace BCIEvent {
 
 	};
 }
+#endif

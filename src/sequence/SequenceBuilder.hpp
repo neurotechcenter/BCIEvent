@@ -23,58 +23,24 @@ namespace BCIEvent {
     class SequenceBuilder {
 	HeadBlock* _head;
 	Block* _lastBlock;
-	std::stack<StatementCloseBlock*> _controlCloseBlocks;	
+	std::stack<Block*> _controlCloseBlocks;	
 	
 	public:
 	SequenceBuilder();
 
 	SequenceBuilder& addNormalBlock(std::function<void(Sequence &)> action);
-	template <BooleanExpression B>
-	SequenceBuilder& addIfBlock(B condition){
-	    auto endBlk = new IfEndBlock();
-	    _lastBlock = new IfStartBlock(_lastBlock, endBlk, condition);
-	    _controlCloseBlocks.push(endBlk);
-	    return *this;
-	}
 
 	
-	template<BooleanExpression B>
-	SequenceBuilder& addIfElseBlock(B condition){
-	    auto endBlk = new IfElseEndBlock();
-	    auto elseBlk = new IfElseElseBlock(endBlk);
-	    _lastBlock = new IfElseStartBlock(_lastBlock, condition, elseBlk, endBlk);
-	    _controlCloseBlocks.push(endBlk);
-	    _controlCloseBlocks.push(elseBlk);
-	    return *this;
-	}
-	
-	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time, std::function<void(Actor &)> action);
+	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time, std::function<void(Sequence &)> action);
 	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time);
 	SequenceBuilder& addTimedBlock(std::chrono::duration<double> time);
-	SequenceBuilder& addEventCallerBlock(std::string);
 	SequenceBuilder& addWaitForProcessBlock();
 
-	template<IntegerExpression I>
-	SequenceBuilder& addLoopBlock(I iterations){
-	    auto startBlk = new LoopStartBlock(_lastBlock, iterations);
-	    auto endBlk = new LoopEndBlock(startBlk);
-	    startBlk->addEndBlock(endBlk);
-	    _lastBlock = startBlk;
-	    _controlCloseBlocks.push(endBlk);
-	    return *this;
-	}
+	SequenceBuilder& addLoopBlock(std::function<int(const Sequence&)> iterations);
+	SequenceBuilder& addWhileLoopBlock(std::function<bool(const Sequence&)> condition);
 
-
-	template <BooleanExpression B>
-	SequenceBuilder& addWhileLoopBlock(B condition){
-	    auto startBlk = new WhileLoopStartBlock(_lastBlock, condition);
-	    auto endBlk = new WhileLoopEndBlock(startBlk);
-	    startBlk->setEndBlock(endBlk);
-	    _lastBlock = startBlk;
-	    _controlCloseBlocks.push(endBlk);
-	    return *this;
-	}
-
+	SequenceBuilder& addIfBlock(std::function<bool(const Sequence&)> condition);
+	SequenceBuilder& addIfElseBlock(std::function<bool(const Sequence&)> condition);
 
 	/**
 	 * Control elements which contain multiple blocks, such as if statements or loops,

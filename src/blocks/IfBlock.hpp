@@ -17,12 +17,7 @@ namespace BCIEvent{
 	std::function<bool(Sequence& sequence)> _condition;
 	IfEndBlock* _endBlock;
 	public:
-	template <BooleanExpression T>
-	IfStartBlock(Block* previous, IfEndBlock* endBlock, T condition) : Block(previous){
-	    _condition = getExpressionFn<bool>(condition);
-	    _endBlock = endBlock;
-	}
-
+		IfStartBlock(Block*, IfEndBlock*, std::function<bool(const Sequence&)> condition);
 	Block* run(Sequence& sequence);
     };
 }

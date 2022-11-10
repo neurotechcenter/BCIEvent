@@ -23,13 +23,10 @@ namespace BCIEvent{
 	friend class LoopEndBlock;
 
 	public:
-	template<IntegerExpression T>
-	LoopStartBlock(Block* previous, T iterationGetter) : Block(previous){
-	    _iterationGetter = getExpressionFn<int>(iterationGetter);
-	}
+		LoopStartBlock(Block* previous, std::function<int(const Sequence&)> iterationGetter);
 	
 	void addEndBlock(LoopEndBlock* endBlock); //must be called
-	Block* run (Actor& callingActor);
+	Block* run (Sequence& sequence);
     };
     class LoopEndBlock : public StatementCloseBlock{
 	LoopStartBlock* _startBlock;

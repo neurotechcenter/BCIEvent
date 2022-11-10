@@ -49,6 +49,7 @@ namespace BCIEvent{
 	}
 	
 	const GenericSignal* currentSignal;
+	GUI::GraphDisplay& getDisplay() { return _display; }
 
 
 	private:
@@ -79,7 +80,6 @@ namespace BCIEvent{
 	std::shared_ptr<BCIEvent::States> _states;
 	std::shared_ptr<ProcessEvent> _processEvent;
 
-	GUI::GraphDisplay& getDisplay() { return _display; }
 
 	Actor* makeActor();
 	void uploadState(std::string name, int width);

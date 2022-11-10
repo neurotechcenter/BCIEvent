@@ -20,10 +20,7 @@ namespace BCIEvent{
 	bool _isLooping = false;
 	friend class WhileLoopEndBlock;
 	public:
-	template <BooleanExpression T>
-	WhileLoopStartBlock(Block* previous, T condition) : Block(previous){
-	    _condition = getExpressionFn<bool>(condition);
-	}
+		WhileLoopStartBlock(Block* previous, std::function<bool(const Sequence&)> condition);
 	Block* run(Sequence& sequence);
 	void setEndBlock(WhileLoopEndBlock* endBlock); //sets the end block. This must be called.
 

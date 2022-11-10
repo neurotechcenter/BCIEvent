@@ -5,6 +5,7 @@
 #include "IntegerExpression.hpp"
 #include "BooleanExpression.hpp"
 #include "NumberExpression.hpp"
+#include "ActorUtil.hpp"
 
 namespace BCIEvent {
 	/*
@@ -22,35 +23,34 @@ namespace BCIEvent {
 		//Methods for making a sequence
 
 
-		ProtoSequence& addNormal(std::function<void(Actor&)> action);
+		ProtoSequence& addNormal(std::function<void(Sequence&)> action);
 		ProtoSequence& addTimer(double timeSeconds, std::function<void(Sequence &)> action);
 		ProtoSequence& addTimer(double timeSeconds);
 		ProtoSequence& addTimed(double timeSeconds);
-		ProtoSequence& addEventCaller(std::string eventName);
 		ProtoSequence& addWaitForProcess();
 		ProtoSequence& closeStatement();
 
 		template <BooleanExpression B>
 		ProtoSequence& addIf(B condition) {
-			_sequenceProto.emplace_back(Protoblock::ProtoBlockType::If, nullptr, nullptr, getExpressionFn(condition), nullptr, nullptr);
+			_sequenceProto.emplace_back(ProtoBlockType::If, getExpressionFn(condition));
 			return *this;
 		}
 		
 		template <BooleanExpression B>
 		ProtoSequence& addIfElse(B condition) {
-			_sequenceProto.emplace_back(Protoblock::ProtoBlockType::IfElse, nullptr, nullptr, getExpressionFn(condition), nullptr, nullptr);
+			_sequenceProto.emplace_back(ProtoBlockType::IfElse, getExpressionFn(condition));
 			return *this;
 		}
 
 		template <BooleanExpression B>
 		ProtoSequence& addWhile(B condition) {
-			_sequenceProto.emplace_back(Protoblock::ProtoBlockType::While, nullptr, nullptr, getExpressionFn(condition), nullptr, nullptr);
+			_sequenceProto.emplace_back(ProtoBlockType::While, getExpressionFn(condition));
 			return *this;
 		}
 
 		template <IntegerExpression I>
 		ProtoSequence& addLoop(I loopAmt) {
-			_sequenceProto.emplace_back(Protoblock::ProtoBlockType::Loop, nullptr, nullptr, nullptr, getExpressionFn(loopAmt), nullptr);
+			_sequenceProto.emplace_back(ProtoBlockType::Loop, getExpressionFn(loopAmt));
 			return *this;
 		}
 

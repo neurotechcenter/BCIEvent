@@ -28,17 +28,13 @@ HeadBlock* SequenceBuilder::getSequenceStart(){
     return _head;
 }
 
-SequenceBuilder& SequenceBuilder::addNormalBlock(std::function<void (Actor& callingActor)> action){
+SequenceBuilder& SequenceBuilder::addNormalBlock(std::function<void (Sequence& callingActor)> action){
    _lastBlock = new NormalBlock(_lastBlock, action); 
    return *this;
 }
 
-SequenceBuilder& SequenceBuilder::addEventCallerBlock(std::string) {
-    _lastBlock = new EventCallerBlock()
 
-}
-
-SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time, std::function<void (Actor &callingActor)> action) {
+SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time, std::function<void (Sequence& callingSequence)> action) {
     _lastBlock = new TimerBlock(_lastBlock, time, action);
     return *this;
 }
@@ -48,7 +44,7 @@ SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> ti
 }
 
 SequenceBuilder& SequenceBuilder::addWaitForProcessBlock() {
-    _lastBlock = new WaitForProcessBlock();
+    _lastBlock = new WaitForProcessBlock(_lastBlock);
     return *this;
 }
 
@@ -63,3 +59,38 @@ SequenceBuilder& SequenceBuilder::closeStatement(){
     return *this;
 }
 	
+
+SequenceBuilder& SequenceBuilder::addIfBlock(std::function<bool (const Sequence &)> condition) {
+	    auto endBlk = new IfEndBlock();
+	    _lastBlock = new IfStartBlock(_lastBlock, endBlk, condition);
+	    _controlCloseBlocks.push(endBlk);
+	    return *this;
+}
+
+	
+SequenceBuilder& SequenceBuilder::addIfElseBlock(std::function<bool(const Sequence &)> condition){
+	    auto endBlk = new IfElseEndBlock();
+	    auto elseBlk = new IfElseElseBlock(endBlk);
+	    _lastBlock = new IfElseStartBlock(_lastBlock, condition, elseBlk, endBlk);
+	    _controlCloseBlocks.push(endBlk);
+	    _controlCloseBlocks.push(elseBlk);
+	    return *this;
+}
+
+SequenceBuilder& SequenceBuilder::addLoopBlock(std::function<int(const Sequence&)> iterations) {
+	    auto startBlk = new LoopStartBlock(_lastBlock, iterations);
+	    auto endBlk = new LoopEndBlock(startBlk);
+	    startBlk->addEndBlock(endBlk);
+	    _lastBlock = startBlk;
+	    _controlCloseBlocks.push(endBlk);
+	    return *this;
+}
+
+SequenceBuilder& SequenceBuilder::addWhileLoopBlock(std::function<bool (const Sequence&)> condition){
+	    auto startBlk = new WhileLoopStartBlock(_lastBlock, condition);
+	    auto endBlk = new WhileLoopEndBlock(startBlk);
+	    startBlk->setEndBlock(endBlk);
+	    _lastBlock = startBlk;
+	    _controlCloseBlocks.push(endBlk);
+	    return *this;
+}

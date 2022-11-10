@@ -11,6 +11,7 @@ namespace BCIEvent {
 		 * and a duration(for timed and timer blocks)
 		 * For any given block prototype, only the fields that are relevant to the block will not be null.
 		 */
+	enum ProtoBlockType {CloseStatement, WaitForProcess, Normal, If, IfElse, While, Loop, Timed, Timer};
 	class Protoblock {
 	public:
 		/*
@@ -19,28 +20,19 @@ namespace BCIEvent {
 		* That way one object can represent any block and can be used to contruct a new instance of that block.
 		* This is essentially my way of implementing some form of algebraic data type that represents any type of block.
 		*/
-		enum ProtoBlockType {CloseStatement, WaitForProcess, Normal, CallEvent, If, IfElse, While, Loop, Timed, Timer};
 		const ProtoBlockType type;
-		const std::unique_ptr<std::function<void (Sequence&)>> action;
-		const std::unique_ptr<std::string> eventName;
-		const std::unique_ptr<std::function<bool (Sequence&)>> condition;
-		const std::unique_ptr<std::function<int (Sequence&)>> number;
-		const std::unique_ptr<std::chrono::seconds> timeSeconds;
+		const std::function<void (Sequence&)> action;
+		const std::string eventName;
+		const std::function<bool (const Sequence&)> condition;
+		const std::function<int (const Sequence&)> number;
+		const std::chrono::duration<float> time;
 
-		Protoblock(
-			ProtoBlockType blockType,
-			std::function<void(Sequence&)>* blockAction,
-			std::string* blockEventName,
-			std::function<bool(Sequence&)>* blockCondition,
-			std::function<int(Sequence&)>* blockNumber,
-			double blockTimeSeconds) :
-			type(blockType),
-			action(std::unique_ptr<std::function<void(Sequence&)>>(blockAction)),
-			eventName(std::unique_ptr<std::string>(blockEventName)),
-			condition(std::unique_ptr<std::function<bool(Sequence&)>>(blockCondition)),
-			number(std::unique_ptr<std::function<int(Sequence&)>>(blockNumber)),
-			timeSeconds(std::make_unique<std::chrono::seconds>(blockTimeSeconds)) {}
-		
+		Protoblock(ProtoBlockType _type, std::function<void(Sequence&)> _action) : type(_type), action(_action) {}
+		Protoblock(ProtoBlockType _type, double _time) : type(_type), time(_time) {}
+		Protoblock(ProtoBlockType _type, double _time, std::function<void(Sequence&)> _action) : type(_type), time(_time), action(_action) {}
+		Protoblock(ProtoBlockType _type) : type(_type) {}
+		Protoblock(ProtoBlockType _type, std::function<bool(const Sequence&)> _condition) : type(_type), condition(_condition) {}
+		Protoblock(ProtoBlockType _type, std::function<int(const Sequence&)> _number) : type(_type), number(_number) {}
 	};
 }
 

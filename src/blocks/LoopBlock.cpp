@@ -4,6 +4,9 @@
 
 using namespace BCIEvent;
 
+LoopStartBlock::LoopStartBlock(Block* previous, std::function<int(const Sequence&)> iterationGetter) : Block(previous) {
+	    _iterationGetter = iterationGetter;
+}
 
 Block* LoopStartBlock::run(Sequence& sequence){
     if (!_endBlock){

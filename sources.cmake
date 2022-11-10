@@ -3,7 +3,6 @@ set(SOURCES_EVENT
 	src/actor/Actor.cpp
 	src/application/AppInitPartial.cpp
 	src/blocks/EndBlock.cpp
-	src/blocks/EventCallerBlock.cpp
 	src/blocks/HeadBlock.cpp
 	src/blocks/IfBlock.cpp
 	src/blocks/IfElseBlock.cpp

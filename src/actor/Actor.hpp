@@ -3,27 +3,27 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "BCIEventApplication.hpp"
-#include "EventListener.hpp"
+#include <list>
+#include <QPixmap>
 #include "GUI.h"
 #include "GenericSignal.h"
-#include "GlobalVariables.hpp"
 #include "GraphDisplay.h"
-#include "Variable.hpp"
-#include "States.hpp"
-#include <list>
 #include "GraphObject.h"
+#include "BCIEventApplication.hpp"
+#include "GlobalVariables.hpp"
+#include "States.hpp"
 #include "BCIEVariable.hpp"
-#include <QPixmap>
 
 namespace BCIEvent{
 	class ProtoSequence;
 	class Sequence;
+	class Event;
+	class EventListener;
     class Actor : public GUI::GraphObject{
 		friend class Sequence;
 		
 	BCIEventApplication* _app;
-	std::map<std::string, std::unique_ptr<Variable>> _variables; 
+	std::map<std::string, std::unique_ptr<BCIEVariable>> _variables; 
 	std::vector<std::unique_ptr<QPixmap>> _graphics;
 	int _currentGraphic = 0;
 
@@ -47,18 +47,17 @@ namespace BCIEvent{
 
 	Actor(BCIEventApplication* app);
 	~Actor();
-	Actor& addVariable(std::unique_ptr<Variable> var);
+	Actor& addVariable(std::unique_ptr<BCIEVariable> var);
 	Actor& addGraphic(std::string filename, bool transparent);
 	Actor& addEventListener(std::unique_ptr<EventListener>);
 	Actor& addEventListener(std::string, std::unique_ptr<EventListener>);
 	Actor& addProcedure(std::string name, ProtoSequence sequence);
 	Actor& addEvent(std::string name);
 
-	Event getEvent(std::string);
 	void callEvent(std::string);
 
 
-	int randInt(int lowerBound, int upperBound) { return _app->randInt(lowerBound, upperBound); }
+	int randInt(int lowerBound, int upperBound);
 
 
 	/**
@@ -108,7 +107,7 @@ namespace BCIEvent{
 
 	template <typename SetType>
 	void setVariable(std::string name, SetType value){
-	    static_assert(std::is_same<SetType, bool>::value || std::is_same<SetType, Variable>::value || std::is_floating_point<SetType>::value || std::is_integral<SetType>::value,
+	    static_assert(std::is_same<SetType, bool>::value || std::is_same<SetType, BCIEVariable>::value || std::is_floating_point<SetType>::value || std::is_integral<SetType>::value,
 		    "Template argument for setVariable must be Variable, boolean, integral, or floating point");
 	    try {
 		*_variables.at(name) = value;

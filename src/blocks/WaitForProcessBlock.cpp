@@ -1,9 +1,10 @@
 #include "WaitForProcessBlock.hpp"
+#include "ProcessEvent.hpp"
 
 using namespace BCIEvent;
 
 WaitForProcessBlock::WaitForProcessBlock(Block* previous) : Block(previous) {
-	ProcessEvent::getInstance()->addWaitForProcessBlock(this);
+	ProcessEvent::getInstance()->addWaitForProcess(this);
 }
 
 void WaitForProcessBlock::process() {

@@ -6,6 +6,7 @@
 #include "StartEvent.hpp"
 #include "WaitForProcessBlock.hpp"
 #include "ProcessEvent.hpp"
+#include "BCIEVariable.hpp"
 
 using namespace BCIEvent;
 
@@ -23,7 +24,7 @@ BCIEventApplication::BCIEventApplication()
     Parameter("ShowAppLog") = 1;
     _states = std::make_unique<BCIEvent::States>(this);
     _globalVars = std::make_unique<GlobalVariables>();
-	_processEvent = ProcessEvent
+	_processEvent = ProcessEvent::getInstance();
 	GUI::Rect rect = {0.5f, 0.4f, 0.5f, 0.6f};
     _messageField = std::make_unique<TextField>(_display);
     _messageField->SetTextHeight(0.8f)
@@ -47,7 +48,7 @@ void BCIEventApplication::addActor(std::unique_ptr<Actor> actor){
     _actors.push_back(std::move(actor));
 }
 
-void BCIEventApplication::addVar(std::unique_ptr<Variable> v) {
+void BCIEventApplication::addVar(std::unique_ptr<BCIEVariable> v) {
 	_globalVars->addVariable(std::move(v));
 }
 
@@ -171,8 +172,4 @@ int BCIEventApplication::randInt(int lower, int upper) {
 
 Actor* BCIEventApplication::makeActor(){
     return new Actor(this);
-}
-
-void BCIEventApplication::addProcessBlock(std::shared_ptr<WaitForProcessBlock> pBlock) {
-	_processBlocks.push_back(pBlock);
 }
