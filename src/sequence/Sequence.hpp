@@ -19,7 +19,7 @@ namespace BCIEvent {
 		Actor* _actor;
 		HeadBlock* _head; //only used for deleting the underlying sequence of blocks when this is deleted
 		Block* _currentBlock = nullptr;
-		std::map<std::string, std::unique_ptr<BCIEVariable>> _variables;
+		std::map<std::string, BCIEVariable> _variables;
 		std::unique_ptr<Sequence> _subProcedure; //subprocedure running within this sequence
 
 
@@ -32,8 +32,8 @@ namespace BCIEvent {
 		* and may well could cause the entire program to explode
 		* Creating multiple identical sequences is done using ProtoSequence.
 		*/
-		Sequence(const Sequence&) = delete;
-		Sequence& operator=(const Sequence&) = delete;
+		//Sequence(const Sequence&) = delete;
+		//Sequence& operator=(const Sequence&) = delete;
 
 		/*
 		* Runs one block through this sequence
@@ -44,34 +44,24 @@ namespace BCIEvent {
 		void setActor(Actor* actor) { _actor = actor; }
 
 
+		void addVariable(std::string name);
+		void addVariable(std::string name, BCIEVariable val);
 
+		//methods below this point are to be called by the sequence's blocks.
 		//Get and set local variables
-		template<typename ReqType>
-		ReqType getVariable(std::string name) const {
-			static_assert(std::is_convertible<ReqType, bool>::value || std::is_floating_point<ReqType>::value || std::is_integral<ReqType>::value,
-				"Template argument for getVariable must be boolean, integral, or floating point");
+		BCIEVariable getVariable(std::string name) {
 			try {
-				if (std::is_same<ReqType, bool>::value) {
-					return _variables.at(name)->getAsBool();
-				}
-				else if (std::is_integral<ReqType>::value) {
-					return static_cast<ReqType>(_variables.at(name)->getAsInt());
-				}
-				else {
-					return static_cast<ReqType>(_variables.at(name)->getAsDouble());
-				}
+				return _variables.at(name);
 			}
-			catch (std::out_of_range e) {
-				return _actor->getVariable<ReqType>(name);
+			catch (std::out_of_range) {
+				return _actor.getVariable(name);
 			}
 		}
 
 		template <typename SetType>
-		void setVariable(std::string name, SetType value) {
-			static_assert(std::is_same<SetType, bool>::value || std::is_same<SetType, BCIEVariable>::value || std::is_floating_point<SetType>::value || std::is_integral<SetType>::value,
-				"Template argument for setVariable must be Variable, boolean, integral, or floating point");
+		void setVariable(std::string name, SetType value) { //no need for type checking here, the variant type will handle that on its own
 			try {
-				*(_variables.at(name)) = value;
+				_variables.at(name) = value;
 			}
 			catch (std::out_of_range e) {
 				_actor->setVariable(name, value);
@@ -88,8 +78,11 @@ namespace BCIEvent {
 			return _actor->getState<T>(name);
 		}
 
-		void addVariable(std::unique_ptr<BCIEVariable>);
+		void callProcedure(std::string name, std::vector<BCIEVariable> params);
 
+		void callBCI2000Event(std::string name, uint32_t value);
+
+		BCIEValue callFunction(std::string name, std::vector<BCIEValue> params);
 
 		//Methods for controlling the calling actor.
 		void actorMove(double, double);

@@ -12,12 +12,17 @@ namespace BCIEvent {
 	* A protoype for a sequence, which can generate an instance of type Sequence
 	*/
 	class ProtoSequence {
+		std::vector<std::string> _parameters; //parameters for a protosequence which is a procedure
 	public:
-		std::vector<Protoblock> _sequenceProto;
+		std::vector<Protoblock*> _sequenceProto;
 		/*
 		* Generates a sequence from the list of prototype blocks
 		*/
-		std::unique_ptr<Sequence> genSequence();
+		Sequence* genSequence();
+		Sequence* genSequence(std::vector<BCIEValue> initialValues);
+		ProtoSequence() {}
+		ProtoSequence(std::vector<std::string> parameters);
+		~ProtoSequence();
 
 		
 		//Methods for making a sequence
@@ -32,25 +37,25 @@ namespace BCIEvent {
 
 		template <BooleanExpression B>
 		ProtoSequence& addIf(B condition) {
-			_sequenceProto.emplace_back(ProtoBlockType::If, getExpressionFn(condition));
+			_sequenceProto.push_back(new Protoblock(ProtoBlockType::If, getExpressionFn(condition)));
 			return *this;
 		}
 		
 		template <BooleanExpression B>
 		ProtoSequence& addIfElse(B condition) {
-			_sequenceProto.emplace_back(ProtoBlockType::IfElse, getExpressionFn(condition));
+			_sequenceProto.push_back(new Protoblock(ProtoBlockType::IfElse, getExpressionFn(condition)));
 			return *this;
 		}
 
 		template <BooleanExpression B>
 		ProtoSequence& addWhile(B condition) {
-			_sequenceProto.emplace_back(ProtoBlockType::While, getExpressionFn(condition));
+			_sequenceProto.push_back(new Protoblock(ProtoBlockType::While, getExpressionFn(condition)));
 			return *this;
 		}
 
 		template <IntegerExpression I>
 		ProtoSequence& addLoop(I loopAmt) {
-			_sequenceProto.emplace_back(ProtoBlockType::Loop, getExpressionFn(loopAmt));
+			_sequenceProto.push_back(new Protoblock(ProtoBlockType::Loop, getExpressionFn(loopAmt)));
 			return *this;
 		}
 

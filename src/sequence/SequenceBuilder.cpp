@@ -43,6 +43,14 @@ SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> ti
     return *this;
 }
 
+SequenceBuilder& SequenceBuilder::addTimedBlock(std::chrono::duration<double> time) {
+    auto startBlk = new TimedBlockStart(_lastBlock, time);
+    auto endBlk = new TimedBlockEnd(startBlk);
+    _lastBlock = startBlk;
+    _controlCloseBlocks.push(endBlk);
+    return *this;
+}
+
 SequenceBuilder& SequenceBuilder::addWaitForProcessBlock() {
     _lastBlock = new WaitForProcessBlock(_lastBlock);
     return *this;

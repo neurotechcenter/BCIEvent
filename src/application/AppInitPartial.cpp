@@ -2,7 +2,6 @@
 
 
 void BCIEvent::BCIEventApplication::InitBCIEvent(){
-    addState("aState", BCIState::u32);
     addActor(std::unique_ptr<Actor>(&(Actor(this)
         .addVariable(std::make_unique<NumberVariable>("var2"))
         .addEventListener((std::make_unique<EventListener>(

@@ -19,7 +19,7 @@ namespace BCIEvent{
 	EventListener(ProtoSequence sequence);
 	void trigger() { _timesTriggered++; }
 	int timesTriggered() { return _timesTriggered; }
-	std::unique_ptr<Sequence> getSequence(); //called by actor when it recognizes the listener as triggered
+	Sequence* getSequence(); //called by actor when it recognizes the listener as triggered
 
     };
 }

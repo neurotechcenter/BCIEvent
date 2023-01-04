@@ -29,6 +29,8 @@ namespace BCIEvent{
 	void StopRun() override;
 	void Halt() override;
 
+	
+
 
 	void addState(std::string name, BCIState::StateType type);
 	void setState(std::string name, int value);
@@ -50,6 +52,15 @@ namespace BCIEvent{
 	
 	const GenericSignal* currentSignal;
 	GUI::GraphDisplay& getDisplay() { return _display; }
+
+	void addEvent();
+	void callEvent();
+
+	void addBCI2000Event();
+	void callBCI2000Event();
+
+	void addFunction(std::string name, int numArgs, std::function<(std::vector<BCIEValue>), BCIEValue> fn);
+	BCIEValue callFunction(std::string name, std::vector<BCIEValue> params);
 
 
 	private:
@@ -76,9 +87,12 @@ namespace BCIEvent{
 	enum RunState {Running, Paused};
 	RunState _currentState = Paused;	
 	std::vector<std::unique_ptr<Actor>> _actors;
-	std::shared_ptr<GlobalVariables> _globalVars;
-	std::shared_ptr<BCIEvent::States> _states;
+	std::map<std::string, BCIEValue> _variables;
+	std::map<std::string, BCIState> _states;
+	std::map<std::string, Event> _events
+	std::vector<std::string> _bci2000events;
 	std::shared_ptr<ProcessEvent> _processEvent;
+	std::map < std::string, std::function<(&Sequence, std::vector<BCIEValue>) BCIEValue> _functions;
 
 
 	Actor* makeActor();

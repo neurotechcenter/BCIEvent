@@ -32,10 +32,15 @@ using namespace BCIEvent;
 	//Run and update blocks
     for (int i = 0; i < _sequences.size(); i++) {
         if (_sequences.front()->update()) { //If sequence is still running, append it to the back of the list
-            _sequences.push_back(std::move(_sequences.front()));
+            _sequences.push_back(_sequences.front());
+            _sequences.pop_front();
         }
-        _sequences.pop_front(); //remove sequence from the front of the list
-           //This will either remove and delete a completed sequence, or remove the empty pointer to a still-running sequence that has been moved to the back of the list
+        else { //else delete the finished sequence
+            delete _sequences.front();
+            _sequences.pop_front();
+
+        }
+           //This will either remove and delete a completed sequence or move the next sequence to the end of the list 
         //After these operations, the list of sequences will be the same except without any completed sequences, which will have been deleted.
 	}
 	_currentSignal = nullptr; //the signal should only ever be accessed during the update stage.
@@ -92,6 +97,10 @@ Actor& Actor::addGraphic(std::string filename, bool transparent){
     return *this;
 }
 
+Sequence* getProc(std::string name, std::vector<BCIEValue> parameters) {
+    return _procedures.at(name).getSequence(parameters);
+}
+
 
 int Actor::randInt(int lower, int upper) {
 	return _app->randInt(lower, upper);
@@ -137,4 +146,15 @@ void Actor::OnPaint(const GUI::DrawContext& context){
 }
 
 
+void Actor::addFunction(std::string name, std::function<(Sequence&, std::vector<BCIEValue>), BCIEValue> fn) {
+    _functions.insert(name, fn);
+}
 
+BCIEValue Actor::callFunction(std::string name, Sequence& callingSequence, std::vector<BCIEValue> params) {
+    try {
+        return _functions.at(name)(callingSequence, params);
+    }
+    catch (std::out_of_range) {
+        return _app->callFunction(name, params);
+    }
+}

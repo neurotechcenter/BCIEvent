@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 #include <QPixmap>
 #include "GUI.h"
 #include "GenericSignal.h"
@@ -28,9 +29,10 @@ namespace BCIEvent{
 	int _currentGraphic = 0;
 
 	std::vector<std::unique_ptr<EventListener>> _listeners;
-	std::list<std::unique_ptr<Sequence>> _sequences; //Currently running sequences
-	std::map<String, ProtoSequence> _procedures; //procedures defined for this actor
-	std::map<String, Event> _events;
+	std::list<Sequence*> _sequences; //Currently running sequences, no smart pointers because they dont work for some reason
+	std::map<std::string, ProtoSequence> _procedures; //procedures defined for this actor
+	std::map<std::string, Event> _events;
+	std::map<std::string, BCIEVariable> _variables;
 
 
 	const GenericSignal* _currentSignal;
@@ -47,17 +49,24 @@ namespace BCIEvent{
 
 	Actor(BCIEventApplication* app);
 	~Actor();
-	Actor& addVariable(std::unique_ptr<BCIEVariable> var);
+	Actor& addVariable(std::string name);
+	Actor& addVariable(std::string name, BCIEValue value);
 	Actor& addGraphic(std::string filename, bool transparent);
 	Actor& addEventListener(std::unique_ptr<EventListener>);
 	Actor& addEventListener(std::string, std::unique_ptr<EventListener>);
 	Actor& addProcedure(std::string name, ProtoSequence sequence);
 	Actor& addEvent(std::string name);
 
+
+
 	void callEvent(std::string);
 
+	Sequence* getProcedure(std::string name, std::vector<BCIEValue> parameters);
 
 	int randInt(int lowerBound, int upperBound);
+
+	void addFunction(std::string name, std::function<(Sequence&, std::vector<BCIEValue>), BCIEValue>);
+	BCIEValue callFunction(std::string name, Sequence& callingSequence, std::vector<BCIEValue> parameters);
 
 
 	/**
@@ -73,6 +82,8 @@ namespace BCIEvent{
 	float positionY() const{ return GUI::GraphObject::PositionY(); }
 	void setPositionX(float x) { GUI::GraphObject::SetPositionX(x); Invalidate(); }
 	void setPositionY(float y) { GUI::GraphObject::SetPositionY(y); Invalidate(); }
+	double positionX() { return GUI::GraphObject::PositionX(); }
+	double positionY() { return GUI::GraphObject::PositionY(); }
 	int zOrder() { return GUI::GraphObject::ZOrder(); }
 	void setZOrder(float zOrder) { GUI::GraphObject::SetZOrder(zOrder); Invalidate(); }
 	bool visible() { return GUI::GraphObject::Visible(); }
@@ -86,24 +97,13 @@ namespace BCIEvent{
 	void OnPaint(const GUI::DrawContext&) override;
 	        
 
-	template<typename ReqType>
-        ReqType getVariable(std::string name) const{
-            static_assert(std::is_convertible<ReqType, bool>::value || std::is_floating_point<ReqType>::value || std::is_integral<ReqType>::value,
-        	    "Template argument for getVariable must be boolean, integral, or floating point");
-            try {
-                if(std::is_same<ReqType, bool>::value){
-        	    return _variables.at(name)->getAsBool();
-        	}
-        	else if (std::is_integral<ReqType>::value){
-        	    return static_cast<ReqType>(_variables.at(name)->getAsInt());
-        	}
-        	else{
-        	    return static_cast<ReqType>(_variables.at(name)->getAsDouble());
-        	}
-            } catch (std::out_of_range e) {
-        	return _app->getVar<ReqType>(name);
-            }
+    BCIEValue getVariable(std::string name) const{
+        try {
+			return _variables.at(name);
+        } catch (std::out_of_range e) {
+        	return _app->getVariable(name);
         }
+    }
 
 	template <typename SetType>
 	void setVariable(std::string name, SetType value){

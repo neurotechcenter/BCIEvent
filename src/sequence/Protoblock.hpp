@@ -14,6 +14,16 @@ namespace BCIEvent {
 	enum ProtoBlockType {CloseStatement, WaitForProcess, Normal, If, IfElse, While, Loop, Timed, Timer};
 	class Protoblock {
 	public:
+
+		Protoblock(const Protoblock& other) :
+			type(other.type),
+			action(other.action),
+			eventName(other.eventName),
+			condition(other.condition),
+			number(other.number),
+			time(other.time)
+		{}
+
 		/*
 		* These next fields are for defining a prototype sequence which is used to generate an actual sequence of blocks. This is to allow cloning of a sequence.
 		* The type Protoblock essentially holds any possible block type alongside its parameters.

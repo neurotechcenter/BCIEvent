@@ -3,6 +3,7 @@
 #include "EventListener.hpp"
 #include "SequenceBuilder.hpp"
 #include "Block.hpp"
+#include "BCIEvent.h"
 #include "HeadBlock.hpp"
 
 
@@ -35,3 +36,34 @@ bool Sequence::update() {
 	}
 	return true; //current block has run and next block exists; return true
 }
+
+void Sequence::addVariable(std::string name) {
+	_variables.insert(name, std::nullopt);
+}
+
+void Sequence.addVariable(std::string name, BCIEValue value) {
+	_variables.insert(name, value);
+}
+
+void Sequence::callBCI2000Event(std::string name, uint32_t value) {
+	bcievent << name << " " << value;
+}
+
+void Sequence::callProcedure(std::string name, std::vector<BCIEValue> params) {
+	_subprocedure = std::unique_ptr<Sequence>(_actor.getProcedure());
+}
+
+BCIEValue Sequence::callFunction(std::string name, std::vector<BCIEValue> params) {
+	return _actor.callFunction(name, *this, params);
+}
+
+void Sequence::actorMoveTo(double x, double y) {
+	_actor->setPositionX(x);
+	_actor->setPositionY(y);
+}
+
+void Sequence::actorMove(double x, double y) {
+	_actor->setPositionX(_actor->positionX() + x);
+	_actor->setPositionY(_actor->positionY() + y);
+}
+
