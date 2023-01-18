@@ -21,9 +21,12 @@
 
 namespace BCIEvent {
     class SequenceBuilder {
-	HeadBlock* _head;
+	std::unique_ptr<HeadBlock> _head;
 	Block* _lastBlock;
-	std::stack<Block*> _controlCloseBlocks;	
+	//Holds the statement close blocks, which end statements like if or loop. Also holds blocks which remove scoped local variables. 
+	//The boolean switch is true if the held block is a scope-ending block, as when closeStatement is called, all variable-removing blocks 
+	//until a scope-ending block are added.
+	std::stack<std::pair<Block*, bool>> _controlCloseBlocks;	
 	
 	public:
 	SequenceBuilder();
@@ -35,6 +38,13 @@ namespace BCIEvent {
 	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time);
 	SequenceBuilder& addTimedBlock(std::chrono::duration<double> time);
 	SequenceBuilder& addWaitForProcessBlock();
+
+
+	//Adds local variables and timers. These are deleted at the end of their scope, as each block adding one is paired with one removing it.
+	SequenceBuilder& addLocalVariable(std::string name, BCIEValue value);
+	SequenceBuilder& addLocalVariable(std::string name);
+
+	SequenceBuilder& addLocalTimer(std::string name);
 
 	SequenceBuilder& addLoopBlock(std::function<int(const Sequence&)> iterations);
 	SequenceBuilder& addWhileLoopBlock(std::function<bool(const Sequence&)> condition);

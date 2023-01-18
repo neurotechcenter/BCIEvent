@@ -13,7 +13,7 @@ namespace BCIEvent{
 	 */
 	HeadBlock();
 	~HeadBlock();
-	Block* run(Sequence &sequence);
+	Block* run(Sequence &sequence) override;
     };
 }
 

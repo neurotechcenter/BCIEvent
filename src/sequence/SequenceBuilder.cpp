@@ -9,23 +9,41 @@
 #include "TimerBlock.hpp"
 #include "EndBlock.hpp"
 #include "WhileLoopBlock.hpp"
+#include "StatementCloseNormalBlock.hpp"
 #include <stdexcept>
 
 using namespace BCIEvent;
 
 
 SequenceBuilder::SequenceBuilder(){
-   _head  = new HeadBlock();
+   _head  = std::make_unique<HeadBlock>();
    _lastBlock = _head;
 }
 
-HeadBlock* SequenceBuilder::getSequenceStart(){
+std::unique_ptr<HeadBlock> SequenceBuilder::getSequenceStart(){
     _lastBlock = new EndBlock(_lastBlock);
 
     if (_controlCloseBlocks.size() != 0){
 	    throw std::runtime_error("Statements were left unclosed. There are " + std::to_string(_controlCloseBlocks.size()) + " statements left to close.");
     }
     return _head;
+}
+
+SequenceBuilder& SequenceBuilder::addLocalVariable(std::string name, BCIEValue value) {
+	_lastBlock = new NormalBlock(_lastBlock, [&](Sequence& callingSequence) {callingSequence.addVariable(name, value)});
+	auto rmvarblock = StatementCloseNormalBlock([&](Sequence& callingSequence) {callingSequence.removeVariable(name); });
+	_controlCloseBlocks.push(std::make_pair(rmvarblock, false));
+	return *this;
+}
+
+SequenceBuilder& SequenceBuilder::addLocalVariable(std::string name) {
+	return addLocalVariable(name, std::nullopt);
+}
+
+SequenceBuilder& SequenceBuilder::addLocalTimer(std::string name) {
+	_lastBlock = new NormalBlock(_lastBlock, [&](Sequence& callingSequence) {callingSequence.addTimer(name); });
+	auto rmtimerblock = new StatementCloseNormalBlock([&](Sequence& callingSequence) {callingSequence.removeTimer(name); });
+	_controlCloseBlocks.push(std::make_pair(rmtimerblock, false))
 }
 
 SequenceBuilder& SequenceBuilder::addNormalBlock(std::function<void (Sequence& callingActor)> action){
@@ -47,7 +65,7 @@ SequenceBuilder& SequenceBuilder::addTimedBlock(std::chrono::duration<double> ti
     auto startBlk = new TimedBlockStart(_lastBlock, time);
     auto endBlk = new TimedBlockEnd(startBlk);
     _lastBlock = startBlk;
-    _controlCloseBlocks.push(endBlk);
+    _controlCloseBlocks.push(std::make_pair(endBlk, true));
     return *this;
 }
 
@@ -56,22 +74,28 @@ SequenceBuilder& SequenceBuilder::addWaitForProcessBlock() {
     return *this;
 }
 
+//Adds all non-sequence-terminating blocks(those which remove scoped variables) up to the first sequence-terminating block (those which end if/loop/other statements)
 SequenceBuilder& SequenceBuilder::closeStatement(){
     if (_controlCloseBlocks.size() <= 0){
 	throw std::out_of_range("closeStatement() called more times than necessary. Check how many multi-block statements you've added.");
     }
-    Block* closeBlock = _controlCloseBlocks.top();
-    _lastBlock->setNext(closeBlock);
-    _lastBlock = closeBlock;
+    auto closeBlockPair = _controlCloseBlocks.top();
+    _lastBlock->setNext(std::get<0>(closeBlockPair));
+    _lastBlock = std::get<0>(closeBlockPair);
     _controlCloseBlocks.pop();
-    return *this;
+	if (std::get<1>(closeBlockPair)) { //this is a terminating block, return
+		return *this;
+	}
+	else { //this is a non-terminating block, pop and add the next block.
+		return closeStatement();
+	}
 }
 	
 
 SequenceBuilder& SequenceBuilder::addIfBlock(std::function<bool (const Sequence &)> condition) {
 	    auto endBlk = new IfEndBlock();
 	    _lastBlock = new IfStartBlock(_lastBlock, endBlk, condition);
-	    _controlCloseBlocks.push(endBlk);
+	    _controlCloseBlocks.push(std::make_pair(endBlk, true));
 	    return *this;
 }
 
@@ -80,8 +104,8 @@ SequenceBuilder& SequenceBuilder::addIfElseBlock(std::function<bool(const Sequen
 	    auto endBlk = new IfElseEndBlock();
 	    auto elseBlk = new IfElseElseBlock(endBlk);
 	    _lastBlock = new IfElseStartBlock(_lastBlock, condition, elseBlk, endBlk);
-	    _controlCloseBlocks.push(endBlk);
-	    _controlCloseBlocks.push(elseBlk);
+	    _controlCloseBlocks.push(std::make_pair(endBlk, true));//these work with scoped variables because adding of blocks to
+	    _controlCloseBlocks.push(std::make_pair(elseBlk, true));//the else branch happens after the else block is popped.
 	    return *this;
 }
 
@@ -90,7 +114,7 @@ SequenceBuilder& SequenceBuilder::addLoopBlock(std::function<int(const Sequence&
 	    auto endBlk = new LoopEndBlock(startBlk);
 	    startBlk->addEndBlock(endBlk);
 	    _lastBlock = startBlk;
-	    _controlCloseBlocks.push(endBlk);
+	    _controlCloseBlocks.push(std::make_pair(endBlk, true));
 	    return *this;
 }
 
@@ -99,6 +123,6 @@ SequenceBuilder& SequenceBuilder::addWhileLoopBlock(std::function<bool (const Se
 	    auto endBlk = new WhileLoopEndBlock(startBlk);
 	    startBlk->setEndBlock(endBlk);
 	    _lastBlock = startBlk;
-	    _controlCloseBlocks.push(endBlk);
+	    _controlCloseBlocks.push(std::make_pair(endBlk, true));
 	    return *this;
 }

@@ -18,7 +18,7 @@ namespace BCIEvent{
 	IfEndBlock* _endBlock;
 	public:
 		IfStartBlock(Block*, IfEndBlock*, std::function<bool(const Sequence&)> condition);
-	Block* run(Sequence& sequence);
+	Block* run(Sequence& sequence) override;
     };
 }
 

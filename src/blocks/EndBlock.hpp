@@ -12,7 +12,7 @@ namespace BCIEvent{
 	public:
 	EndBlock(Block* prev);
 	~EndBlock();
-	Block* run(Sequence &sequence);
+	Block* run(Sequence &sequence) override;
     };
 }
 #endif

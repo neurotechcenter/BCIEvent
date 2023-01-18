@@ -21,7 +21,7 @@ namespace BCIEvent{
 	friend class WhileLoopEndBlock;
 	public:
 		WhileLoopStartBlock(Block* previous, std::function<bool(const Sequence&)> condition);
-	Block* run(Sequence& sequence);
+	Block* run(Sequence& sequence) override;
 	void setEndBlock(WhileLoopEndBlock* endBlock); //sets the end block. This must be called.
 
 	private:
@@ -34,7 +34,7 @@ namespace BCIEvent{
 	WhileLoopStartBlock* _startBlock;
 	public:
 	WhileLoopEndBlock(WhileLoopStartBlock* startBlock); //constructor which sets _next to itself. For use with a stack holding closing blocks
-	Block* run(Sequence& sequence);
+	Block* run(Sequence& sequence) override;
     };
 }
 

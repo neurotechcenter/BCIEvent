@@ -16,7 +16,7 @@ namespace BCIEvent{
 	class ProcessEvent;
 	class Actor;
 
-    class BCIEventApplication : public ApplicationBase{
+    class BCIEventApplication : public ApplicationBase {
 	public:
 	BCIEventApplication();
 	~BCIEventApplication();
@@ -39,17 +39,16 @@ namespace BCIEvent{
 
 	int randInt(int lowerBound, int upperBound);
 
-	void addVar(std::unique_ptr<BCIEVariable> var);
+	void addVariable(std::string);
+	void addVariable(std::string, BCIEValue);
+	void addVariable(std::string, std::function<(SequenceEnvironment&), BCIEValue>, int);
 
-	template<typename ReqType>
-	ReqType getVar(std::string name) const {
-		return _globalVars->getVariable(name);
-	}
-	template<typename SetType>
-	SetType setVar(std::string name, SetType value) {
-		_globalVars->setVariable(name, value);
-	}
+	BCIEValue getVariable(std::string);
+	void setVariable(std::string, BCIEValue);
 	
+	void addTimer(std::string name);
+	Timer& getTimer(std::string name);
+
 	const GenericSignal* currentSignal;
 	GUI::GraphDisplay& getDisplay() { return _display; }
 
@@ -69,7 +68,7 @@ namespace BCIEvent{
 	std::thread _appLoopThread;
 	bool _appLoop = true;
 
-
+	void initialize();
 	void applicationLoop();
 	void update(const GenericSignal&);
 	void addActor(std::unique_ptr<Actor>);
@@ -88,11 +87,13 @@ namespace BCIEvent{
 	RunState _currentState = Paused;	
 	std::vector<std::unique_ptr<Actor>> _actors;
 	std::map<std::string, BCIEValue> _variables;
+	std::priority_queue<VarInitializer, std::deque<VarInitializer>, &var_init_greater> _varInits;
 	std::map<std::string, BCIState> _states;
 	std::map<std::string, Event> _events
 	std::vector<std::string> _bci2000events;
-	std::shared_ptr<ProcessEvent> _processEvent;
+	std::shared_ptr<StateEvent> _stateEvents;
 	std::map < std::string, std::function<(&Sequence, std::vector<BCIEValue>) BCIEValue> _functions;
+	std::map<std::string, Timer> _timers;
 
 
 	Actor* makeActor();

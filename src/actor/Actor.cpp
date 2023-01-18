@@ -44,9 +44,15 @@ using namespace BCIEvent;
         //After these operations, the list of sequences will be the same except without any completed sequences, which will have been deleted.
 	}
 	_currentSignal = nullptr; //the signal should only ever be accessed during the update stage.
-	Invalidate();
-	Paint();
     }
+
+void Actor::initialize() {
+    while (!_varInits.empty()) {
+        VarInitializer& vi = _varInits.top();
+        _variables.insert(std::get<0>(vi), std::get<1>(vi)(*this));
+        _varInits.pop();
+    }
+}
 
 Actor::Actor(BCIEventApplication* app) :
 	GUI::GraphObject(app->getDisplay(), 0)
@@ -62,8 +68,18 @@ Actor::~Actor(){
     DestructorEntered();
 }
 
-Actor& Actor::addVariable(std::unique_ptr<BCIEVariable> var){
-    _variables.insert(std::pair<std::string, std::unique_ptr<BCIEVariable>>(var->name(), std::move(var)));
+Actor& Actor::addVariable(std::string name){
+    _variables.insert(std::make_pair(name, std::nullopt))
+    return *this;
+}
+
+Actor& Actor::addVariable(std::string name, BCIEValue value) {
+    _variables.insert(std::make_pair(name, value));
+    return *this
+}
+
+Actor& Actor::addVariable(std::string name, std::function<(SequenceEnvironment&), BCIEValue> value, int priority) {
+    _varInits.push(std::make_tuple(name, value, priority));
     return *this;
 }
 
@@ -97,13 +113,50 @@ Actor& Actor::addGraphic(std::string filename, bool transparent){
     return *this;
 }
 
-Sequence* getProc(std::string name, std::vector<BCIEValue> parameters) {
+Actor& addSound(std::string filename) {
+    _sounds.push(std::make_unique<WavePlayer>(filename));
+    return *this;
+}
+
+Actor& Actor::addTimer(std::string name) {
+    _timers.insert(name, Timer());
+    return *this;
+}
+
+std::unique_ptr<Sequence> getProc(std::string name, std::vector<BCIEValue> parameters) {
     return _procedures.at(name).getSequence(parameters);
+}
+
+BCIEValue getVariable(std::string name) {
+    try {
+        return _variables.at(name);
+    }
+    catch (std::out_of_range) {
+        return _app->getVariable(name);
+    }
+}
+
+void setVariable(std::string name, BCIEValue val) {
+    try {
+        _variables.at(name) = name;
+    }
+    catch (std::out_of_range) {
+        _app.setVariable(name, val);
+    }
 }
 
 
 int Actor::randInt(int lower, int upper) {
 	return _app->randInt(lower, upper);
+}
+
+Timer& getTimer(std::string name) {
+    try {
+        return _timers.at(name);
+    }
+    catch (std::out_of_range) {
+        return _app->getTimer(name);
+    }
 }
 
 
@@ -146,15 +199,20 @@ void Actor::OnPaint(const GUI::DrawContext& context){
 }
 
 
-void Actor::addFunction(std::string name, std::function<(Sequence&, std::vector<BCIEValue>), BCIEValue> fn) {
+Actor& Actor::addFunction(std::string name, std::function<(Sequence&, std::vector<BCIEValue>), BCIEValue> fn) {
     _functions.insert(name, fn);
+    return *this;
 }
 
 BCIEValue Actor::callFunction(std::string name, Sequence& callingSequence, std::vector<BCIEValue> params) {
     try {
         return _functions.at(name)(callingSequence, params);
     }
-    catch (std::out_of_range) {
+    catch (const std::out_of_range&) {
         return _app->callFunction(name, params);
     }
+}
+
+void Actor::playSound(int snd) {
+    _sounds.at(snd).Play();
 }

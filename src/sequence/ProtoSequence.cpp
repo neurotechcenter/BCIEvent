@@ -4,9 +4,9 @@
 #include "ActorUtil.hpp"
 using namespace BCIEvent;
 
-ProtoSequence::ProtoSequence(std::vector<std::pair<std::string, BCIEType>>> params) {
+ProtoSequence::ProtoSequence(std::vector<std::string> params) {
 	for (auto&& p : params) {
-		_parameters.insert(p.first, p.second);
+	    _parameters.push_back(p);
 	}
 }
 
@@ -46,7 +46,7 @@ ProtoSequence& ProtoSequence::closeStatement() {
 	return *this;
 }
 
-Sequence* ProtoSequence::genSequence(std::vector<BCIEValue> parameter_values) {
+std::unique_ptr<Sequence> ProtoSequence::genSequence(std::vector<BCIEValue> parameter_values) {
 	if (parameter_values.size != _parameters.size()) {
 		throw std::logic_error("genSequence called on procedure sequence with incorrect number of parameter values");
 	}
@@ -58,7 +58,7 @@ Sequence* ProtoSequence::genSequence(std::vector<BCIEValue> parameter_values) {
 }
 
 
-Sequence* ProtoSequence::genSequence() {
+std::unique_ptr<Sequence> ProtoSequence::genSequence() {
 	if (!_parameters.empty()) {
 		throw std::logic_error("genSequence called without initial values for this sequences parameters. This would be caused by a sequence intended to be a procedure mistakenly being interpreted as an event response.");
 	}
@@ -98,6 +98,6 @@ Sequence* ProtoSequence::genSequence() {
 			break;
 		}
 	}
-	return new Sequence(builder.getSequenceStart());
+	return std::make_unique<Sequence>(builder.getSequenceStart());
 }
 

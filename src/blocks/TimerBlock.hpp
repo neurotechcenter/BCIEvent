@@ -20,7 +20,7 @@ namespace BCIEvent{
     public:
 	TimerBlock(Block* previous, std::chrono::duration<double> time, std::function<void (Sequence&)> action);
 	TimerBlock(Block* previous, std::chrono::duration<double> time); //treated as wait block
-	Block* run(Sequence& sequence);
+	Block* run(Sequence& sequence) override;
    }; 
 }
 

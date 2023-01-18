@@ -29,10 +29,13 @@ namespace BCIEvent{
 	int _currentGraphic = 0;
 
 	std::vector<std::unique_ptr<EventListener>> _listeners;
-	std::list<Sequence*> _sequences; //Currently running sequences, no smart pointers because they dont work for some reason
+	std::list<std::unique_ptr<Sequence>> _sequences; //Currently running sequences, no smart pointers because they dont work for some reason
 	std::map<std::string, ProtoSequence> _procedures; //procedures defined for this actor
 	std::map<std::string, Event> _events;
 	std::map<std::string, BCIEVariable> _variables;
+	std::priority_queue<VarInitializer, std::deque<VarInitializer>, &var_init_greater> _varInits;
+	std::map<std::string, Timer> _timers;
+	std::vector<std::unique_ptr<WavePlayer>> _sounds;
 
 
 	const GenericSignal* _currentSignal;
@@ -41,6 +44,7 @@ namespace BCIEvent{
 
 	public:
 
+		void initalize();
 	/**
 	 * Main update function: called once every cycle of the main loop.
 	 * Runs blocks and handles events.
@@ -51,23 +55,27 @@ namespace BCIEvent{
 	~Actor();
 	Actor& addVariable(std::string name);
 	Actor& addVariable(std::string name, BCIEValue value);
+	Actor& addVariable(std::string name, std::function<(SequenceEnvironment&), BCIEValue> value, int initPriority);
 	Actor& addGraphic(std::string filename, bool transparent);
+	Actor& addSound(std::string filename);
 	Actor& addEventListener(std::unique_ptr<EventListener>);
 	Actor& addEventListener(std::string, std::unique_ptr<EventListener>);
 	Actor& addProcedure(std::string name, ProtoSequence sequence);
 	Actor& addEvent(std::string name);
+	Actor& addFunction(std::string name, std::function<(Sequence&, std::vector<BCIEValue>), BCIEValue>);
+	Actor& addTimer(std::string name);
 
 
 
 	void callEvent(std::string);
 
-	Sequence* getProcedure(std::string name, std::vector<BCIEValue> parameters);
+	std::unique_ptr<Sequence> getProcedure(std::string name, std::vector<BCIEValue> parameters);
 
 	int randInt(int lowerBound, int upperBound);
 
-	void addFunction(std::string name, std::function<(Sequence&, std::vector<BCIEValue>), BCIEValue>);
 	BCIEValue callFunction(std::string name, Sequence& callingSequence, std::vector<BCIEValue> parameters);
 
+	Timer& getTimer(std::string name);
 
 	/**
 	 * Returns the value of the signal.
@@ -100,21 +108,12 @@ namespace BCIEvent{
     BCIEValue getVariable(std::string name) const{
         try {
 			return _variables.at(name);
-        } catch (std::out_of_range e) {
+        } catch (const std::out_of_range& e) {
         	return _app->getVariable(name);
         }
     }
 
-	template <typename SetType>
-	void setVariable(std::string name, SetType value){
-	    static_assert(std::is_same<SetType, bool>::value || std::is_same<SetType, BCIEVariable>::value || std::is_floating_point<SetType>::value || std::is_integral<SetType>::value,
-		    "Template argument for setVariable must be Variable, boolean, integral, or floating point");
-	    try {
-		*_variables.at(name) = value;
-	    } catch (std::out_of_range e) {
-		_app->setVar(name, value);
-	    }
-	}
+	void setVariable(std::string name, BCIEValue value);
 	
 	template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
 	void setState(std::string name, T value){
@@ -126,6 +125,8 @@ namespace BCIEvent{
 	    return static_cast<T>(_app->getBCIState(name).get());
 	}
     };
+
+	void playSound(int sound);
 }
 
 

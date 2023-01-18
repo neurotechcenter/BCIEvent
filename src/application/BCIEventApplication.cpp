@@ -42,12 +42,28 @@ void BCIEventApplication::addActor(std::unique_ptr<Actor> actor){
     _actors.push_back(std::move(actor));
 }
 
+void BCIEventApplication::addVariable(std::string name) {
+	_variables.insert(name, std::nullopt)
+}
+
 void BCIEventApplication::addVariable(std::string name, BCIEValue value) {
 	_variables.insert(name, value);
 }
 
+void BCIEventApplication::addVariable(std::string name, std::function<(SequenceEnvironment&), BCIEValue> value, int priority) {
+	_varInits.push(std::make_tuple(name, value, priority));
+}
+
 void BCIEventApplication::addVariable(std::string name) {
 	_variables.insert(name, std::nullopt);
+}
+
+void BCIEventApplication::addTimer(std::string name) {
+	_timers.insert(std::make_pair(name, Timer()));
+}
+
+Timer& BCIEventApplication::getTimer(std::string name) {
+	_timers.at(name);
 }
 
 void BCIEventApplication::addBCI2000Event(std::string name) {
@@ -133,6 +149,10 @@ void BCIEventApplication::OnPreflight(const SignalProperties& input) const{
 }
 
 void BCIEventApplication::OnInitialize(const SignalProperties& input) {
+	initialize();
+	for (auto actor : _actors) {
+		actor->initialize();
+	}
 	_appLoopThread = std::thread(&BCIEventApplication::applicationLoop, this);
 	StartEvent::getInstance()->trigger();
 	_display.Show();
@@ -147,6 +167,14 @@ void BCIEventApplication::OnStopRun(){
 void BCIEventApplication::OnHalt(){
 	_appLoop = false;
 	_appLoopThread.join();
+}
+
+void BCIEventApplication::initialize() {
+	while (!_varInits.empty()) {
+		VarInitializer& vi = _varInits.top();
+		_variables.insert(std::make_pair(std::get<0>(vi), std::get<1>(vi)(ApplicationEnvironment(this))));
+		_varInits.pop();
+	}
 }
 
 void BCIEventApplication::applicationLoop() {

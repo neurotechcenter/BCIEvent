@@ -26,13 +26,13 @@ namespace BCIEvent{
 		LoopStartBlock(Block* previous, std::function<int(const Sequence&)> iterationGetter);
 	
 	void addEndBlock(LoopEndBlock* endBlock); //must be called
-	Block* run (Sequence& sequence);
+	Block* run (Sequence& sequence) override;
     };
     class LoopEndBlock : public StatementCloseBlock{
 	LoopStartBlock* _startBlock;
 	public:
 	LoopEndBlock(LoopStartBlock* startBlock); //constructor which sets _next to itself. For use with a stack holding closing blocks.
-	Block* run(Sequence& sequence);
+	Block* run(Sequence& sequence) override;
     };
 }
 

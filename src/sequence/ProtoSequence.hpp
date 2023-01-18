@@ -18,8 +18,8 @@ namespace BCIEvent {
 		/*
 		* Generates a sequence from the list of prototype blocks
 		*/
-		Sequence* genSequence();
-		Sequence* genSequence(std::vector<BCIEValue> initialValues);
+		std::unique_ptr<Sequence> genSequence();
+		std::unique_ptr<Sequence> genSequence(std::vector<BCIEValue> initialValues);
 		ProtoSequence() {}
 		ProtoSequence(std::vector<std::string> parameters);
 		~ProtoSequence();

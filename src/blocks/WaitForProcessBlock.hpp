@@ -11,7 +11,7 @@ namespace BCIEvent {
 	public:
 		WaitForProcessBlock(Block*);
 		void process();
-		Block* run(Sequence& sequence);
+		Block* run(Sequence& sequence) override;
 
 	};
 }

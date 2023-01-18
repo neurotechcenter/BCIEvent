@@ -1,7 +1,10 @@
 #ifndef BCIEVALUE_H
 #define BCIEVALUE_H
-
+#include <functional>
 #include <variant>
+#include <string>
+#include <optional>
+#include "SequenceEnvironment.hpp"
 /*
 * Type representing a value of a variable or parameter.
 * A variable itself is typeless, and can hold a value of any of these four types, or be empty
@@ -12,6 +15,10 @@
 */
 
 typedef BCIEValue std::variant<int, bool, double, std::string, std::nullopt_t>;
+typedef VarInitializer std::tuple < std::string, std::function<(SequenceEnvironment&), BCIEValue, int>;
+bool var_init_greater(VarInitializer* l, VarInitializer* r) {
+	return std::get<2>(l) > std::get<2>(r);
+}
 
 
 

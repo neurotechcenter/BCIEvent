@@ -14,10 +14,6 @@ Sequence::Sequence(HeadBlock* head) {
 	_currentBlock = static_cast<Block*>(head);
 }
 
-Sequence::~Sequence() {
-	delete _head; //deleting the head of a sequence of blocks will sequentially delete all other blocks in the sequence.
-}
-
 bool Sequence::update() {
 	if (_subProcedure) { //if there is a subprocedure currently running
 		if (_subProcedure->update()) {
@@ -37,6 +33,19 @@ bool Sequence::update() {
 	return true; //current block has run and next block exists; return true
 }
 
+void Sequence::addTimer(std::string name) {
+	_timers.insert(name, Timer());
+}
+
+Timer& Sequence::getTimer(std::string name) {
+	try {
+		return timers.at(name);
+	}
+	catch (std::out_of_range) {
+		return _actor->getTimer(name);
+	}
+}
+
 void Sequence::addVariable(std::string name) {
 	_variables.insert(name, std::nullopt);
 }
@@ -44,6 +53,17 @@ void Sequence::addVariable(std::string name) {
 void Sequence.addVariable(std::string name, BCIEValue value) {
 	_variables.insert(name, value);
 }
+
+void Sequence::setVariable(std::string name, BCIEValue val) {
+	try {
+		_variables.at(name) = value;
+	}
+	catch (std::out_of_range) {
+		_actor->setVariable(name, val);
+	}
+}
+
+
 
 void Sequence::callBCI2000Event(std::string name, uint32_t value) {
 	bcievent << name << " " << value;

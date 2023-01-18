@@ -18,7 +18,7 @@ class IfElseElseBlock : public StatementCloseBlock{
     friend class IfElseStartBlock;
     public:
     IfElseElseBlock(IfElseEndBlock* endBlock);
-    Block* run(Sequence& sequence);
+    Block* run(Sequence& sequence) override;
 
 };
 
@@ -29,7 +29,7 @@ class IfElseStartBlock : public Block{
 
     public:
         IfElseStartBlock(Block* previous, std::function<bool(const Sequence&)> condition, IfElseElseBlock* elseBlock, IfElseEndBlock* endBlock);
-    Block* run(Sequence& sequence);
+    Block* run(Sequence& sequence) override;
 };
 
 
