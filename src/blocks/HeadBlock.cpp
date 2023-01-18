@@ -1,6 +1,6 @@
 #include "HeadBlock.hpp"
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 HeadBlock::HeadBlock() : Block(this){}
 HeadBlock::~HeadBlock(){

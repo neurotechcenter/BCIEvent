@@ -5,7 +5,7 @@
 #include <chrono>
 #include <functional>
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     /**
      * A block with a timer.
      * waits until time has elapsed before returning the next block.

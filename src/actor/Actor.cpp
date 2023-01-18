@@ -11,7 +11,7 @@
 #include <QPainter>
 
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
     void Actor::update( const GenericSignal& signal ){
 
@@ -34,9 +34,7 @@ using namespace BCIEvent;
             _sequences.pop_front();
         }
         else { //else delete the finished sequence
-            delete _sequences.front();
             _sequences.pop_front();
-
         }
            //This will either remove and delete a completed sequence or move the next sequence to the end of the list 
         //After these operations, the list of sequences will be the same except without any completed sequences, which will have been deleted.
@@ -46,8 +44,8 @@ using namespace BCIEvent;
 
 void Actor::initialize() {
     while (!_varInits.empty()) {
-        VarInitializer& vi = _varInits.top();
-        _variables.insert(std::get<0>(vi), std::get<1>(vi)(*this));
+        VarInitializer vi = _varInits.top();
+        _variables.insert(std::make_pair(std::get<0>(vi), std::get<1>(vi)(*this)));
         _varInits.pop();
     }
 }
@@ -67,16 +65,16 @@ Actor::~Actor(){
 }
 
 Actor& Actor::addVariable(std::string name){
-    _variables.insert(std::make_pair(name, std::nullopt))
+    _variables.insert(std::make_pair(name, std::nullopt));
     return *this;
 }
 
 Actor& Actor::addVariable(std::string name, BCIEValue value) {
     _variables.insert(std::make_pair(name, value));
-    return *this
+    return *this;
 }
 
-Actor& Actor::addVariable(std::string name, std::function<(SequenceEnvironment&), BCIEValue> value, int priority) {
+Actor& Actor::addVariable(std::string name, std::function<BCIEValue(SequenceEnvironment&)> value, int priority) {
     _varInits.push(std::make_tuple(name, value, priority));
     return *this;
 }
@@ -111,22 +109,22 @@ Actor& Actor::addGraphic(std::string filename, bool transparent){
     return *this;
 }
 
-Actor& addSound(std::string filename) {
-    filepath = "../src/custom/BCIEvent/assets/sounds/" + filename;
-    _sounds.push(std::make_unique<WavePlayer>(filepath));
+Actor& Actor::addSound(std::string filename) {
+    std::string filepath = "../src/custom/BCIEvent/assets/sounds/" + filename;
+    _sounds.push_back(std::make_unique<WavePlayer>(filepath));
     return *this;
 }
 
 Actor& Actor::addTimer(std::string name) {
-    _timers.insert(name, Timer());
+    _timers.insert(std::make_pair(name, Timer()));
     return *this;
 }
 
-std::unique_ptr<Sequence> getProc(std::string name, std::vector<BCIEValue> parameters) {
-    return _procedures.at(name).getSequence(parameters);
+std::unique_ptr<Sequence> Actor::getProcedure(std::string name, std::vector<BCIEValue> parameters) {
+    return _procedures.at(name).genSequence(parameters);
 }
 
-BCIEValue getVariable(std::string name) {
+BCIEValue Actor::getVariable(std::string name) {
     try {
         return _variables.at(name);
     }
@@ -135,12 +133,12 @@ BCIEValue getVariable(std::string name) {
     }
 }
 
-void setVariable(std::string name, BCIEValue val) {
+void Actor::setVariable(std::string name, BCIEValue val) {
     try {
         _variables.at(name) = name;
     }
     catch (std::out_of_range) {
-        _app.setVariable(name, val);
+        _app->setVariable(name, val);
     }
 }
 
@@ -149,7 +147,7 @@ int Actor::randInt(int lower, int upper) {
 	return _app->randInt(lower, upper);
 }
 
-Timer& getTimer(std::string name) {
+BCIEvent::Timer& Actor::getTimer(std::string name) {
     try {
         return _timers.at(name);
     }
@@ -198,14 +196,14 @@ void Actor::OnPaint(const GUI::DrawContext& context){
 }
 
 
-Actor& Actor::addFunction(std::string name, std::function<(Sequence&, std::vector<BCIEValue>), BCIEValue> fn) {
-    _functions.insert(name, fn);
+Actor& Actor::addFunction(std::string name, std::function<BCIEValue (SequenceEnvironment&, std::vector<BCIEValue>)> fn) {
+    _functions.insert(std::make_pair(name, fn));
     return *this;
 }
 
-BCIEValue Actor::callFunction(std::string name, Sequence& callingSequence, std::vector<BCIEValue> params) {
+BCIEValue Actor::callFunction(std::string name, std::vector<BCIEValue> params) {
     try {
-        return _functions.at(name)(callingSequence, params);
+        return _functions.at(name)(*this, params);
     }
     catch (const std::out_of_range&) {
         return _app->callFunction(name, params);
@@ -213,5 +211,6 @@ BCIEValue Actor::callFunction(std::string name, Sequence& callingSequence, std::
 }
 
 void Actor::playSound(int snd) {
-    _sounds.at(snd).Play();
+    _sounds.at(snd)->Play();
 }
+

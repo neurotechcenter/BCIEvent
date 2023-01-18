@@ -2,7 +2,7 @@
 #include "ActorUtil.hpp"
 #include "IntegerExpression.hpp"
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 LoopStartBlock::LoopStartBlock(Block* previous, std::function<int(const Sequence&)> iterationGetter) : Block(previous) {
 	    _iterationGetter = iterationGetter;

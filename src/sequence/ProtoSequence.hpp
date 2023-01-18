@@ -7,7 +7,7 @@
 #include "NumberExpression.hpp"
 #include "ActorUtil.hpp"
 
-namespace BCIEvent {
+namespace BCIEvent_N {
 	/*
 	* A protoype for a sequence, which can generate an instance of type Sequence
 	*/

@@ -19,7 +19,7 @@
 #include "WhileLoopBlock.hpp"
 #include "WaitForProcessBlock.hpp"
 
-namespace BCIEvent {
+namespace BCIEvent_N {
     class SequenceBuilder {
 	std::unique_ptr<HeadBlock> _head;
 	Block* _lastBlock;
@@ -62,7 +62,7 @@ namespace BCIEvent {
 	 */
 	SequenceBuilder& closeStatement();
 
-	HeadBlock* getSequenceStart();
+	std::unique_ptr<HeadBlock> getSequenceStart();
 
     };
 }

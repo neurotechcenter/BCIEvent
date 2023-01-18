@@ -7,11 +7,11 @@
 #include "HeadBlock.hpp"
 
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
-Sequence::Sequence(HeadBlock* head) {
-	_head = head;
-	_currentBlock = static_cast<Block*>(head);
+Sequence::Sequence(std::unique_ptr<HeadBlock> head) {
+	_head = std::move(head);
+	_currentBlock = static_cast<Block*>(_head.get());
 }
 
 bool Sequence::update() {
@@ -34,12 +34,12 @@ bool Sequence::update() {
 }
 
 void Sequence::addTimer(std::string name) {
-	_timers.insert(name, Timer());
+	_timers.insert(std::make_pair(name, Timer()));
 }
 
 Timer& Sequence::getTimer(std::string name) {
 	try {
-		return timers.at(name);
+		return _timers.at(name);
 	}
 	catch (std::out_of_range) {
 		return _actor->getTimer(name);
@@ -47,44 +47,51 @@ Timer& Sequence::getTimer(std::string name) {
 }
 
 void Sequence::addVariable(std::string name) {
-	_variables.insert(name, std::nullopt);
+	_variables.insert(std::make_pair(name, std::nullopt));
 }
 
 void Sequence::addVariable(std::string name, BCIEValue value) {
-	_variables.insert(name, value);
+	_variables.insert(std::make_pair(name, value));
 }
 
 void Sequence::setVariable(std::string name, BCIEValue val) {
 	try {
-		_variables.at(name) = value;
+		_variables.at(name) = val;
 	}
 	catch (std::out_of_range) {
 		_actor->setVariable(name, val);
 	}
 }
 
-BCIEValue Sequence::getVariable(std::string name)[
+BCIEValue Sequence::getVariable(std::string name){
 	try {
 		return _variables.at(name);
 	}
 	catch (std::out_of_range) {
 		return _actor->getVariable(name);
 	}
+}
 
-]
+void Sequence::removeVariable(std::string name) {
+	_variables.erase(name);
+}
+
+void Sequence::removeTimer(std::string name) {
+	_timers.erase(name);
+}
 
 
 
 void Sequence::callBCI2000Event(std::string name, uint32_t value) {
-	bcievent << name << " " << value;
+	::bcievent << name << " " << value;
 }
 
 void Sequence::callProcedure(std::string name, std::vector<BCIEValue> params) {
-	_subprocedure = std::unique_ptr<Sequence>(_actor.getProcedure());
+	_subProcedure = _actor.getProcedure(name);
 }
 
 BCIEValue Sequence::callFunction(std::string name, std::vector<BCIEValue> params) {
-	return _actor.callFunction(name, *this, params);
+	return _actor.callFunction(name, params);
 }
 
 void Sequence::actorMoveTo(double x, double y) {

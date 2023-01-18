@@ -2,7 +2,7 @@
 #define STATEMENTCLOSE_H
 
 #include "Block.hpp"
-namespace BCIEvent{
+namespace BCIEvent_N{
 
     /**
      * Any block which closes a statement.

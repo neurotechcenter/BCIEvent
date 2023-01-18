@@ -2,7 +2,7 @@
 #define BCISTATE_H
 #include <string>
 
-namespace BCIEvent{
+namespace BCIEvent_N{
 
     /**
      * A BCI2000 state. BCIEvent does not add these states automatically, you must add them

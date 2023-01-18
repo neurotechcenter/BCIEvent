@@ -3,7 +3,7 @@
 #include <chrono>
 #include <functional>
 
-namespace BCIEvent {
+namespace BCIEvent_N {
 	class Sequence;
 		/*
 		 * Holds type and all possible parameters, those being a void procedure(for normal blocksand timer blocks with action),
@@ -11,7 +11,7 @@ namespace BCIEvent {
 		 * and a duration(for timed and timer blocks)
 		 * For any given block prototype, only the fields that are relevant to the block will not be null.
 		 */
-	enum ProtoBlockType {CloseStatement, WaitForProcess, Normal, If, IfElse, While, Loop, Timed, Timer};
+	enum ProtoBlockType {CloseStatement, WaitForProcess, Normal, If, IfElse, While, Loop, Timed, Timer_m};
 	class Protoblock {
 	public:
 

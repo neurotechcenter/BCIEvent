@@ -4,7 +4,6 @@
 #include <variant>
 #include <string>
 #include <optional>
-#include "SequenceEnvironment.hpp"
 /*
 * Type representing a value of a variable or parameter.
 * A variable itself is typeless, and can hold a value of any of these four types, or be empty
@@ -13,10 +12,10 @@
 * The reason for having an extra empty variant member instead of default initializing is so that errors relating to 
 * uninitialized variables are explicit, rather than the code continuing to run with unintended values.
 */
-namespace BCIEvent {
-
-	typedef std::variant<int, bool, double, std::string, std::nullopt_t> BCIEValue;
-	typedef std::tuple < std::string, std::function<BCIEValue(SequenceEnvironment&)>, int> VarInitializer;
+namespace BCIEvent_N {
+	class SequenceEnvironment;
+	using BCIEValue = std::variant<int, bool, double, std::string, std::nullopt_t>;
+	using VarInitializer = std::tuple < std::string, std::function<BCIEValue(SequenceEnvironment&)>, int>;
 	class VarInitCmp {
 		public:
 		bool operator()(const VarInitializer& l, const VarInitializer& r) const {

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 
 int signbit(int val){

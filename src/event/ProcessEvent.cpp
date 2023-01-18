@@ -1,6 +1,6 @@
 #include "ProcessEvent.hpp"
 #include "WaitForProcessBlock.hpp"
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 void ProcessEvent::trigger() {
 	for (WaitForProcessBlock* b : _processBlocks) {

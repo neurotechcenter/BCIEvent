@@ -4,7 +4,7 @@
 #include <type_traits>
 #include "Actor.hpp"
 
-namespace BCIEvent{
+namespace BCIEvent_N{
    
     template<typename T>
     concept ExpressionType = std::convertible_to<T, bool> || std::convertible_to<T, int> || std::convertible_to<T, float>;

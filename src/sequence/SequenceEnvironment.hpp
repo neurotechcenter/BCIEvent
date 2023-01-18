@@ -5,12 +5,12 @@
 #include "BCIEValue.hpp"
 #include "Timer.hpp"
 
-namespace BCIEvent {
+namespace BCIEvent_N {
 	class SequenceEnvironment {
 	public: 
 		virtual BCIEValue getVariable(std::string) = 0;
 		virtual Timer& getTimer(std::string) = 0;
-		virtual BCIEValue callFunc(std::string, std::vector<BCIEValue>) = 0;
+		virtual BCIEValue callFunction(std::string, std::vector<BCIEValue>) = 0;
 	};
 }
 

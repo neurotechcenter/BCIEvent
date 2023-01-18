@@ -5,7 +5,7 @@
 #include "Block.hpp"
 
 
-namespace BCIEvent {
+namespace BCIEvent_N {
 	class WaitForProcessBlock : public Block {
 		bool _waiting = false;
 	public:

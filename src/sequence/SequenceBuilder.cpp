@@ -7,17 +7,18 @@
 #include "IfBlock.hpp"
 #include "IfElseBlock.hpp"
 #include "TimerBlock.hpp"
+#include "TimedBlock.hpp"
 #include "EndBlock.hpp"
 #include "WhileLoopBlock.hpp"
 #include "StatementCloseNormalBlock.hpp"
 #include <stdexcept>
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 
 SequenceBuilder::SequenceBuilder(){
    _head  = std::make_unique<HeadBlock>();
-   _lastBlock = _head;
+   _lastBlock = static_cast<Block*>(_head.get());
 }
 
 std::unique_ptr<HeadBlock> SequenceBuilder::getSequenceStart(){
@@ -26,12 +27,12 @@ std::unique_ptr<HeadBlock> SequenceBuilder::getSequenceStart(){
     if (_controlCloseBlocks.size() != 0){
 	    throw std::runtime_error("Statements were left unclosed. There are " + std::to_string(_controlCloseBlocks.size()) + " statements left to close.");
     }
-    return _head;
+    return std::move(_head);
 }
 
 SequenceBuilder& SequenceBuilder::addLocalVariable(std::string name, BCIEValue value) {
-	_lastBlock = new NormalBlock(_lastBlock, [&](Sequence& callingSequence) {callingSequence.addVariable(name, value)});
-	auto rmvarblock = StatementCloseNormalBlock([&](Sequence& callingSequence) {callingSequence.removeVariable(name); });
+	_lastBlock = new NormalBlock(_lastBlock, [&](Sequence& callingSequence) {callingSequence.addVariable(name, value);  });
+	auto rmvarblock = new StatementCloseNormalBlock([&](Sequence& callingSequence) {callingSequence.removeVariable(name); });
 	_controlCloseBlocks.push(std::make_pair(rmvarblock, false));
 	return *this;
 }
@@ -63,9 +64,9 @@ SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> ti
 }
 
 SequenceBuilder& SequenceBuilder::addTimedBlock(std::chrono::duration<double> time) {
-    auto startBlk = new TimedBlockStart(_lastBlock, time);
-    auto endBlk = new TimedBlockEnd(startBlk);
-    _lastBlock = startBlk;
+    TimedBlockStart* startBlk = new TimedBlockStart(_lastBlock, time);
+    Block* endBlk = new TimedBlockEnd(startBlk);
+    _lastBlock = static_cast<Block*>(startBlk);
     _controlCloseBlocks.push(std::make_pair(endBlk, true));
     return *this;
 }

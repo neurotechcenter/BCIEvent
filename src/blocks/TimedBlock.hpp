@@ -4,7 +4,7 @@
 #include "Block.hpp"
 #include "StatementCloseBlock.hpp"
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     /**
      *	Blocks which ensure a certain amount of time has passed before moving on.
      *	Similar to TimerBlock, but these enclose multiple blocks.

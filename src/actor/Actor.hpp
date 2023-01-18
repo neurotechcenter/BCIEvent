@@ -13,13 +13,14 @@
 #include "BCIEValue.hpp"
 #include "BCIEventApplication.hpp"
 #include "WavePlayer.h"
+#include "SequenceEnvironment.hpp"
 
-namespace BCIEvent{
+namespace BCIEvent_N{
 	class ProtoSequence;
 	class Sequence;
 	class Event;
 	class EventListener;
-    class Actor : public GUI::GraphObject{
+    class Actor : public GUI::GraphObject, public SequenceEnvironment{
 		friend class Sequence;
 		
 	BCIEventApplication* _app;
@@ -34,6 +35,7 @@ namespace BCIEvent{
 	std::priority_queue<VarInitializer, std::deque<VarInitializer>, VarInitCmp> _varInits;
 	std::map<std::string, Timer> _timers;
 	std::vector<std::unique_ptr<WavePlayer>> _sounds;
+	std::map < std::string, std::function < BCIEValue(SequenceEnvironment&, std::vector<BCIEValue>)>> _functions ;
 
 
 	const GenericSignal* _currentSignal;
@@ -42,7 +44,7 @@ namespace BCIEvent{
 
 	public:
 
-		void initalize();
+	void initialize();
 	/**
 	 * Main update function: called once every cycle of the main loop.
 	 * Runs blocks and handles events.
@@ -60,7 +62,7 @@ namespace BCIEvent{
 	Actor& addEventListener(std::string, std::unique_ptr<EventListener>);
 	Actor& addProcedure(std::string name, ProtoSequence sequence);
 	Actor& addEvent(std::string name);
-	Actor& addFunction(std::string name, std::function<BCIEValue(Sequence&, std::vector<BCIEValue>)>);
+	Actor& addFunction(std::string name, std::function<BCIEValue(SequenceEnvironment&, std::vector<BCIEValue>)>);
 	Actor& addTimer(std::string name);
 
 
@@ -71,7 +73,7 @@ namespace BCIEvent{
 
 	int randInt(int lowerBound, int upperBound);
 
-	BCIEValue callFunction(std::string name, Sequence& callingSequence, std::vector<BCIEValue> parameters);
+	BCIEValue callFunction(std::string name, std::vector<BCIEValue> parameters);
 
 	Timer& getTimer(std::string name);
 
@@ -94,6 +96,7 @@ namespace BCIEvent{
 	void setZOrder(float zOrder) { GUI::GraphObject::SetZOrder(zOrder); Invalidate(); }
 	bool visible() { return GUI::GraphObject::Visible(); }
 	void setVisible(bool visible) { GUI::GraphObject::SetVisible(visible); Invalidate(); }
+	void playSound(int sound);
 
 	/**
 	 * This currently returns true when a point within the bounding box is clicked.
@@ -103,13 +106,7 @@ namespace BCIEvent{
 	void OnPaint(const GUI::DrawContext&) override;
 	        
 
-    BCIEValue getVariable(std::string name) const{
-        try {
-			return _variables.at(name);
-        } catch (const std::out_of_range& e) {
-        	return _app->getVariable(name);
-        }
-    }
+    BCIEValue getVariable(std::string name);
 
 	void setVariable(std::string name, BCIEValue value);
 	
@@ -124,7 +121,7 @@ namespace BCIEvent{
 	}
     };
 
-	void playSound(int sound);
+
 }
 
 

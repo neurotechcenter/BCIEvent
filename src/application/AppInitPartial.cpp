@@ -1,7 +1,8 @@
 #include "AppInitInclude.hpp"
 
+using namespace BCIEvent_N;
 
-void BCIEvent::BCIEventApplication::InitBCIEvent(){
+void BCIEvent_N::BCIEventApplication::InitBCIEvent(){
     addActor(std::unique_ptr<Actor>(&(Actor(this)
         .addVariable(std::make_unique<NumberVariable>("var2"))
         .addEventListener((std::make_unique<EventListener>(

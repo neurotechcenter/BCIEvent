@@ -7,11 +7,11 @@
 #include <deque>
 #include <functional>
 #include "Actor.hpp"
+#include "Timer.hpp"
 
-namespace BCIEvent {
+namespace BCIEvent_N {
 	class HeadBlock;
 	class Block;
-	class Timer;
 	/**
 	* An object representing a sequence of blocks.
 	* Also acts as an interface for those blocks to access the environment.
@@ -52,6 +52,8 @@ namespace BCIEvent {
 
 		//methods below this point are to be called by the sequence's blocks.
 		
+		void callProcedure(std::string name, std::vector<BCIEValue> params);
+
 		void addTimer(std::string name);
 		Timer& getTimer(std::string name);
 
@@ -66,6 +68,14 @@ namespace BCIEvent {
 		void removeVariable(std::string name);
 		void removeTimer(std::string name);
 
+		void callBCI2000Event(std::string name, uint32_t value);
+
+		BCIEValue callFunction(std::string name, std::vector<BCIEValue> params);
+
+		//Methods for controlling the calling actor.
+		void actorMove(double, double);
+		void actorMoveTo(double, double);
+
 		template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
 		void setState(std::string name, T value) {
 			_actor->setState(value);
@@ -76,15 +86,7 @@ namespace BCIEvent {
 			return _actor->getState<T>(name);
 		}
 
-		void callProcedure(std::string name, std::vector<BCIEValue> params);
 
-		void callBCI2000Event(std::string name, uint32_t value);
-
-		BCIEValue callFunction(std::string name, std::vector<BCIEValue> params);
-
-		//Methods for controlling the calling actor.
-		void actorMove(double, double);
-		void actorMoveTo(double, double);
 
 
 	};

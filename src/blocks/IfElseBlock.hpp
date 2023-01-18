@@ -5,7 +5,7 @@
 #include "BooleanExpression.hpp"
 #include "StatementCloseBlock.hpp"
 #include "ActorUtil.hpp"
-namespace BCIEvent{
+namespace BCIEvent_N{
 
 class IfElseEndBlock : public StatementCloseBlock{
     public:

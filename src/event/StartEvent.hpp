@@ -3,7 +3,7 @@
 
 #include "Event.hpp"
 #include <memory>
-namespace BCIEvent{
+namespace BCIEvent_N{
     /**
      * Singleton class representing the event which runs when the application starts.
 	 */

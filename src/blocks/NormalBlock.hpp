@@ -4,7 +4,7 @@
 #include <functional>
 #include <memory>
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     /**
      * A block which does a single action
      */

@@ -3,7 +3,7 @@
 #include <memory>
 #include "ProtoSequence.hpp"
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     class Event;
 	class HeadBlock;
     /**
@@ -19,7 +19,7 @@ namespace BCIEvent{
 	EventListener(ProtoSequence sequence);
 	void trigger() { _timesTriggered++; }
 	int timesTriggered() { return _timesTriggered; }
-	Sequence* getSequence(); //called by actor when it recognizes the listener as triggered
+	std::unique_ptr<Sequence> getSequence(); //called by actor when it recognizes the listener as triggered
 
     };
 }

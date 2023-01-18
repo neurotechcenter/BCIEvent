@@ -2,7 +2,7 @@
 #include "BooleanExpression.hpp"
 #include <stdexcept>
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 
 WhileLoopStartBlock::WhileLoopStartBlock(Block* previous, std::function<bool(const Sequence&)> condition) : Block(previous) {

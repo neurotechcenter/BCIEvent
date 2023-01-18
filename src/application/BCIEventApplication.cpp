@@ -5,10 +5,11 @@
 #include "Shapes.h"
 #include "StartEvent.hpp"
 #include "WaitForProcessBlock.hpp"
+#include "ApplicationEnvironment.hpp"
 #include "ProcessEvent.hpp"
-#include "BCIEVariable.hpp"
+#include "BCIEvent.h"
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 
 RegisterFilter(BCIEventApplication, 3);
@@ -17,7 +18,6 @@ RegisterFilter(BCIEventApplication, 3);
 BCIEventApplication::BCIEventApplication() 
     :  _display(ApplicationWindowClient::Window()){
     Parameter("ShowAppLog") = 1;
-    _states = std::make_unique<BCIEvent::States>(this);
 	_processEvent = ProcessEvent::getInstance();
 	GUI::Rect rect = {0.5f, 0.4f, 0.5f, 0.6f};
     _messageField = std::make_unique<TextField>(_display);
@@ -43,19 +43,15 @@ void BCIEventApplication::addActor(std::unique_ptr<Actor> actor){
 }
 
 void BCIEventApplication::addVariable(std::string name) {
-	_variables.insert(name, std::nullopt)
+	_variables.insert(std::make_pair(name, BCIEValue(std::nullopt)));
 }
 
 void BCIEventApplication::addVariable(std::string name, BCIEValue value) {
-	_variables.insert(name, value);
+	_variables.insert(std::make_pair(name, value));
 }
 
-void BCIEventApplication::addVariable(std::string name, std::function<(SequenceEnvironment&), BCIEValue> value, int priority) {
+void BCIEventApplication::addVariable(std::string name, std::function<BCIEValue(SequenceEnvironment&)> value, int priority) {
 	_varInits.push(std::make_tuple(name, value, priority));
-}
-
-void BCIEventApplication::addVariable(std::string name) {
-	_variables.insert(name, std::nullopt);
 }
 
 void BCIEventApplication::addTimer(std::string name) {
@@ -67,14 +63,14 @@ Timer& BCIEventApplication::getTimer(std::string name) {
 }
 
 void BCIEventApplication::addBCI2000Event(std::string name) {
-	_bci2000states.push_back(name);
+	_bci2000events.push_back(name);
 }
 
 void BCIEventApplication::callBCI2000Event(std::string name, uint32_t value) {
 	bcievent << name << " " << value;
 }
 
-void BCIEventApplication::uploadState(std::string name, int width, int kind){
+void BCIEventApplication::uploadState(std::string name, uint32_t width, int kind){
 	if (States->Exists(name)){
 	    throw std::invalid_argument("Attempted to define state " + name + ", but that state already exists");
     	}
@@ -89,9 +85,9 @@ void BCIEventApplication::uploadState(std::string name, int width, int kind){
 
 void BCIEventApplication::Publish(){
 	AppLog << "publishing";
-    for (const BCIState* state : _states->getStates()){
-        auto name = state->name();    
-	auto type = state->type();
+    for (auto state : _states){
+        auto name = std::get<1>(state).name();    
+	auto type = std::get<1>(state).type();
 	if (type == BCIState::Boolean){
 	    uploadState(name, 1, State::StateKind);
 	} else if (type == BCIState::i8 || type == BCIState::u8){
@@ -106,7 +102,7 @@ void BCIEventApplication::Publish(){
 	    }
 	}
 	for (auto s : _bci2000events) {
-		uploadState(name, 32, State::EventKind);
+		uploadState(s, 32, State::EventKind);
 	}
     }
 }
@@ -171,8 +167,8 @@ void BCIEventApplication::OnHalt(){
 
 void BCIEventApplication::initialize() {
 	while (!_varInits.empty()) {
-		VarInitializer& vi = _varInits.top();
-		_variables.insert(std::make_pair(std::get<0>(vi), std::get<1>(vi)(ApplicationEnvironment(this))));
+		const VarInitializer& vi = _varInits.top();
+		_variables.insert(std::make_pair(std::get<0>(vi), std::get<1>(vi)(*this)));
 		_varInits.pop();
 	}
 }
@@ -207,16 +203,16 @@ int BCIEventApplication::randInt(int lower, int upper) {
 	return RandomNumberGenerator(upper - lower + 1) + lower;
 }
 
-Actor* BCIEventApplication::makeActor(){
-    return new Actor(this);
+std::unique_ptr<Actor> BCIEventApplication::makeActor(){
+    return std::make_unique<Actor>(this);
 }
 
 
 
-void BCIEventApplication::addFunction(std::string name, int numArgs, std::function<(std::vector<BCIEValue>), BCIEValue> fn) {
-	_functions.insert(name, fn);
+void BCIEventApplication::addFunction(std::string name, int numArgs, std::function<BCIEValue(SequenceEnvironment&, std::vector<BCIEValue>)> fn) {
+	_functions.insert(std::make_pair(name, fn));
 }
 
 BCIEValue BCIEventApplication::callFunction(std::string name, std::vector<BCIEValue> params) {
-	_functions.at(name)(params);
+	return _functions.at(name)(*this, params);
 }

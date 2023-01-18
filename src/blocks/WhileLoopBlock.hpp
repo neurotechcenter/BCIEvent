@@ -6,7 +6,7 @@
 #include "BooleanExpression.hpp"
 #include "StatementCloseBlock.hpp"
 #include "ActorUtil.hpp"
-namespace BCIEvent{
+namespace BCIEvent_N{
 
     /**
      * Blocks for while loops.

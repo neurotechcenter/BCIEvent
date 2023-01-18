@@ -2,7 +2,7 @@
 #include "SequenceBuilder.hpp"
 #include "BooleanExpression.hpp"
 #include "ActorUtil.hpp"
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 ProtoSequence::ProtoSequence(std::vector<std::string> params) {
 	for (auto&& p : params) {
@@ -22,12 +22,12 @@ ProtoSequence& ProtoSequence::addNormal(std::function<void(Sequence&)> action) {
 }
 
 ProtoSequence& ProtoSequence::addTimer(double timeSeconds, std::function<void(Sequence&)> action) {
-	_sequenceProto.push_back(new Protoblock(ProtoBlockType::Timer, timeSeconds, action));
+	_sequenceProto.push_back(new Protoblock(ProtoBlockType::Timer_m, timeSeconds, action));
 	return *this;
 }
 
 ProtoSequence& ProtoSequence::addTimer(double timeSeconds) {
-	_sequenceProto.push_back(new Protoblock(ProtoBlockType::Timer, timeSeconds));
+	_sequenceProto.push_back(new Protoblock(ProtoBlockType::Timer_m, timeSeconds));
 	return *this;
 }
 
@@ -51,7 +51,7 @@ std::unique_ptr<Sequence> ProtoSequence::genSequence(std::vector<BCIEValue> para
 		throw std::logic_error("genSequence called on procedure sequence with incorrect number of parameter values");
 	}
 	auto seq = genSequence();
-	for (int i = 0; i < _parameters.size; i++) {
+	for (int i = 0; i < _parameters.size(); i++) {
 		seq->addVariable(_parameters[i], parameter_values[i]);
 	}
 	return seq;
@@ -86,7 +86,7 @@ std::unique_ptr<Sequence> ProtoSequence::genSequence() {
 		case ProtoBlockType::Loop:
 			builder.addLoopBlock(b->number);
 			break;
-		case ProtoBlockType::Timer:
+		case ProtoBlockType::Timer_m:
 			if (b->action) {
 				builder.addTimerBlock(b->time, b->action);
 				break;

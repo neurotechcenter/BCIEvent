@@ -1,7 +1,7 @@
 #include "WaitForProcessBlock.hpp"
 #include "ProcessEvent.hpp"
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 WaitForProcessBlock::WaitForProcessBlock(Block* previous) : Block(previous) {
 	ProcessEvent::getInstance()->addWaitForProcess(this);

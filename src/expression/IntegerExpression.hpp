@@ -4,7 +4,7 @@
 #include<type_traits>
 #include "Actor.hpp"
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     
     /**
      * Concepts for integer expressions within blocks.

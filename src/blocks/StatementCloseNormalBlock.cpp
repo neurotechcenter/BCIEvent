@@ -1,6 +1,6 @@
 #include "StatementCloseNormalBlock.hpp"
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 StatementCloseNormalBlock::StatementCloseNormalBlock(std::function<void(Sequence&)> action) {
 	_action = action;

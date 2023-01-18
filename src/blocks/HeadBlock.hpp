@@ -2,7 +2,7 @@
 #define HEADBLOCK_H
 #include "Block.hpp"
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     class HeadBlock : public Block{
 	public:
 	/**

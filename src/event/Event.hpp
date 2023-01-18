@@ -4,7 +4,7 @@
 #include <vector>
 
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     class EventListener;
     class Event{
 	std::vector<EventListener*> _listeners;

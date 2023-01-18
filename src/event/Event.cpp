@@ -2,7 +2,7 @@
 #include "EventListener.hpp"
 
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 
 void Event::trigger(){

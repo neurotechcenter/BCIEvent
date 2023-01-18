@@ -1,7 +1,7 @@
 #include "IfElseBlock.hpp"
 #include "ActorUtil.hpp"
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 IfElseStartBlock::IfElseStartBlock(Block* previous, std::function<bool(const Sequence&)> condition, IfElseElseBlock* elseBlock, IfElseEndBlock* endBlock) : Block(previous) {
 	   _condition = condition; 

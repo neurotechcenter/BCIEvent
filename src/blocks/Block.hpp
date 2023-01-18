@@ -4,7 +4,7 @@
 #include "Sequence.hpp"
 
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     class Actor;
     class Block{
 	protected:

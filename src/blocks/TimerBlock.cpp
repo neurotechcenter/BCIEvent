@@ -1,7 +1,7 @@
 #include "TimerBlock.hpp"
 #include <chrono>
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 
 TimerBlock::TimerBlock(Block* previous, std::chrono::duration<double> time, std::function<void(Sequence& sequence)> action) : Block(previous){

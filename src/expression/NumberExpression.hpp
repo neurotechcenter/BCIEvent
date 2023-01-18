@@ -6,7 +6,7 @@
 #include "Actor.hpp"
 #include "IntegerExpression.hpp"
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     
     /**
      * Concepts for general number expressions within expressions.

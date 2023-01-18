@@ -1,7 +1,7 @@
 #include "EndBlock.hpp"
 #include "Block.hpp"
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 EndBlock::EndBlock(Block* previous) : Block(previous){
     _next = nullptr;

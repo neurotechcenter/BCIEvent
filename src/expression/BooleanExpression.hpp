@@ -5,7 +5,7 @@
 #include "Actor.hpp"
 #include <functional>
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     /**
      * Concepts for boolean expressions within blocks.
      * These can be boolean values, functions which return a boolean,

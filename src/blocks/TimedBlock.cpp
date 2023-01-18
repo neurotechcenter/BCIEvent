@@ -2,7 +2,7 @@
 #include "blocks/Block.hpp"
 #include <chrono>
 
-using namespace BCIEvent;
+using namespace BCIEvent_N;
 
 TimedBlockStart::TimedBlockStart(Block* previous, std::chrono::duration<double> time) : Block(previous){
     _time = time;

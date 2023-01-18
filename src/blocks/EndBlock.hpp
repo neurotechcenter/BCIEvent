@@ -1,7 +1,7 @@
 #ifndef ENDBLOCK_H
 #define ENDBLOCK_H
 #include "Block.hpp"
-namespace BCIEvent{
+namespace BCIEvent_N{
 
     /**
      * A block that is meant to be at the end of a series of blocks.

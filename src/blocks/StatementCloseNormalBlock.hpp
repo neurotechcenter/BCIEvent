@@ -3,7 +3,7 @@
 
 #include "StatementCloseBlock.hpp"
 
-namespace BCIEvent {
+namespace BCIEvent_N {
 	/*
 	* A normal block whose next value is set to itself initally, as it is only used for deleting 
 	* variables and timers as they go out of scope. As such, it is placed on the closeBlock stack and has its

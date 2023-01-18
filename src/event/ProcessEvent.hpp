@@ -3,7 +3,7 @@
 
 #include "Event.hpp"
 #include <memory>
-namespace BCIEvent{
+namespace BCIEvent_N{
 	class WaitForProcessBlock;
     /**
      * Singleton class representing the event triggered each run of BCI2000's processing loop

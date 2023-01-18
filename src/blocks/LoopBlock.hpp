@@ -7,7 +7,7 @@
 #include "IntegerExpression.hpp"
 #include "StatementCloseBlock.hpp"
 
-namespace BCIEvent{
+namespace BCIEvent_N{
 
     /**
      * Blocks for making a for loop

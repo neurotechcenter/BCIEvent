@@ -1,8 +1,8 @@
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef BCIEVENT_TIMER_H
+#define BCIEVENT_TIMER_H
 #include <chrono>
 
-namespace BCIEvent {
+namespace BCIEvent_N {
 	class Timer {
 		bool running;
 		std::chrono::time_point<std::chrono::high_resolution_clock> startTime;

@@ -7,7 +7,7 @@
 #include "StatementCloseBlock.hpp"
 #include "ActorUtil.hpp"
 
-namespace BCIEvent{
+namespace BCIEvent_N{
     class IfEndBlock : public StatementCloseBlock{
 	public:
 	Block* run(Sequence& sequence);

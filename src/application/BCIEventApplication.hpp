@@ -5,6 +5,7 @@
 #include "GenericSignal.h"
 #include "GraphDisplay.h"
 #include "SignalProperties.h"
+#include "SequenceEnvironment.hpp"
 #include "TextField.h"
 #include "BCIState.hpp"
 #include <vector>
@@ -13,7 +14,7 @@
 #include <queue>
 #include "BCIEValue.hpp"
 
-namespace BCIEvent{
+namespace BCIEvent_N{
 	class WaitForProcessBlock;
 	class ProcessEvent;
 	class Actor;
@@ -22,7 +23,7 @@ namespace BCIEvent{
 	class Sequence;
 	class Timer;
 
-    class BCIEventApplication : public ApplicationBase {
+    class BCIEventApplication : public ApplicationBase, public SequenceEnvironment {
 	public:
 	BCIEventApplication();
 	~BCIEventApplication();
@@ -58,13 +59,13 @@ namespace BCIEvent{
 	const GenericSignal* currentSignal;
 	GUI::GraphDisplay& getDisplay() { return _display; }
 
-	void addEvent();
-	void callEvent();
+	void addEvent(std::string name);
+	void callEvent(std::string name);
 
-	void addBCI2000Event();
-	void callBCI2000Event();
+	void addBCI2000Event(std::string name);
+	void callBCI2000Event(std::string name, uint32_t value);
 
-	void addFunction(std::string name, int numArgs, std::function<BCIEValue(std::vector<BCIEValue>)> fn);
+	void addFunction(std::string name, int numArgs, std::function<BCIEValue(SequenceEnvironment&, std::vector<BCIEValue>)> fn);
 	BCIEValue callFunction(std::string name, std::vector<BCIEValue> params);
 
 
@@ -97,12 +98,13 @@ namespace BCIEvent{
 	std::map<std::string, BCIState> _states;
 	std::map<std::string, Event> _events;
 	std::vector<std::string> _bci2000events;
-	std::map < std::string, std::function<BCIEValue (Sequence&, std::vector<BCIEValue>)>> _functions;
+	std::map < std::string, std::function<BCIEValue (SequenceEnvironment&, std::vector<BCIEValue>)>> _functions;
 	std::map<std::string, Timer> _timers;
+	std::shared_ptr<ProcessEvent> _processEvent;
 
 
-	Actor* makeActor();
-	void uploadState(std::string name, int width);
+	std::unique_ptr<Actor> makeActor();
+	void uploadState(std::string name, uint32_t width, int kind);
     };
 }
 
