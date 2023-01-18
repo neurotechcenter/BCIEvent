@@ -10,10 +10,9 @@
 #include "GenericSignal.h"
 #include "GraphDisplay.h"
 #include "GraphObject.h"
+#include "BCIEValue.hpp"
 #include "BCIEventApplication.hpp"
-#include "GlobalVariables.hpp"
-#include "States.hpp"
-#include "BCIEVariable.hpp"
+#include "WavePlayer.h"
 
 namespace BCIEvent{
 	class ProtoSequence;
@@ -24,7 +23,6 @@ namespace BCIEvent{
 		friend class Sequence;
 		
 	BCIEventApplication* _app;
-	std::map<std::string, std::unique_ptr<BCIEVariable>> _variables; 
 	std::vector<std::unique_ptr<QPixmap>> _graphics;
 	int _currentGraphic = 0;
 
@@ -32,8 +30,8 @@ namespace BCIEvent{
 	std::list<std::unique_ptr<Sequence>> _sequences; //Currently running sequences, no smart pointers because they dont work for some reason
 	std::map<std::string, ProtoSequence> _procedures; //procedures defined for this actor
 	std::map<std::string, Event> _events;
-	std::map<std::string, BCIEVariable> _variables;
-	std::priority_queue<VarInitializer, std::deque<VarInitializer>, &var_init_greater> _varInits;
+	std::map<std::string, BCIEValue> _variables;
+	std::priority_queue<VarInitializer, std::deque<VarInitializer>, VarInitCmp> _varInits;
 	std::map<std::string, Timer> _timers;
 	std::vector<std::unique_ptr<WavePlayer>> _sounds;
 
@@ -55,14 +53,14 @@ namespace BCIEvent{
 	~Actor();
 	Actor& addVariable(std::string name);
 	Actor& addVariable(std::string name, BCIEValue value);
-	Actor& addVariable(std::string name, std::function<(SequenceEnvironment&), BCIEValue> value, int initPriority);
+	Actor& addVariable(std::string name, std::function<BCIEValue(SequenceEnvironment&)> value, int initPriority);
 	Actor& addGraphic(std::string filename, bool transparent);
 	Actor& addSound(std::string filename);
 	Actor& addEventListener(std::unique_ptr<EventListener>);
 	Actor& addEventListener(std::string, std::unique_ptr<EventListener>);
 	Actor& addProcedure(std::string name, ProtoSequence sequence);
 	Actor& addEvent(std::string name);
-	Actor& addFunction(std::string name, std::function<(Sequence&, std::vector<BCIEValue>), BCIEValue>);
+	Actor& addFunction(std::string name, std::function<BCIEValue(Sequence&, std::vector<BCIEValue>)>);
 	Actor& addTimer(std::string name);
 
 

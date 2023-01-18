@@ -50,7 +50,7 @@ void Sequence::addVariable(std::string name) {
 	_variables.insert(name, std::nullopt);
 }
 
-void Sequence.addVariable(std::string name, BCIEValue value) {
+void Sequence::addVariable(std::string name, BCIEValue value) {
 	_variables.insert(name, value);
 }
 
@@ -62,6 +62,16 @@ void Sequence::setVariable(std::string name, BCIEValue val) {
 		_actor->setVariable(name, val);
 	}
 }
+
+BCIEValue Sequence::getVariable(std::string name)[
+	try {
+		return _variables.at(name);
+	}
+	catch (std::out_of_range) {
+		return _actor->getVariable(name);
+	}
+
+]
 
 
 

@@ -1,10 +1,10 @@
-
+#include "ProcessEvent.hpp"
+#include "WaitForProcessBlock.hpp"
 using namespace BCIEvent;
 
 void ProcessEvent::trigger() {
-	Event::trigger();
-	for (WaitForProcessBlock& b : _processBlocks) {
-		b.trigger();
+	for (WaitForProcessBlock* b : _processBlocks) {
+		b->process();
 	}
 
 }

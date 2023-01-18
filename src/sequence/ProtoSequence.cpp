@@ -47,12 +47,12 @@ ProtoSequence& ProtoSequence::closeStatement() {
 }
 
 std::unique_ptr<Sequence> ProtoSequence::genSequence(std::vector<BCIEValue> parameter_values) {
-	if (parameter_values.size != _parameters.size()) {
+	if (parameter_values.size() != _parameters.size()) {
 		throw std::logic_error("genSequence called on procedure sequence with incorrect number of parameter values");
 	}
-	Sequence* seq = genSequence();
+	auto seq = genSequence();
 	for (int i = 0; i < _parameters.size; i++) {
-		seq.addVariable(_parameters[i], parameter_values[i]);
+		seq->addVariable(_parameters[i], parameter_values[i]);
 	}
 	return seq;
 }

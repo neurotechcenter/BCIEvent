@@ -1,6 +1,7 @@
 #ifndef ACTORUTIL_H
 #define ACTORUTIL_H
 #include <concepts>
+#include <type_traits>
 #include "Actor.hpp"
 
 namespace BCIEvent{
@@ -8,12 +9,12 @@ namespace BCIEvent{
     template<typename T>
     concept ExpressionType = std::convertible_to<T, bool> || std::convertible_to<T, int> || std::convertible_to<T, float>;
 
-    template<typename T, typename U> requires ExpressionType<U> && std::same_as<std::result_of<T(const Sequence&)>,U>
+    template<typename T, typename U> requires ExpressionType<U> && std::same_as<std::invoke_result<T(const Sequence&)>,U>
     std::function<U (const Sequence&)> getExpressionFn(T in){
 	return in; 
     }
 
-    template<typename T, typename U> requires ExpressionType<U> && std::same_as<std::result_of<T()>, U>
+    template<typename T, typename U> requires ExpressionType<U> && std::same_as<std::invoke_result<T()>, U>
     std::function<U (const Sequence&)> getExpressionFn(T in){
 	return [&](const Sequence&){ return T(); };
     }

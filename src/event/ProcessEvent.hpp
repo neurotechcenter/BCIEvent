@@ -8,7 +8,7 @@ namespace BCIEvent{
     /**
      * Singleton class representing the event triggered each run of BCI2000's processing loop
      */
-    class ProcessEvent : public Event{
+    class ProcessEvent{
 	public:
     	static std::shared_ptr<ProcessEvent> getInstance(){
 			static std::shared_ptr<ProcessEvent> event{new ProcessEvent};
@@ -20,6 +20,7 @@ namespace BCIEvent{
 		
 		std::vector<WaitForProcessBlock*> _processBlocks;
 		void addWaitForProcess(WaitForProcessBlock*);
+		void trigger();
 	private:
 		ProcessEvent() { _processBlocks = std::vector<WaitForProcessBlock*>(); };
     };

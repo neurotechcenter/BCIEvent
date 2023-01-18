@@ -1,10 +1,8 @@
 #include "Actor.hpp"
 #include "Event.hpp"
 #include "GUI.h"
-#include "GlobalVariables.hpp"
 #include "GraphDisplay.h"
 #include "GraphObject.h"
-#include "NumberVariable.hpp"
 #include "EventListener.hpp"
 #include "StartEvent.hpp"
 #include <stdexcept>
@@ -114,7 +112,8 @@ Actor& Actor::addGraphic(std::string filename, bool transparent){
 }
 
 Actor& addSound(std::string filename) {
-    _sounds.push(std::make_unique<WavePlayer>(filename));
+    filepath = "../src/custom/BCIEvent/assets/sounds/" + filename;
+    _sounds.push(std::make_unique<WavePlayer>(filepath));
     return *this;
 }
 

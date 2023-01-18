@@ -43,7 +43,8 @@ SequenceBuilder& SequenceBuilder::addLocalVariable(std::string name) {
 SequenceBuilder& SequenceBuilder::addLocalTimer(std::string name) {
 	_lastBlock = new NormalBlock(_lastBlock, [&](Sequence& callingSequence) {callingSequence.addTimer(name); });
 	auto rmtimerblock = new StatementCloseNormalBlock([&](Sequence& callingSequence) {callingSequence.removeTimer(name); });
-	_controlCloseBlocks.push(std::make_pair(rmtimerblock, false))
+	_controlCloseBlocks.push(std::make_pair(rmtimerblock, false));
+	return *this;
 }
 
 SequenceBuilder& SequenceBuilder::addNormalBlock(std::function<void (Sequence& callingActor)> action){

@@ -63,7 +63,7 @@ void BCIEventApplication::addTimer(std::string name) {
 }
 
 Timer& BCIEventApplication::getTimer(std::string name) {
-	_timers.at(name);
+	return 	_timers.at(name);
 }
 
 void BCIEventApplication::addBCI2000Event(std::string name) {

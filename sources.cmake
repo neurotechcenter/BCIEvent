@@ -8,6 +8,7 @@ set(SOURCES_EVENT
 	src/blocks/IfElseBlock.cpp
 	src/blocks/LoopBlock.cpp
 	src/blocks/NormalBlock.cpp
+	src/blocks/StatementCloseNormalBlock.cpp
 	src/blocks/TimedBlock.cpp
 	src/blocks/TimerBlock.cpp
 	src/blocks/WhileLoopBlock.cpp
@@ -16,10 +17,9 @@ set(SOURCES_EVENT
 	src/sequence/Sequence.cpp
 	src/sequence/ProtoSequence.cpp
 	src/state/BCIState.cpp
-	src/state/States.cpp
-	src/variable/GlobalVariables.cpp
 	src/event/EventListener.cpp
 	src/event/Event.cpp
+	src/event/ProcessEvent.cpp
     )
 set(INCLUDE_EVENT 
     src
@@ -29,6 +29,7 @@ set(INCLUDE_EVENT
     src/sequence
     src/variable
     src/state
+	src/timer
     src/expression
     src/application
 )

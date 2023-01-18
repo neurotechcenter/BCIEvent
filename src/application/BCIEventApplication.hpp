@@ -3,18 +3,24 @@
 #include "ApplicationBase.h"
 #include "ApplicationWindow.h"
 #include "GenericSignal.h"
-#include "GlobalVariables.hpp"
 #include "GraphDisplay.h"
 #include "SignalProperties.h"
-#include "States.hpp"
 #include "TextField.h"
+#include "BCIState.hpp"
 #include <vector>
 #include <thread>
+#include <functional>
+#include <queue>
+#include "BCIEValue.hpp"
 
 namespace BCIEvent{
 	class WaitForProcessBlock;
 	class ProcessEvent;
 	class Actor;
+	class SequenceEnvironment;
+	class Event;
+	class Sequence;
+	class Timer;
 
     class BCIEventApplication : public ApplicationBase {
 	public:
@@ -41,7 +47,7 @@ namespace BCIEvent{
 
 	void addVariable(std::string);
 	void addVariable(std::string, BCIEValue);
-	void addVariable(std::string, std::function<(SequenceEnvironment&), BCIEValue>, int);
+	void addVariable(std::string, std::function<BCIEValue(SequenceEnvironment&)>, int);
 
 	BCIEValue getVariable(std::string);
 	void setVariable(std::string, BCIEValue);
@@ -58,7 +64,7 @@ namespace BCIEvent{
 	void addBCI2000Event();
 	void callBCI2000Event();
 
-	void addFunction(std::string name, int numArgs, std::function<(std::vector<BCIEValue>), BCIEValue> fn);
+	void addFunction(std::string name, int numArgs, std::function<BCIEValue(std::vector<BCIEValue>)> fn);
 	BCIEValue callFunction(std::string name, std::vector<BCIEValue> params);
 
 
@@ -87,12 +93,11 @@ namespace BCIEvent{
 	RunState _currentState = Paused;	
 	std::vector<std::unique_ptr<Actor>> _actors;
 	std::map<std::string, BCIEValue> _variables;
-	std::priority_queue<VarInitializer, std::deque<VarInitializer>, &var_init_greater> _varInits;
+	std::priority_queue<VarInitializer, std::deque<VarInitializer>, VarInitCmp> _varInits;
 	std::map<std::string, BCIState> _states;
-	std::map<std::string, Event> _events
+	std::map<std::string, Event> _events;
 	std::vector<std::string> _bci2000events;
-	std::shared_ptr<StateEvent> _stateEvents;
-	std::map < std::string, std::function<(&Sequence, std::vector<BCIEValue>) BCIEValue> _functions;
+	std::map < std::string, std::function<BCIEValue (Sequence&, std::vector<BCIEValue>)>> _functions;
 	std::map<std::string, Timer> _timers;
 
 

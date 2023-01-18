@@ -1,6 +1,5 @@
 #ifndef SEQUENCE_HPP
 #define SEQUENCE_HPP
-#include "BCIEVariable.hpp"
 #include "SequenceEnvironment.hpp"
 #include <concepts>
 #include <tuple>
@@ -12,6 +11,7 @@
 namespace BCIEvent {
 	class HeadBlock;
 	class Block;
+	class Timer;
 	/**
 	* An object representing a sequence of blocks.
 	* Also acts as an interface for those blocks to access the environment.
@@ -24,9 +24,9 @@ namespace BCIEvent {
 		Actor* _actor;
 		std::unique_ptr<HeadBlock> _head; //only used for deleting the underlying sequence of blocks when this is deleted
 		Block* _currentBlock = nullptr;
-		std::map<std::string, BCIEVariable> _variables;
+		std::map<std::string, BCIEValue> _variables;
 		std::unique_ptr<Sequence> _subProcedure; //subprocedure running within this sequence
-		std::map<std::string, TImer> _timers;
+		std::map<std::string, Timer> _timers;
 
 
 	public:
@@ -76,7 +76,7 @@ namespace BCIEvent {
 			return _actor->getState<T>(name);
 		}
 
-		void callProcedure(std::string name, std::vector<BCIEVariable> params);
+		void callProcedure(std::string name, std::vector<BCIEValue> params);
 
 		void callBCI2000Event(std::string name, uint32_t value);
 
