@@ -62,7 +62,7 @@ namespace BCIEvent_N {
 	 */
 	SequenceBuilder& closeStatement();
 
-	std::unique_ptr<HeadBlock> getSequenceStart();
+	HeadBlock* getSequenceStart();
 
     };
 }

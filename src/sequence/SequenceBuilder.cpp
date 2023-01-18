@@ -21,13 +21,13 @@ SequenceBuilder::SequenceBuilder(){
    _lastBlock = static_cast<Block*>(_head.get());
 }
 
-std::unique_ptr<HeadBlock> SequenceBuilder::getSequenceStart(){
+HeadBlock* SequenceBuilder::getSequenceStart(){
     _lastBlock = new EndBlock(_lastBlock);
 
     if (_controlCloseBlocks.size() != 0){
 	    throw std::runtime_error("Statements were left unclosed. There are " + std::to_string(_controlCloseBlocks.size()) + " statements left to close.");
     }
-    return std::move(_head);
+    return _head.release();
 }
 
 SequenceBuilder& SequenceBuilder::addLocalVariable(std::string name, BCIEValue value) {

@@ -1,11 +1,9 @@
-#ifndef BLOCK_H
-#define BLOCK_H
+#ifndef BCIEVENT_BLOCK_H
+#define BCIEVENT_BLOCK_H
 
 #include "Sequence.hpp"
 
-
 namespace BCIEvent_N{
-    class Actor;
     class Block{
 	protected:
 	    Block* _next;

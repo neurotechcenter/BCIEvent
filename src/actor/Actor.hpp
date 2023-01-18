@@ -28,7 +28,7 @@ namespace BCIEvent_N{
 	int _currentGraphic = 0;
 
 	std::vector<std::unique_ptr<EventListener>> _listeners;
-	std::list<std::unique_ptr<Sequence>> _sequences; //Currently running sequences, no smart pointers because they dont work for some reason
+	std::list<Sequence*> _sequences; //Currently running sequences, no smart pointers because they dont work for some reason
 	std::map<std::string, ProtoSequence> _procedures; //procedures defined for this actor
 	std::map<std::string, Event> _events;
 	std::map<std::string, BCIEValue> _variables;

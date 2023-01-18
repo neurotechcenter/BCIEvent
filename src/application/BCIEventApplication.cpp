@@ -5,7 +5,6 @@
 #include "Shapes.h"
 #include "StartEvent.hpp"
 #include "WaitForProcessBlock.hpp"
-#include "ApplicationEnvironment.hpp"
 #include "ProcessEvent.hpp"
 #include "BCIEvent.h"
 
@@ -35,7 +34,7 @@ BCIEventApplication::~BCIEventApplication(){
 }
 
 void BCIEventApplication::addState(std::string name, BCIState::StateType type){
-	_states.emplace(name, type);
+	_states.insert(std::make_pair(name, BCIState(this, type, name)));
 }
 
 void BCIEventApplication::addActor(std::unique_ptr<Actor> actor){
@@ -146,7 +145,7 @@ void BCIEventApplication::OnPreflight(const SignalProperties& input) const{
 
 void BCIEventApplication::OnInitialize(const SignalProperties& input) {
 	initialize();
-	for (auto actor : _actors) {
+	for (auto& actor : _actors) {
 		actor->initialize();
 	}
 	_appLoopThread = std::thread(&BCIEventApplication::applicationLoop, this);
@@ -215,4 +214,12 @@ void BCIEventApplication::addFunction(std::string name, int numArgs, std::functi
 
 BCIEValue BCIEventApplication::callFunction(std::string name, std::vector<BCIEValue> params) {
 	return _functions.at(name)(*this, params);
+}
+
+BCIEValue BCIEventApplication::getVariable(std::string name) {
+	return _variables.at(name);
+}
+
+void BCIEventApplication::setVariable(std::string name, BCIEValue value) {
+	_variables.at(name) = value;
 }

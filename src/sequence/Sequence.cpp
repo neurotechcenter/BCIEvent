@@ -9,9 +9,13 @@
 
 using namespace BCIEvent_N;
 
-Sequence::Sequence(std::unique_ptr<HeadBlock> head) {
-	_head = std::move(head);
-	_currentBlock = static_cast<Block*>(_head.get());
+Sequence::Sequence(HeadBlock* head) {
+	_head = head;
+	_currentBlock = static_cast<Block*>(_head);
+}
+
+Sequence::~Sequence() {
+	delete _head;
 }
 
 bool Sequence::update() {
@@ -87,11 +91,11 @@ void Sequence::callBCI2000Event(std::string name, uint32_t value) {
 }
 
 void Sequence::callProcedure(std::string name, std::vector<BCIEValue> params) {
-	_subProcedure = _actor.getProcedure(name);
+	_subProcedure = _actor->getProcedure(name, params);
 }
 
 BCIEValue Sequence::callFunction(std::string name, std::vector<BCIEValue> params) {
-	return _actor.callFunction(name, params);
+	return _actor->callFunction(name, params);
 }
 
 void Sequence::actorMoveTo(double x, double y) {

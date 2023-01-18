@@ -23,7 +23,7 @@ using namespace BCIEvent_N;
         if (listener->timesTriggered() > 0) {
             auto seq = listener->getSequence();
             seq->setActor(this);
-            _sequences.push_back(seq);
+            _sequences.push_back(seq.release());
         }
     }
 
@@ -34,6 +34,7 @@ using namespace BCIEvent_N;
             _sequences.pop_front();
         }
         else { //else delete the finished sequence
+            delete _sequences.front();
             _sequences.pop_front();
         }
            //This will either remove and delete a completed sequence or move the next sequence to the end of the list 
@@ -62,6 +63,9 @@ Actor::Actor(BCIEventApplication* app) :
 
 Actor::~Actor(){
     DestructorEntered();
+    for (auto s : _sequences) {
+        delete s;
+    }
 }
 
 Actor& Actor::addVariable(std::string name){
@@ -111,7 +115,9 @@ Actor& Actor::addGraphic(std::string filename, bool transparent){
 
 Actor& Actor::addSound(std::string filename) {
     std::string filepath = "../src/custom/BCIEvent/assets/sounds/" + filename;
-    _sounds.push_back(std::make_unique<WavePlayer>(filepath));
+    auto wp = new WavePlayer();
+    wp->SetFile(filepath);
+    _sounds.push_back(std::unique_ptr<WavePlayer>(wp));
     return *this;
 }
 
@@ -133,21 +139,12 @@ BCIEValue Actor::getVariable(std::string name) {
     }
 }
 
-void Actor::setVariable(std::string name, BCIEValue val) {
-    try {
-        _variables.at(name) = name;
-    }
-    catch (std::out_of_range) {
-        _app->setVariable(name, val);
-    }
-}
-
 
 int Actor::randInt(int lower, int upper) {
 	return _app->randInt(lower, upper);
 }
 
-BCIEvent::Timer& Actor::getTimer(std::string name) {
+Timer& Actor::getTimer(std::string name) {
     try {
         return _timers.at(name);
     }
@@ -214,3 +211,12 @@ void Actor::playSound(int snd) {
     _sounds.at(snd)->Play();
 }
 
+void Actor::setVariable(std::string name, BCIEValue value) {
+    try {
+        _variables.at(name) = value;
+    }
+    catch (std::out_of_range) {
+        _app->setVariable(name, value);
+    }
+
+}

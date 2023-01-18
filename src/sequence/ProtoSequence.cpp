@@ -2,6 +2,7 @@
 #include "SequenceBuilder.hpp"
 #include "BooleanExpression.hpp"
 #include "ActorUtil.hpp"
+#include "HeadBlock.hpp"
 using namespace BCIEvent_N;
 
 ProtoSequence::ProtoSequence(std::vector<std::string> params) {

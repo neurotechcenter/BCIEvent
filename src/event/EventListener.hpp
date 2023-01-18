@@ -5,7 +5,6 @@
 
 namespace BCIEvent_N{
     class Event;
-	class HeadBlock;
     /**
      * This holds a sequence and tallies how many times it has been triggered.
 	 * An EventListener is not created with a listening event, instead, it is registered to an event externally.

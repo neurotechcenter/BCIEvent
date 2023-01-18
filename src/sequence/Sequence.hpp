@@ -22,7 +22,7 @@ namespace BCIEvent_N {
 	class Sequence : public SequenceEnvironment {
 		bool running = false;
 		Actor* _actor;
-		std::unique_ptr<HeadBlock> _head; //only used for deleting the underlying sequence of blocks when this is deleted
+		HeadBlock* _head; //only used for deleting the underlying sequence of blocks when this is deleted
 		Block* _currentBlock = nullptr;
 		std::map<std::string, BCIEValue> _variables;
 		std::unique_ptr<Sequence> _subProcedure; //subprocedure running within this sequence
@@ -30,7 +30,7 @@ namespace BCIEvent_N {
 
 
 	public:
-		Sequence(std::unique_ptr<HeadBlock> head);
+		Sequence(HeadBlock* head);
 		~Sequence();
 
 		/*
