@@ -58,7 +58,8 @@ Actor::Actor(BCIEventApplication* app) :
     SetAlignment(GUI::Alignment::Center);
     SetScalingMode(GUI::ScalingMode::AdjustBoth);
     Show();
-    _events.emplace("clicked", Event());
+    _events.insert(std::make_pair("click", Event()));
+    _clickEvent = &_events.at("click");
 }
 
 Actor::~Actor(){
@@ -84,9 +85,12 @@ Actor& Actor::addVariable(std::string name, std::function<BCIEValue(SequenceEnvi
 }
 
 Actor& Actor::addEventListener(std::string name, std::unique_ptr<EventListener> listener){
-    _events.at(name).addListener(listener.get()); //free pointer is given to event listener,
-//TODO: will have to change getEvent to also get global events, will also have to solve problem of what happens if 
-//an actor is deleted with its event listeners still attached to events as the events to avoid use of listeners after they are deleted
+    try {
+        _events.at(name).addListener(listener.get()); //free pointer is given to event listener,
+    }
+    catch (std::out_of_range) {
+        _app->subscribeEvent(name, listener.get());
+    }
     _listeners.push_back(std::move(listener)); //ownership given to actor
     return *this;
 }
@@ -136,6 +140,15 @@ BCIEValue Actor::getVariable(std::string name) {
     }
     catch (std::out_of_range) {
         return _app->getVariable(name);
+    }
+}
+
+void Actor::callEvent(std::string name) {
+    try {
+        _events.at(name).trigger();
+    }
+    catch (std::out_of_range) {
+        _app->callEvent(name);
     }
 }
 
@@ -219,4 +232,8 @@ void Actor::setVariable(std::string name, BCIEValue value) {
         _app->setVariable(name, value);
     }
 
+}
+
+void Actor::changeGraphic(int graphic) {
+    _currentGraphic = graphic;
 }

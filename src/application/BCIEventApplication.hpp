@@ -22,6 +22,7 @@ namespace BCIEvent_N{
 	class Event;
 	class Sequence;
 	class Timer;
+	class EventListener;
 
     class BCIEventApplication : public ApplicationBase, public SequenceEnvironment {
 	public:
@@ -62,11 +63,13 @@ namespace BCIEvent_N{
 	void addEvent(std::string name);
 	void callEvent(std::string name);
 
-	void addBCI2000Event(std::string name);
-	void callBCI2000Event(std::string name, uint32_t value);
+	void addStateEvent(std::string name);
+	void callStateEvent(std::string name, uint32_t value);
 
 	void addFunction(std::string name, int numArgs, std::function<BCIEValue(SequenceEnvironment&, std::vector<BCIEValue>)> fn);
 	BCIEValue callFunction(std::string name, std::vector<BCIEValue> params);
+
+	void subscribeEvent(std::string, EventListener* listener);
 
 
 	private:

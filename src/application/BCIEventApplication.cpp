@@ -7,6 +7,7 @@
 #include "WaitForProcessBlock.hpp"
 #include "ProcessEvent.hpp"
 #include "BCIEvent.h"
+#include <iostream>
 
 using namespace BCIEvent_N;
 
@@ -16,6 +17,7 @@ RegisterFilter(BCIEventApplication, 3);
 
 BCIEventApplication::BCIEventApplication() 
     :  _display(ApplicationWindowClient::Window()){
+	bciout << "bcieventapp constructor" << std::flush;
     Parameter("ShowAppLog") = 1;
 	_processEvent = ProcessEvent::getInstance();
 	GUI::Rect rect = {0.5f, 0.4f, 0.5f, 0.6f};
@@ -61,12 +63,24 @@ Timer& BCIEventApplication::getTimer(std::string name) {
 	return 	_timers.at(name);
 }
 
-void BCIEventApplication::addBCI2000Event(std::string name) {
+void BCIEventApplication::addStateEvent(std::string name) {
 	_bci2000events.push_back(name);
 }
 
-void BCIEventApplication::callBCI2000Event(std::string name, uint32_t value) {
+void BCIEventApplication::callStateEvent(std::string name, uint32_t value) {
 	bcievent << name << " " << value;
+}
+
+void BCIEventApplication::subscribeEvent(std::string name, EventListener* listener) {
+	_events.at(name).addListener(listener);
+}
+
+void BCIEventApplication::addEvent(std::string name) {
+	_events.insert(std::make_pair(name, Event()));
+}
+
+void BCIEventApplication::callEvent(std::string name) {
+	_events.at(name).trigger();
 }
 
 void BCIEventApplication::uploadState(std::string name, uint32_t width, int kind){

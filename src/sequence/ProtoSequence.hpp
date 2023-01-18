@@ -35,6 +35,11 @@ namespace BCIEvent_N {
 		ProtoSequence& addWaitForProcess();
 		ProtoSequence& closeStatement();
 
+		ProtoSequence& addIf(std::function<bool(Sequence&)> cond) {
+			_sequenceProto.push_back(new Protoblock(ProtoBlockType::If, cond));
+			return *this;
+		}
+
 		template <BooleanExpression B>
 		ProtoSequence& addIf(B condition) {
 			_sequenceProto.push_back(new Protoblock(ProtoBlockType::If, getExpressionFn(condition)));

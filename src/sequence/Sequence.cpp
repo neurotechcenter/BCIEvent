@@ -108,3 +108,7 @@ void Sequence::actorMove(double x, double y) {
 	_actor->setPositionY(_actor->positionY() + y);
 }
 
+
+void Sequence::actorChangeGraphic(int graphic) {
+	_actor->changeGraphic(graphic);
+}

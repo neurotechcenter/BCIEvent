@@ -13,7 +13,7 @@ namespace BCIEvent_N{
      */
     template<typename T> //returns a boolean
     concept ReturnsBoolean = std::convertible_to<std::invoke_result<T>::type, bool> 
-    || std::convertible_to<std::invoke_result<T,const Sequence&>::type, bool>; 
+    || std::convertible_to<std::invoke_result<T, Sequence&>::type, bool>; 
     template <typename T>
     concept BooleanExpression = ReturnsBoolean<T> || std::convertible_to<T, bool> || std::convertible_to<T, std::string>;
 

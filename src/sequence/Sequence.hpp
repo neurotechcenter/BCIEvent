@@ -70,11 +70,15 @@ namespace BCIEvent_N {
 
 		void callBCI2000Event(std::string name, uint32_t value);
 
+		void callEvent(std::string name) { _actor->callEvent(name); }
+
 		BCIEValue callFunction(std::string name, std::vector<BCIEValue> params);
 
 		//Methods for controlling the calling actor.
 		void actorMove(double, double);
 		void actorMoveTo(double, double);
+
+		void actorChangeGraphic(int graphic);
 
 		template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
 		void setState(std::string name, T value) {

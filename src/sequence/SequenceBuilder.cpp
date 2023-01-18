@@ -55,7 +55,7 @@ SequenceBuilder& SequenceBuilder::addNormalBlock(std::function<void (Sequence& c
 
 
 SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time, std::function<void (Sequence& callingSequence)> action) {
-    _lastBlock = new TimerBlock(_lastBlock, time, action);
+    _lastBlock = new TimerBlock(_lastBlock, std::chrono::duration_cast<std::chrono::seconds>(time), action);
     return *this;
 }
 SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time) {

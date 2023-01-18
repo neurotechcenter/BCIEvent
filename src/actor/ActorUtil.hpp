@@ -10,23 +10,23 @@ namespace BCIEvent_N{
     concept ExpressionType = std::convertible_to<T, bool> || std::convertible_to<T, int> || std::convertible_to<T, float>;
 
     template<typename T, typename U> requires ExpressionType<U> && std::same_as<std::invoke_result<T(const Sequence&)>,U>
-    std::function<U (const Sequence&)> getExpressionFn(T in){
+    std::function<U ( Sequence&)> getExpressionFn(T in){
 	return in; 
     }
 
     template<typename T, typename U> requires ExpressionType<U> && std::same_as<std::invoke_result<T()>, U>
-    std::function<U (const Sequence&)> getExpressionFn(T in){
-	return [&](const Sequence&){ return T(); };
+    std::function<U ( Sequence&)> getExpressionFn(T in){
+	return [&]( Sequence&){ return T(); };
     }
 
     template<typename T, typename U> requires std::convertible_to<T, std::string>
-    std::function<U (const Sequence&)> getExpressionFn(T in){
-	return [&](const Sequence& a) { return a.getVariable(in); };
+    std::function<U ( Sequence&)> getExpressionFn(T in){
+	return [&]( Sequence& a) { return a.getVariable(in); };
     }
 
     template<typename T>
-    std::function<T (const Sequence&)> getExpressionFn(T in){
-	return [&](const Sequence&) { return in; };
+    std::function<T ( Sequence&)> getExpressionFn(T in){
+	return [&]( Sequence&) { return in; };
     }
 
 }

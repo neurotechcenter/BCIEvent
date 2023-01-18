@@ -17,7 +17,7 @@ namespace BCIEvent_N{
 
     template <typename T>
     concept ReturnsNumber = std::convertible_to<std::invoke_result<T>::type, long double>
-    || std::convertible_to<std::invoke_result<T, const Sequence&>::type, long double>;
+    || std::convertible_to<std::invoke_result<T, Sequence&>::type, long double>;
     
     template<typename T>
     concept NumberExpression = ReturnsNumber<T> || std::convertible_to<T, long double> || std::convertible_to<T, std::string>

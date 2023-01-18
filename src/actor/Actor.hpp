@@ -40,7 +40,8 @@ namespace BCIEvent_N{
 
 	const GenericSignal* _currentSignal;
 
-	std::shared_ptr<Event> _clickEvent;
+	Event* _clickEvent;
+
 
 	public:
 
@@ -64,6 +65,7 @@ namespace BCIEvent_N{
 	Actor& addEvent(std::string name);
 	Actor& addFunction(std::string name, std::function<BCIEValue(SequenceEnvironment&, std::vector<BCIEValue>)>);
 	Actor& addTimer(std::string name);
+	Actor& self() { return *this; }
 
 
 
@@ -97,6 +99,7 @@ namespace BCIEvent_N{
 	bool visible() { return GUI::GraphObject::Visible(); }
 	void setVisible(bool visible) { GUI::GraphObject::SetVisible(visible); Invalidate(); }
 	void playSound(int sound);
+	void changeGraphic(int graphic);
 
 	/**
 	 * This currently returns true when a point within the bounding box is clicked.
