@@ -13,6 +13,7 @@
 using namespace BCIEvent_N;
 
 void BCIEvent_N::BCIEventApplication::InitBCIEvent(){
+	/*
 	bciout << "start of initialization" << std::flush;
 	addEvent("go");
 	addEvent("buttonClicked");
@@ -53,5 +54,7 @@ void BCIEvent_N::BCIEventApplication::InitBCIEvent(){
 			))
 		.addVariable("ready", false);
 	addActor(std::move(button));
+	*/
+	bciout << "app initialize";
 }
 

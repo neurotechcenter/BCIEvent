@@ -49,6 +49,15 @@ using namespace BCIEvent_N;
            //This will either remove and delete a completed sequence or move the next sequence to the end of the list 
         //After these operations, the list of sequences will be the same except without any completed sequences, which will have been deleted.
 	}
+
+    //update the text field
+    if (_textIsTimed) {
+        if (_textTimer.time() > _textTimeSeconds) {
+            setTextVisible(false);
+        }
+    }
+
+
 	_currentSignal = nullptr; //the signal should only ever be accessed during the update stage.
     }
 
@@ -199,18 +208,12 @@ bool Actor::OnClick(const GUI::Point& clickPoint){
 }
 
 void Actor::OnPaint(const GUI::DrawContext& context){
-    bciout << "PAINTING";
     QPixmap *imgBuffer = &*_graphics.at(_currentGraphic);
-    bciout << "2";
     int width = ::Floor(context.rect.Width()), height = ::Floor(context.rect.Height());
-    bciout << "3";
     if (width == imgBuffer->width() && height == imgBuffer->height()){
-    bciout << "4";
 	context.handle.dc->drawPixmap(::Floor(context.rect.left), ::Floor(context.rect.top), *imgBuffer);
     } else {
-    	bciout << "5";
 	context.handle.dc->drawPixmap(::Floor(context.rect.left), ::Floor(context.rect.top), width, height, *imgBuffer);
-	bciout << "6";
     }
 }
 
@@ -245,5 +248,18 @@ void Actor::setVariable(std::string name, BCIEValue value) {
 
 void Actor::changeGraphic(int graphic) {
     _currentGraphic = graphic;
+    Change();
+}
+
+
+bool bounds(int i) {
+    return i >= 0 && i < 256;
+}
+
+void Actor::setTextColor(int r, int g, int b) {
+    if (!(bounds(r) && bounds(g) && bounds(b))) {
+        throw std::logic_error("Color values must be between 0 and 255, inclusive");
+    }
+    _textColor = RGBColor(r << 16 & g << 8 & b); //transforms color values to one number
 }
 

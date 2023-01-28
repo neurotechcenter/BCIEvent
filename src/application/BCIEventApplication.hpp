@@ -13,10 +13,12 @@
 #include "ApplicationWindow.h"
 #include "GenericSignal.h"
 #include "GraphDisplay.h"
+#include "GUI.h"
 #include "SignalProperties.h"
 #include "SequenceEnvironment.hpp"
 #include "TextField.h"
 #include "BCIState.hpp"
+#include "Shapes.h"
 #include <vector>
 #include <thread>
 #include <functional>
@@ -80,6 +82,8 @@ namespace BCIEvent_N{
 
 	void subscribeEvent(std::string, EventListener* listener);
 
+	void setBackgroundColor(int r, int g, int b);
+
 
 	private:
 	ApplicationWindow& _display;
@@ -113,6 +117,7 @@ namespace BCIEvent_N{
 	std::map < std::string, std::function<BCIEValue (SequenceEnvironment&, std::vector<BCIEValue>)>> _functions;
 	std::map<std::string, Timer> _timers;
 	std::shared_ptr<ProcessEvent> _processEvent;
+	RectangularShape _background;
 
 
 	std::unique_ptr<Actor> makeActor();

@@ -45,6 +45,15 @@ namespace BCIEvent_N{
 	std::map<std::string, Timer> _timers;
 	std::vector<std::unique_ptr<WavePlayer>> _sounds;
 	std::map < std::string, std::function < BCIEValue(SequenceEnvironment&, std::vector<BCIEValue>)>> _functions ;
+	
+	//Actor's text box
+	RGBColor _textColor;
+	std::string text;
+	TextField _textField;
+	Timer _textTimer;
+	double _textTimeSeconds;
+	bool _textIsTimed;
+
 
 
 	const GenericSignal* _currentSignal;
@@ -53,6 +62,8 @@ namespace BCIEvent_N{
 
 
 	public:
+
+		enum DisplayMode {Image, Text};
 
 	void initialize();
 	/**
@@ -99,16 +110,24 @@ namespace BCIEvent_N{
 
 	float positionX() const{ return GUI::GraphObject::PositionX(); }
 	float positionY() const{ return GUI::GraphObject::PositionY(); }
-	void setPositionX(float x) { GUI::GraphObject::SetPositionX(x); Invalidate(); }
-	void setPositionY(float y) { GUI::GraphObject::SetPositionY(y); Invalidate(); }
+	void setPositionX(float x) { GUI::GraphObject::SetPositionX(x); Change(); }
+	void setPositionY(float y) { GUI::GraphObject::SetPositionY(y); Change(); }
 	double positionX() { return GUI::GraphObject::PositionX(); }
 	double positionY() { return GUI::GraphObject::PositionY(); }
 	int zOrder() { return GUI::GraphObject::ZOrder(); }
-	void setZOrder(float zOrder) { GUI::GraphObject::SetZOrder(zOrder); Invalidate(); }
+	void setZOrder(float zOrder) { GUI::GraphObject::SetZOrder(zOrder); Change(); }
 	bool visible() { return GUI::GraphObject::Visible(); }
-	void setVisible(bool visible) { GUI::GraphObject::SetVisible(visible); Invalidate(); }
+	void setVisible(bool visible) { GUI::GraphObject::SetVisible(visible); Change(); }
 	void playSound(int sound);
 	void changeGraphic(int graphic);
+
+	void setBackgroundColor(int r, int g, int b) { _app->setBackgroundColor(r, g, b); }
+	
+	//Actor's text box controls
+	void setTextColor(int r, int g, int b);
+	void setTextVisible(bool isVisible) { _textField.SetVisible(isVisible); }
+	void say(std::string text) { setTextVisible(true); _text = text; _textIsTimed = false; }
+	void sayFor(std::string text, double timeSeconds) { setTextVisible(true); _text = text; _textTimeSeconds = timeSeconds; _textTimer.reset(); _textTimer.start(); _textIsTimed = true; }
 
 	/**
 	 * This currently returns true when a point within the bounding box is clicked.

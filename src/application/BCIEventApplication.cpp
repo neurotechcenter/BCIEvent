@@ -25,18 +25,11 @@ RegisterFilter(BCIEventApplication, 3);
 
 
 BCIEventApplication::BCIEventApplication() 
-    :  _display(ApplicationWindowClient::Window()){
+    :  _display(ApplicationWindowClient::Window()), _background(_display, 0) {
 	bciout << "bcieventapp constructor" << std::flush;
     Parameter("ShowAppLog") = 1;
 	_processEvent = ProcessEvent::getInstance();
-	GUI::Rect rect = {0.5f, 0.4f, 0.5f, 0.6f};
-    _messageField = std::make_unique<TextField>(_display);
-    _messageField->SetTextHeight(0.8f)
-	    .SetColor(RGBColor::Gray)
-	    .SetTextColor(RGBColor::Yellow)
-	    .SetObjectRect(rect);
-    _messageField->SetText("A")
-	    .Show();
+
     InitBCIEvent();
 }
 
@@ -125,15 +118,19 @@ void BCIEventApplication::Publish(){
 	}
 	for (auto s : _bci2000events) {
 		uploadState(s, 32, State::EventKind);
+		//bcievent << s << " 0";
 	}
     }
 }
 
 void BCIEventApplication::Preflight(const SignalProperties &input, SignalProperties& output) const {
+	bciout << "preflight" << std::flush;
     OnPreflight(input);
+	output = input;
 }
 
 void BCIEventApplication::Initialize(const SignalProperties& input, const SignalProperties& output){
+	bciout << "init" << std::flush;
     ApplicationBase::Initialize(input, output);
     OnInitialize(input);
 }
@@ -245,5 +242,21 @@ BCIEValue BCIEventApplication::getVariable(std::string name) {
 
 void BCIEventApplication::setVariable(std::string name, BCIEValue value) {
 	_variables.at(name) = value;
+}
+
+bool between_0_256(int in) {
+	return in >= 0 && in < 256;
+}
+
+void BCIEventApplication::setBackgroundColor(int r, int g, int b) {
+	if (!(between_0_256(r) && between_0_256(g) && between_0_256(b))) {
+		throw std::logic_error("color values must be between 0 and 255, inclusive");
+	}
+	//transforms three color value to one color value, by shifting the bits for
+	//red and green to the left and adding the result
+	uint32_t color = r << 16 & g << 8 & b;
+	_background.SetColor(RGBColor(color));
+	_background.SetFillColor(RGBColor(color));
+
 }
 

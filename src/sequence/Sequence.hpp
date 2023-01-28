@@ -89,6 +89,10 @@ namespace BCIEvent_N {
 
 		void actorChangeGraphic(int graphic);
 
+		void actorSetOrder(int order) { _actor->setZOrder(order); }
+
+		void setBackgroundColor(int r, int g, int b) { _actor->setBackgroundColor(r, g, b); }
+
 		template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
 		void setState(std::string name, T value) {
 			_actor->setState(value);
