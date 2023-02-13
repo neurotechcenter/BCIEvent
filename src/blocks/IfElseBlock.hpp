@@ -11,9 +11,8 @@
 #define IFELSEBLOCK_H
 
 #include "Actor.hpp"
-#include "BooleanExpression.hpp"
+#include "Expression.hpp"
 #include "StatementCloseBlock.hpp"
-#include "ActorUtil.hpp"
 namespace BCIEvent_N{
 
 class IfElseEndBlock : public StatementCloseBlock{
@@ -25,6 +24,8 @@ class IfElseElseBlock : public StatementCloseBlock{
     IfElseEndBlock* _endBlock;
     bool _ifCondition;
     friend class IfElseStartBlock;
+
+    void setCond(bool cond) { _ifCondition = cond; }
     public:
     IfElseElseBlock(IfElseEndBlock* endBlock);
     Block* run(Sequence& sequence) override;
@@ -34,11 +35,13 @@ class IfElseElseBlock : public StatementCloseBlock{
 class IfElseStartBlock : public Block{
     IfElseElseBlock* _elseBlock;
     IfElseEndBlock* _endBlock;
-    std::function<bool (Sequence&)> _condition;
+    BooleanExpression _condition;
+    
 
     public:
-        IfElseStartBlock(Block* previous, std::function<bool(const Sequence&)> condition, IfElseElseBlock* elseBlock, IfElseEndBlock* endBlock);
+        IfElseStartBlock(Block* previous, BooleanExpression condition, IfElseElseBlock* elseBlock, IfElseEndBlock* endBlock);
     Block* run(Sequence& sequence) override;
+   
 };
 
 

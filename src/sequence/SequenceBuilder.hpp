@@ -19,8 +19,7 @@
 #include "Event.hpp"
 #include "EventListener.hpp"
 #include "StartEvent.hpp"
-#include "BooleanExpression.hpp"
-#include "IntegerExpression.hpp"
+#include "Expression.hpp"
 #include "StatementCloseBlock.hpp"
 #include "IfBlock.hpp"
 #include "IfElseBlock.hpp"
@@ -43,9 +42,9 @@ namespace BCIEvent_N {
 	SequenceBuilder& addNormalBlock(std::function<void(Sequence &)> action);
 
 	
-	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time, std::function<void(Sequence &)> action);
-	SequenceBuilder& addTimerBlock(std::chrono::duration<double> time);
-	SequenceBuilder& addTimedBlock(std::chrono::duration<double> time);
+	SequenceBuilder& addTimerBlock(double timeSeconds, std::function<void(Sequence &)> action);
+	SequenceBuilder& addTimerBlock(double timeSeconds);
+	SequenceBuilder& addTimedBlock(double timeSeconds);
 	SequenceBuilder& addWaitForProcessBlock();
 
 
@@ -55,11 +54,11 @@ namespace BCIEvent_N {
 
 	SequenceBuilder& addLocalTimer(std::string name);
 
-	SequenceBuilder& addLoopBlock(std::function<int(const Sequence&)> iterations);
-	SequenceBuilder& addWhileLoopBlock(std::function<bool(const Sequence&)> condition);
+	SequenceBuilder& addLoopBlock(IntegerExpression iterations);
+	SequenceBuilder& addWhileLoopBlock(BooleanExpression condition);
 
-	SequenceBuilder& addIfBlock(std::function<bool(const Sequence&)> condition);
-	SequenceBuilder& addIfElseBlock(std::function<bool(const Sequence&)> condition);
+	SequenceBuilder& addIfBlock(BooleanExpression condition);
+	SequenceBuilder& addIfElseBlock(BooleanExpression condition);
 
 	/**
 	 * Control elements which contain multiple blocks, such as if statements or loops,

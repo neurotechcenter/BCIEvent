@@ -13,28 +13,29 @@
 using namespace BCIEvent_N;
 
 
-TimerBlock::TimerBlock(Block* previous, std::chrono::duration<double> time, std::function<void(Sequence& sequence)> action) : Block(previous){
-    _time = time;
+TimerBlock::TimerBlock(Block* previous, double timeSeconds, std::function<void(Sequence& sequence)> action) : Block(previous){
+    _time = timeSeconds;
     _action = action;
 }
 
-TimerBlock::TimerBlock(Block* previous, std::chrono::duration<double> time) : Block(previous){
-    _time = time;
+TimerBlock::TimerBlock(Block* previous, double timeSeconds) : Block(previous){
+    _time = timeSeconds;
 }
 
 Block* TimerBlock::run(Sequence& sequence){
-    auto now = std::chrono::high_resolution_clock::now();
-    _timeElapsed = now - _startTime;
     if (!_isRunning){ //if clock is not running, start it.
        _isRunning=true;
-       _startTime = now;
+       _timer.reset();
+       _timer.start();
     }
-    if (_timeElapsed >= _time){ //time has elapsed, stop the clock and return the next block
-	_isRunning=false;
-	return _next;
+    else {
+        if (_timer.time() >= _time) { //time has elapsed, stop the clock and return the next block
+            _isRunning = false;
+            return _next;
+        }
+        if (_action) //don't run action if there is no action
+            _action(sequence); //time has not elapsed; execute action and return this block.
     }
-    if(_action) //don't run action if there is no action
-	_action(sequence); //time has not elapsed; execute action and return this block.
     return this; 
 }
 

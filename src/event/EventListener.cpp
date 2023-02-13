@@ -12,9 +12,7 @@
 #include <exception>
 using namespace BCIEvent_N;
 
-EventListener::EventListener(ProtoSequence seq) {
-    _seq = seq;
-}
+EventListener::EventListener(ProtoSequence seq) : _seq(seq), _timesTriggered(0) {}
 
 std::unique_ptr<Sequence> EventListener::getSequence() {
     if (_timesTriggered == 0) {

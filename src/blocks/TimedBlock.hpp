@@ -21,13 +21,13 @@ namespace BCIEvent_N{
      */
 
     class TimedBlockStart : public Block{
-	std::chrono::time_point<std::chrono::high_resolution_clock> _startTime;
-	std::chrono::duration<double> _time;
+		double _time;
+		Timer _timer;
 	public:
 	Block* run(Sequence& sequence) override;
-	TimedBlockStart(Block* previous, std::chrono::duration<double> time);
-	std::chrono::time_point<std::chrono::high_resolution_clock> startTime() {return _startTime;}
-	std::chrono::duration<double> time() {return _time;}
+	TimedBlockStart(Block* previous, double timeSeconds);
+	double time() {return _time;}
+	Timer& timer() { return _timer; }
     };
 
     class TimedBlockEnd : public StatementCloseBlock{

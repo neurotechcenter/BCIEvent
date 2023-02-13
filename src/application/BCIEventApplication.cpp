@@ -17,6 +17,8 @@
 #include "ProcessEvent.hpp"
 #include "BCIEvent.h"
 #include <iostream>
+#include <optional>
+#define STR(s) #s
 
 using namespace BCIEvent_N;
 
@@ -25,6 +27,7 @@ RegisterFilter(BCIEventApplication, 3);
 
 
 BCIEventApplication::BCIEventApplication() 
+    //:  _display(ApplicationWindowClient::Window()), _background(_display, 100000) {
     :  _display(ApplicationWindowClient::Window()), _background(_display, 0) {
 	bciout << "bcieventapp constructor" << std::flush;
     Parameter("ShowAppLog") = 1;
@@ -42,7 +45,9 @@ void BCIEventApplication::addState(std::string name, BCIState::StateType type){
 }
 
 void BCIEventApplication::addActor(std::unique_ptr<Actor> actor){
+	bciout << "adding actor" << std::flush;
     _actors.push_back(std::move(actor));
+	bciout << "added actor";
 }
 
 void BCIEventApplication::addVariable(std::string name) {
@@ -99,6 +104,13 @@ void BCIEventApplication::uploadState(std::string name, uint32_t width, int kind
 }
 
 void BCIEventApplication::Publish(){
+	BEGIN_STATE_DEFINITIONS
+		"StimulusCode   16 0 0 0",
+		"StimulusType    1 0 0 0", // attended vs. non-attended
+		"StimulusBegin   1 0 0 0", // 1: first block of stimulus presentation
+		"PhaseInSequence 2 0 0 0", // 1: pre-sequence, 2: during sequence, 3: post-sequence
+		"PauseApplication 1 0 0 0",
+	END_STATE_DEFINITIONS
 	AppLog << "publishing";
     for (auto state : _states){
         auto name = std::get<1>(state).name();    
@@ -120,7 +132,36 @@ void BCIEventApplication::Publish(){
 		uploadState(s, 32, State::EventKind);
 		//bcievent << s << " 0";
 	}
+	for (auto& p : _parameters) {
+		uploadParam(std::get<1>(p));
+	}
     }
+}
+
+std::string BCIEventApplication::BCVToString(const BCIEValue& val) {
+	if (std::holds_alternative<std::string>(val)) {
+		return std::get<std::string>(val);
+	}
+	else if (std::holds_alternative<int>(val)) {
+		return std::to_string(std::get<int>(val));
+	}
+	else if (std::holds_alternative<double>(val)) {
+		return std::to_string(std::get<double>(val));
+	}
+	else if (std::holds_alternative<bool>(val)) {
+		return std::to_string(std::get<bool>(val));
+	}
+	else if (std::holds_alternative<std::nullopt_t>(val)) {
+		bcierr << "attempted to get value of a null BCIEValue";
+	}
+	else {
+		bcierr << "this should be unreachable.";
+	}
+	return "";
+}
+
+void BCIEventApplication::uploadParam(const ParamDef& def) {
+	Param(def.path, STR(BCIEVENT_APP_NAME), def.typeStr(), BCVToString(def.value), std::to_string(INT_MIN), std::to_string(INT_MAX), "");
 }
 
 void BCIEventApplication::Preflight(const SignalProperties &input, SignalProperties& output) const {
@@ -168,6 +209,7 @@ void BCIEventApplication::OnInitialize(const SignalProperties& input) {
 	for (auto& actor : _actors) {
 		actor->initialize();
 	}
+	_appLoop = true;
 	_appLoopThread = std::thread(&BCIEventApplication::applicationLoop, this);
 	StartEvent::getInstance()->trigger();
 	_display.Show();
@@ -181,7 +223,8 @@ void BCIEventApplication::OnStopRun(){
 
 void BCIEventApplication::OnHalt(){
 	_appLoop = false;
-	_appLoopThread.join();
+	//somehow this is being called from within the apploopthread
+	//_appLoopThread.join();
 }
 
 void BCIEventApplication::initialize() {
@@ -234,6 +277,14 @@ void BCIEventApplication::addFunction(std::string name, int numArgs, std::functi
 
 BCIEValue BCIEventApplication::callFunction(std::string name, std::vector<BCIEValue> params) {
 	return _functions.at(name)(*this, params);
+}
+
+
+void BCIEventApplication::addParam(std::string name, ParamDef::DataType dataType, bool isList) {
+	if (_parameters.count(name))
+		bcierr << "Attempted to add duplicate parameter: " << name;
+
+	_parameters.insert(std::make_pair(name, ParamDef(STR(BCIEVENT_APP_NAME) + name, dataType, isList)));
 }
 
 BCIEValue BCIEventApplication::getVariable(std::string name) {

@@ -32,4 +32,5 @@ set(INCLUDE_EVENT
 	src/timer
     src/expression
     src/application
+	src/param
 )

@@ -8,13 +8,12 @@
 // You should have received a copy of the GNU GPL with BCIEvent. If not, go to 
 //     https://www.gnu.org/licenses/
 #include "WhileLoopBlock.hpp"
-#include "BooleanExpression.hpp"
 #include <stdexcept>
 
 using namespace BCIEvent_N;
 
 
-WhileLoopStartBlock::WhileLoopStartBlock(Block* previous, std::function<bool(const Sequence&)> condition) : Block(previous) {
+WhileLoopStartBlock::WhileLoopStartBlock(Block* previous, BooleanExpression condition) : Block(previous) {
 	    _condition = condition;
 }
 

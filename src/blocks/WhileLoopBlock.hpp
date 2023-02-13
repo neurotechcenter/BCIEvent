@@ -12,9 +12,8 @@
 #include "Block.hpp"
 #include <string>
 #include <functional>
-#include "BooleanExpression.hpp"
 #include "StatementCloseBlock.hpp"
-#include "ActorUtil.hpp"
+#include "Expression.hpp"
 namespace BCIEvent_N{
 
     /**
@@ -29,12 +28,12 @@ namespace BCIEvent_N{
 	bool _isLooping = false;
 	friend class WhileLoopEndBlock;
 	public:
-		WhileLoopStartBlock(Block* previous, std::function<bool(const Sequence&)> condition);
+		WhileLoopStartBlock(Block* previous, BooleanExpression condition);
 	Block* run(Sequence& sequence) override;
 	void setEndBlock(WhileLoopEndBlock* endBlock); //sets the end block. This must be called.
 
 	private:
-	std::function<bool (const Sequence&)> _condition;
+	BooleanExpression _condition;
 
     };
     

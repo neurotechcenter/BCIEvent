@@ -57,9 +57,29 @@ using namespace BCIEvent_N;
         }
     }
 
+    //Draw actors every 60th of a second
+    std::chrono::duration<double> timeSinceDraw = std::chrono::high_resolution_clock::now() - _lastDraw;
+    if (timeSinceDraw.count() >= 1.0 / 60.0) {
+        _lastDraw = std::chrono::high_resolution_clock::now();
+        Paint();
+    }
+
 
 	_currentSignal = nullptr; //the signal should only ever be accessed during the update stage.
     }
+
+void Actor::reset() {
+    for (auto& var : _variables) {
+        std::get<1>(var) = std::nullopt;
+    }
+    for (auto seq : _sequences) {
+        delete seq;
+    }
+    _sequences.clear();
+    initialize();
+    _textIsTimed = false;
+
+}
 
 void Actor::initialize() {
     while (!_varInits.empty()) {
@@ -70,7 +90,7 @@ void Actor::initialize() {
 }
 
 Actor::Actor(BCIEventApplication* app) :
-	GUI::GraphObject(app->getDisplay(), 0)
+	GUI::GraphObject(app->getDisplay(), 0), _textField(app->getDisplay(), 1)
 {
 	_app = app;
     SetAlignment(GUI::Alignment::Center);
@@ -208,6 +228,7 @@ bool Actor::OnClick(const GUI::Point& clickPoint){
 }
 
 void Actor::OnPaint(const GUI::DrawContext& context){
+    bciout << "drawing???";
     QPixmap *imgBuffer = &*_graphics.at(_currentGraphic);
     int width = ::Floor(context.rect.Width()), height = ::Floor(context.rect.Height());
     if (width == imgBuffer->width() && height == imgBuffer->height()){

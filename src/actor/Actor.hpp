@@ -31,6 +31,8 @@ namespace BCIEvent_N{
 	class EventListener;
     class Actor : public GUI::GraphObject, public SequenceEnvironment{
 		friend class Sequence;
+
+		std::chrono::time_point<std::chrono::high_resolution_clock> _lastDraw;
 		
 	BCIEventApplication* _app;
 	std::vector<std::unique_ptr<QPixmap>> _graphics;
@@ -47,12 +49,12 @@ namespace BCIEvent_N{
 	std::map < std::string, std::function < BCIEValue(SequenceEnvironment&, std::vector<BCIEValue>)>> _functions ;
 	
 	//Actor's text box
-	RGBColor _textColor;
-	std::string text;
+	RGBColor _textColor = RGBColor(0x00FFFFFF);
+	std::string _text = "";
 	TextField _textField;
 	Timer _textTimer;
-	double _textTimeSeconds;
-	bool _textIsTimed;
+	double _textTimeSeconds = 0;
+	bool _textIsTimed = false;
 
 
 
@@ -72,6 +74,8 @@ namespace BCIEvent_N{
 	 */
 	void update( const GenericSignal& input );
 
+	void reset();
+
 	Actor(BCIEventApplication* app);
 	~Actor();
 	Actor& addVariable(std::string name);
@@ -85,6 +89,7 @@ namespace BCIEvent_N{
 	Actor& addEvent(std::string name);
 	Actor& addFunction(std::string name, std::function<BCIEValue(SequenceEnvironment&, std::vector<BCIEValue>)>);
 	Actor& addTimer(std::string name);
+	Actor& dbg(std::string text) { bciout << text; return *this; }
 	Actor& self() { return *this; }
 
 
@@ -115,7 +120,7 @@ namespace BCIEvent_N{
 	double positionX() { return GUI::GraphObject::PositionX(); }
 	double positionY() { return GUI::GraphObject::PositionY(); }
 	int zOrder() { return GUI::GraphObject::ZOrder(); }
-	void setZOrder(float zOrder) { GUI::GraphObject::SetZOrder(zOrder); Change(); }
+	void setZOrder(float zOrder) { GUI::GraphObject::SetZOrder(zOrder); _textField.SetZOrder(zOrder + 1); Change(); }
 	bool visible() { return GUI::GraphObject::Visible(); }
 	void setVisible(bool visible) { GUI::GraphObject::SetVisible(visible); Change(); }
 	void playSound(int sound);
@@ -135,21 +140,13 @@ namespace BCIEvent_N{
 	 */
 	bool OnClick(const GUI::Point&) override;
 	void OnPaint(const GUI::DrawContext&) override;
+	void OnChange() { Paint(); }
 	        
 
     BCIEValue getVariable(std::string name);
 
 	void setVariable(std::string name, BCIEValue value);
 	
-	template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
-	void setState(std::string name, T value){
-	    _app->getBCIState(name).set(value);
-	}
-
-	template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
-	T getState(std::string name) const{
-	    return static_cast<T>(_app->getBCIState(name).get());
-	}
     };
 
 

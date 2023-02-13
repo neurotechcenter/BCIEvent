@@ -63,17 +63,17 @@ SequenceBuilder& SequenceBuilder::addNormalBlock(std::function<void (Sequence& c
 }
 
 
-SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time, std::function<void (Sequence& callingSequence)> action) {
-    _lastBlock = new TimerBlock(_lastBlock, std::chrono::duration_cast<std::chrono::seconds>(time), action);
+SequenceBuilder& SequenceBuilder::addTimerBlock(double timeSeconds, std::function<void(Sequence& callingSequence)> action) {
+    _lastBlock = new TimerBlock(_lastBlock, timeSeconds, action);
     return *this;
 }
-SequenceBuilder& SequenceBuilder::addTimerBlock(std::chrono::duration<double> time) {
-    _lastBlock = new TimerBlock(_lastBlock, time);
+SequenceBuilder& SequenceBuilder::addTimerBlock(double timeSeconds) {
+    _lastBlock = new TimerBlock(_lastBlock, timeSeconds);
     return *this;
 }
 
-SequenceBuilder& SequenceBuilder::addTimedBlock(std::chrono::duration<double> time) {
-    TimedBlockStart* startBlk = new TimedBlockStart(_lastBlock, time);
+SequenceBuilder& SequenceBuilder::addTimedBlock(double timeSeconds) {
+    TimedBlockStart* startBlk = new TimedBlockStart(_lastBlock, timeSeconds);
     Block* endBlk = new TimedBlockEnd(startBlk);
     _lastBlock = static_cast<Block*>(startBlk);
     _controlCloseBlocks.push(std::make_pair(endBlk, true));
@@ -103,7 +103,7 @@ SequenceBuilder& SequenceBuilder::closeStatement(){
 }
 	
 
-SequenceBuilder& SequenceBuilder::addIfBlock(std::function<bool (const Sequence &)> condition) {
+SequenceBuilder& SequenceBuilder::addIfBlock(BooleanExpression condition) {
 	    auto endBlk = new IfEndBlock();
 	    _lastBlock = new IfStartBlock(_lastBlock, endBlk, condition);
 	    _controlCloseBlocks.push(std::make_pair(endBlk, true));
@@ -111,7 +111,7 @@ SequenceBuilder& SequenceBuilder::addIfBlock(std::function<bool (const Sequence 
 }
 
 	
-SequenceBuilder& SequenceBuilder::addIfElseBlock(std::function<bool(const Sequence &)> condition){
+SequenceBuilder& SequenceBuilder::addIfElseBlock(BooleanExpression condition){
 	    auto endBlk = new IfElseEndBlock();
 	    auto elseBlk = new IfElseElseBlock(endBlk);
 	    _lastBlock = new IfElseStartBlock(_lastBlock, condition, elseBlk, endBlk);
@@ -120,7 +120,7 @@ SequenceBuilder& SequenceBuilder::addIfElseBlock(std::function<bool(const Sequen
 	    return *this;
 }
 
-SequenceBuilder& SequenceBuilder::addLoopBlock(std::function<int(const Sequence&)> iterations) {
+SequenceBuilder& SequenceBuilder::addLoopBlock(IntegerExpression iterations) {
 	    auto startBlk = new LoopStartBlock(_lastBlock, iterations);
 	    auto endBlk = new LoopEndBlock(startBlk);
 	    startBlk->addEndBlock(endBlk);
@@ -129,7 +129,7 @@ SequenceBuilder& SequenceBuilder::addLoopBlock(std::function<int(const Sequence&
 	    return *this;
 }
 
-SequenceBuilder& SequenceBuilder::addWhileLoopBlock(std::function<bool (const Sequence&)> condition){
+SequenceBuilder& SequenceBuilder::addWhileLoopBlock(BooleanExpression condition){
 	    auto startBlk = new WhileLoopStartBlock(_lastBlock, condition);
 	    auto endBlk = new WhileLoopEndBlock(startBlk);
 	    startBlk->setEndBlock(endBlk);

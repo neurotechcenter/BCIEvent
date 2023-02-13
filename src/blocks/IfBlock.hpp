@@ -12,9 +12,8 @@
 
 #include "Block.hpp"
 #include <functional>
-#include "BooleanExpression.hpp"
+#include "Expression.hpp"
 #include "StatementCloseBlock.hpp"
-#include "ActorUtil.hpp"
 
 namespace BCIEvent_N{
     class IfEndBlock : public StatementCloseBlock{
@@ -23,10 +22,10 @@ namespace BCIEvent_N{
     };
 
     class IfStartBlock : public Block{
-	std::function<bool(Sequence& sequence)> _condition;
+	BooleanExpression _condition;
 	IfEndBlock* _endBlock;
 	public:
-		IfStartBlock(Block*, IfEndBlock*, std::function<bool(const Sequence&)> condition);
+		IfStartBlock(Block*, IfEndBlock*, BooleanExpression condition);
 	Block* run(Sequence& sequence) override;
     };
 }

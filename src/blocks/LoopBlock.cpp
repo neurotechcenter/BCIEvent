@@ -8,12 +8,10 @@
 // You should have received a copy of the GNU GPL with BCIEvent. If not, go to 
 //     https://www.gnu.org/licenses/
 #include "LoopBlock.hpp"
-#include "ActorUtil.hpp"
-#include "IntegerExpression.hpp"
 
 using namespace BCIEvent_N;
 
-LoopStartBlock::LoopStartBlock(Block* previous, std::function<int(const Sequence&)> iterationGetter) : Block(previous) {
+LoopStartBlock::LoopStartBlock(Block* previous, IntegerExpression iterationGetter) : Block(previous) {
 	    _iterationGetter = iterationGetter;
 }
 

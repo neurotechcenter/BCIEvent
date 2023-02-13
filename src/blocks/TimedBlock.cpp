@@ -13,12 +13,13 @@
 
 using namespace BCIEvent_N;
 
-TimedBlockStart::TimedBlockStart(Block* previous, std::chrono::duration<double> time) : Block(previous){
-    _time = time;
+TimedBlockStart::TimedBlockStart(Block* previous, double timeSeconds) : Block(previous){
+    _time = timeSeconds;
 }
 
 Block* TimedBlockStart::run(Sequence& sequence){
-    _startTime = std::chrono::high_resolution_clock::now();
+    _timer.reset();
+    _timer.start();
     return _next;
 }
 
@@ -27,7 +28,7 @@ TimedBlockEnd::TimedBlockEnd(TimedBlockStart* start){
 }
 
 Block* TimedBlockEnd::run(Sequence& sequence){
-    if (std::chrono::high_resolution_clock::now() >= _start->startTime() + _start->time()){
+    if (_start->timer().time() >= _start->time()) {
 	return _next;
     }
     return this; //wait until time has elapsed

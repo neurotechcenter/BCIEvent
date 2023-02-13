@@ -9,8 +9,6 @@
 //     https://www.gnu.org/licenses/
 #include "ProtoSequence.hpp"
 #include "SequenceBuilder.hpp"
-#include "BooleanExpression.hpp"
-#include "ActorUtil.hpp"
 #include "HeadBlock.hpp"
 using namespace BCIEvent_N;
 
@@ -20,39 +18,47 @@ ProtoSequence::ProtoSequence(std::vector<std::string> params) {
 	}
 }
 
-ProtoSequence::~ProtoSequence() {
-	for (auto p : _sequenceProto) {
-		delete p;
+ProtoSequence::ProtoSequence(const ProtoSequence& other) {
+	_parameters = other._parameters;
+	for (const std::unique_ptr<Protoblock>& block : other._sequenceProto) {
+		_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(*block))); //copy blocks from other sequence
+	}
+}
+
+ProtoSequence::ProtoSequence(ProtoSequence&& other) {
+	_parameters = other._parameters;
+	for (auto&& block : other._sequenceProto) {
+		_sequenceProto.push_back(std::move(block));
 	}
 }
 
 ProtoSequence& ProtoSequence::addNormal(std::function<void(Sequence&)> action) {
-	_sequenceProto.push_back(new Protoblock(ProtoBlockType::Normal, action));
+	_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(ProtoBlockType::Normal, action)));
 	return *this;
 }
 
 ProtoSequence& ProtoSequence::addTimer(double timeSeconds, std::function<void(Sequence&)> action) {
-	_sequenceProto.push_back(new Protoblock(ProtoBlockType::Timer_m, timeSeconds, action));
+	_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(ProtoBlockType::Timer_m, timeSeconds, action)));
 	return *this;
 }
 
 ProtoSequence& ProtoSequence::addTimer(double timeSeconds) {
-	_sequenceProto.push_back(new Protoblock(ProtoBlockType::Timer_m, timeSeconds));
+	_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(ProtoBlockType::Timer_m, timeSeconds)));
 	return *this;
 }
 
 ProtoSequence& ProtoSequence::addTimed(double timeSeconds) {
-	_sequenceProto.push_back(new Protoblock(ProtoBlockType::Timed, timeSeconds));
+	_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(ProtoBlockType::Timed, timeSeconds)));
 	return *this;
 }
 
 ProtoSequence& ProtoSequence::addWaitForProcess() {
-	_sequenceProto.push_back(new Protoblock(ProtoBlockType::WaitForProcess));
+	_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(ProtoBlockType::WaitForProcess)));
 	return *this;
 }
 
 ProtoSequence& ProtoSequence::closeStatement() {
-	_sequenceProto.push_back(new Protoblock(ProtoBlockType::CloseStatement));
+	_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(ProtoBlockType::CloseStatement)));
 	return *this;
 }
 
@@ -73,7 +79,7 @@ std::unique_ptr<Sequence> ProtoSequence::genSequence() {
 		throw std::logic_error("genSequence called without initial values for this sequences parameters. This would be caused by a sequence intended to be a procedure mistakenly being interpreted as an event response.");
 	}
 	SequenceBuilder builder = SequenceBuilder();
-	for (Protoblock* b : _sequenceProto) {
+	for (auto& b : _sequenceProto) {
 		switch (b->type) {
 		case ProtoBlockType::CloseStatement:
 			builder.closeStatement();

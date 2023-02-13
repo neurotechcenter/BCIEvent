@@ -8,11 +8,10 @@
 // You should have received a copy of the GNU GPL with BCIEvent. If not, go to 
 //     https://www.gnu.org/licenses/
 #include "IfElseBlock.hpp"
-#include "ActorUtil.hpp"
 
 using namespace BCIEvent_N;
 
-IfElseStartBlock::IfElseStartBlock(Block* previous, std::function<bool(const Sequence&)> condition, IfElseElseBlock* elseBlock, IfElseEndBlock* endBlock) : Block(previous) {
+IfElseStartBlock::IfElseStartBlock(Block* previous, BooleanExpression condition, IfElseElseBlock* elseBlock, IfElseEndBlock* endBlock) : Block(previous) {
 	   _condition = condition; 
 	   _elseBlock = elseBlock;
 	   _endBlock = endBlock;
@@ -20,10 +19,10 @@ IfElseStartBlock::IfElseStartBlock(Block* previous, std::function<bool(const Seq
 
 Block* IfElseStartBlock::run(Sequence& sequence){
     if (_condition(sequence)){
-	_elseBlock->_ifCondition = true;
+		_elseBlock->setCond(true);
 	return _next;
     } else {
-	_elseBlock->_ifCondition = false;
+		_elseBlock->setCond(false);
 	return _elseBlock;
     }
 }

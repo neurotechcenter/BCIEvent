@@ -10,6 +10,7 @@
 #ifndef PROTOBLOCK_H
 #define PROTOBLOCK_H
 #include <chrono>
+#include "Expression.hpp"
 #include <functional>
 
 namespace BCIEvent_N {
@@ -31,7 +32,7 @@ namespace BCIEvent_N {
 			condition(other.condition),
 			number(other.number),
 			time(other.time)
-		{}
+		{};
 
 		/*
 		* These next fields are for defining a prototype sequence which is used to generate an actual sequence of blocks. This is to allow cloning of a sequence.
@@ -39,19 +40,19 @@ namespace BCIEvent_N {
 		* That way one object can represent any block and can be used to contruct a new instance of that block.
 		* This is essentially my way of implementing some form of algebraic data type that represents any type of block.
 		*/
-		const ProtoBlockType type;
-		const std::function<void (Sequence&)> action;
-		const std::string eventName;
-		const std::function<bool (const Sequence&)> condition;
-		const std::function<int (const Sequence&)> number;
-		const std::chrono::duration<float> time;
+		ProtoBlockType type;
+		std::function<void (Sequence&)> action;
+		std::string eventName;
+		BooleanExpression condition;
+		IntegerExpression number;
+		double time = 0;
 
 		Protoblock(ProtoBlockType _type, std::function<void(Sequence&)> _action) : type(_type), action(_action) {}
 		Protoblock(ProtoBlockType _type, double _time) : type(_type), time(_time) {}
 		Protoblock(ProtoBlockType _type, double _time, std::function<void(Sequence&)> _action) : type(_type), time(_time), action(_action) {}
 		Protoblock(ProtoBlockType _type) : type(_type) {}
-		Protoblock(ProtoBlockType _type, std::function<bool(const Sequence&)> _condition) : type(_type), condition(_condition) {}
-		Protoblock(ProtoBlockType _type, std::function<int(const Sequence&)> _number) : type(_type), number(_number) {}
+		Protoblock(ProtoBlockType _type, BooleanExpression _condition) : type(_type), condition(_condition) {}
+		Protoblock(ProtoBlockType _type, IntegerExpression _number) : type(_type), number(_number) {}
 	};
 }
 

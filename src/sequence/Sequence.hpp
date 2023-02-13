@@ -10,7 +10,6 @@
 #ifndef SEQUENCE_HPP
 #define SEQUENCE_HPP
 #include "SequenceEnvironment.hpp"
-#include <concepts>
 #include <tuple>
 #include <queue>
 #include <deque>
@@ -87,21 +86,15 @@ namespace BCIEvent_N {
 		void actorMove(double, double);
 		void actorMoveTo(double, double);
 
+		void actorSay(std::string text) { _actor->say(text); }
+		void actorSayFor(std::string text, double timeSeconds) { _actor->sayFor(text, timeSeconds); }
+
 		void actorChangeGraphic(int graphic);
 
 		void actorSetOrder(int order) { _actor->setZOrder(order); }
 
 		void setBackgroundColor(int r, int g, int b) { _actor->setBackgroundColor(r, g, b); }
 
-		template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
-		void setState(std::string name, T value) {
-			_actor->setState(value);
-		}
-
-		template <typename T> requires std::integral<T> || std::convertible_to<T, bool>
-		T getState(std::string name) const {
-			return _actor->getState<T>(name);
-		}
 
 
 

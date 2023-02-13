@@ -12,9 +12,8 @@
 
 #include <functional>
 #include "Block.hpp"
-#include "ActorUtil.hpp"
-#include "IntegerExpression.hpp"
 #include "StatementCloseBlock.hpp"
+#include "Expression.hpp"
 
 namespace BCIEvent_N{
 
@@ -25,14 +24,14 @@ namespace BCIEvent_N{
     class LoopEndBlock;
     class LoopStartBlock : public Block{
 	LoopEndBlock* _endBlock = nullptr;
-	std::function<int (const Sequence& sequence)> _iterationGetter;
+	IntegerExpression _iterationGetter;
 	int _iterations;
 	int _currentIter;
 	bool _isLooping = false;
 	friend class LoopEndBlock;
 
 	public:
-		LoopStartBlock(Block* previous, std::function<int(const Sequence&)> iterationGetter);
+		LoopStartBlock(Block* previous, IntegerExpression iterationGetter);
 	
 	void addEndBlock(LoopEndBlock* endBlock); //must be called
 	Block* run (Sequence& sequence) override;

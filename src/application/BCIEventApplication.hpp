@@ -24,6 +24,7 @@
 #include <functional>
 #include <queue>
 #include "BCIEValue.hpp"
+#include "ParamDef.hpp"
 
 namespace BCIEvent_N{
 	class WaitForProcessBlock;
@@ -80,6 +81,9 @@ namespace BCIEvent_N{
 	void addFunction(std::string name, int numArgs, std::function<BCIEValue(SequenceEnvironment&, std::vector<BCIEValue>)> fn);
 	BCIEValue callFunction(std::string name, std::vector<BCIEValue> params);
 
+	void addParam(std::string name, ParamDef::DataType dataType, bool isList);
+	BCIEValue getParam(std::string name);
+
 	void subscribeEvent(std::string, EventListener* listener);
 
 	void setBackgroundColor(int r, int g, int b);
@@ -117,11 +121,15 @@ namespace BCIEvent_N{
 	std::map < std::string, std::function<BCIEValue (SequenceEnvironment&, std::vector<BCIEValue>)>> _functions;
 	std::map<std::string, Timer> _timers;
 	std::shared_ptr<ProcessEvent> _processEvent;
+	std::map<std::string, const ParamDef> _parameters;
 	RectangularShape _background;
+
+	std::string BCVToString(const BCIEValue&);
 
 
 	std::unique_ptr<Actor> makeActor();
 	void uploadState(std::string name, uint32_t width, int kind);
+	void uploadParam(const ParamDef& def);
     };
 }
 

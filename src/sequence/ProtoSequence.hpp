@@ -11,10 +11,7 @@
 #define PROTOSEQUENCE_H
 #include "Protoblock.hpp"
 #include "Sequence.hpp"
-#include "IntegerExpression.hpp"
-#include "BooleanExpression.hpp"
-#include "NumberExpression.hpp"
-#include "ActorUtil.hpp"
+#include "Expression.hpp"
 
 namespace BCIEvent_N {
 	/*
@@ -22,8 +19,8 @@ namespace BCIEvent_N {
 	*/
 	class ProtoSequence {
 		std::vector<std::string> _parameters; //parameters for a protosequence which is a procedure
+		std::vector<std::unique_ptr<Protoblock>> _sequenceProto;
 	public:
-		std::vector<Protoblock*> _sequenceProto;
 		/*
 		* Generates a sequence from the list of prototype blocks
 		*/
@@ -31,7 +28,8 @@ namespace BCIEvent_N {
 		std::unique_ptr<Sequence> genSequence(std::vector<BCIEValue> initialValues);
 		ProtoSequence() {}
 		ProtoSequence(std::vector<std::string> parameters);
-		~ProtoSequence();
+		ProtoSequence(const ProtoSequence&);
+		ProtoSequence(ProtoSequence&&);
 
 		
 		//Methods for making a sequence
@@ -44,32 +42,23 @@ namespace BCIEvent_N {
 		ProtoSequence& addWaitForProcess();
 		ProtoSequence& closeStatement();
 
-		ProtoSequence& addIf(std::function<bool(Sequence&)> cond) {
-			_sequenceProto.push_back(new Protoblock(ProtoBlockType::If, cond));
+		ProtoSequence& addIf(BooleanExpression cond) {
+			_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(ProtoBlockType::If, cond)));
 			return *this;
 		}
 
-		template <BooleanExpression B>
-		ProtoSequence& addIf(B condition) {
-			_sequenceProto.push_back(new Protoblock(ProtoBlockType::If, getExpressionFn(condition)));
-			return *this;
-		}
-		
-		template <BooleanExpression B>
-		ProtoSequence& addIfElse(B condition) {
-			_sequenceProto.push_back(new Protoblock(ProtoBlockType::IfElse, getExpressionFn(condition)));
+		ProtoSequence& addIfElse(BooleanExpression condition) {
+			_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(ProtoBlockType::IfElse, condition)));
 			return *this;
 		}
 
-		template <BooleanExpression B>
-		ProtoSequence& addWhile(B condition) {
-			_sequenceProto.push_back(new Protoblock(ProtoBlockType::While, getExpressionFn(condition)));
+		ProtoSequence& addWhile(BooleanExpression condition) {
+			_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(ProtoBlockType::While, condition)));
 			return *this;
 		}
 
-		template <IntegerExpression I>
-		ProtoSequence& addLoop(I loopAmt) {
-			_sequenceProto.push_back(new Protoblock(ProtoBlockType::Loop, getExpressionFn(loopAmt)));
+		ProtoSequence& addLoop(IntegerExpression loopAmt) {
+			_sequenceProto.push_back(std::move(std::make_unique<Protoblock>(ProtoBlockType::Loop, loopAmt)));
 			return *this;
 		}
 

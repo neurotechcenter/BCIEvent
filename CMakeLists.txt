@@ -1,10 +1,6 @@
 include(sources.cmake)
 
 
-if(CMAKE_CXX_STANDARD LESS 20)
-	message( FATAL_ERROR "C++ standard must be 20 or later" )
-endif()
-
 if( NOT BCIEVENT_APP_NAME )
 	message("BCIEVENT_APP_NAME not set; using default name BCIEventApplication")
 	set(BCIEVENT_APP_NAME BCIEventApplication)

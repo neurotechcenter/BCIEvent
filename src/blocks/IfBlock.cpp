@@ -11,7 +11,7 @@
 
 using namespace BCIEvent_N;
 
-IfStartBlock::IfStartBlock(Block* previous, IfEndBlock* endBlock, std::function<bool(const Sequence&)> condition) : Block(previous), _condition{ condition } {
+IfStartBlock::IfStartBlock(Block* previous, IfEndBlock* endBlock, BooleanExpression condition) : Block(previous), _condition{ condition } {
 	    _endBlock = endBlock;
 	}
 

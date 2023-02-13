@@ -22,13 +22,12 @@ namespace BCIEvent_N{
      */
    class TimerBlock : public Block{
        bool _isRunning = false;
-       std::chrono::time_point<std::chrono::high_resolution_clock> _startTime;
-       std::chrono::duration<double> _time;
-       std::chrono::duration<double> _timeElapsed;
+       Timer _timer;
+       double _time;
        std::function<void(Sequence& sequence)> _action;
     public:
-	TimerBlock(Block* previous, std::chrono::duration<double> time, std::function<void (Sequence&)> action);
-	TimerBlock(Block* previous, std::chrono::duration<double> time); //treated as wait block
+	TimerBlock(Block* previous, double timeSeconds, std::function<void (Sequence&)> action);
+	TimerBlock(Block* previous, double timeSeconds); //treated as wait block
 	Block* run(Sequence& sequence) override;
    }; 
 }
